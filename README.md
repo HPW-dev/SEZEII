@@ -1,7 +1,7 @@
 # SEZE II
 [Смотреть на русском](README_RU.md)
 
-SEZE is a plugin-based video converter for Windows/Linux
+SEZE is a plugin-based video converter for Windows/Linux. You can write your video filter in C/C++ (see section "How to make video effect") 
 + CLI version usage example: ```seze -i "path_to_your_vid.mp4" -o "path_to_output.mkv" --plug "path_to_plugin"```.\
 Execute ```seze``` without options or with ```-h``` for watch avaliable commands
 + GUI version - launch ```seze-gui```
