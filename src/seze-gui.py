@@ -52,10 +52,10 @@ def load_out():
     entry_out_vid.insert(0, txt)
 
 def load_plug():
-  plugin_name = getLoadFileName(window)
+  txt = getLoadFileName(window)
   if txt:
     entry_plug.delete(0, tk.END)
-    entry_plug.insert(0, plugin_name)
+    entry_plug.insert(0, txt)
 
 def process():
   input_video = entry_in_vid.get()
