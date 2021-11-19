@@ -1,4 +1,4 @@
-![logo](resources/logo-v3.png)\
+# SEZE II
 [Watch on English](README.md)
 
 SEZE это конвертер видео использующий эффекты из плагинов. Доступен для Windows/Linux
