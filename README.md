@@ -20,6 +20,8 @@ Fast drag'n'drop scripts avaliable for Windows (see ```bin/scripts``` folder)
 + [pyinstaller](https://www.pyinstaller.org/) - © PyInstaller Development Team, [GPL](https://www.pyinstaller.org/license.html)
 ### How to build
 * See [Build info](resources/how2build.md)
+### How to make video effect (plugin)
+* See [Plugin dev. info](resources/how2plugin.md)
 ### SEZEII License
 * [MIT license](LICENSE)
 ***
