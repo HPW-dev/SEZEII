@@ -1,6 +1,6 @@
 ### Как скомпилировать SEZE II
 + Установите [Python3](https://www.python.org/downloads/) и [Scons](https://scons.org/doc/production/HTML/scons-user/ch01s02.html).
-+ Для линукса установти dev-пакеты FFmpeg и SDL2.
++ Для Линукса установти dev-пакеты FFmpeg и SDL2.
 + Скачайте dev-релиз SEZE с github.
 
 Выполните следующие команды в корневом каталоге SEZE II:\
