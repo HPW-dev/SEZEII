@@ -1,4 +1,4 @@
-![logo](resources/logo_.png)\
+![logo](resources/_logo_.png)\
 [Смотреть на русском](README_RU.md)
 
 SEZE is a plugin-based video converter for Windows/Linux
