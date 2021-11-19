@@ -3,7 +3,7 @@
 + For Linux install FFmpeg and SDL2 dev-packages.
 + Download SEZE dev. release from github .
 
-execute this commands in project root:\
+execute this commands in project root:
 + For build SEZE II: ```scons .```
 + For build free plugins (output in ./bin/plugins/): ```scons . -Q build_plugins=1```
 + For debug & watch ffmpeg debug log:
