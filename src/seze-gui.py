@@ -41,15 +41,21 @@ def getSaveFileName(wnd):
 
 def load_in():
   txt = getLoadFileName(window)
-  entry_in_vid.insert(0, txt)
+  if txt:
+    entry_in_vid.delete(0, tk.END)
+    entry_in_vid.insert(0, txt)
 
 def load_out():
   txt = getSaveFileName(window)
-  entry_out_vid.insert(0, txt)
+  if txt:
+    entry_out_vid.delete(0, tk.END)
+    entry_out_vid.insert(0, txt)
 
 def load_plug():
   plugin_name = getLoadFileName(window)
-  entry_plug.insert(0, plugin_name)
+  if txt:
+    entry_plug.delete(0, tk.END)
+    entry_plug.insert(0, plugin_name)
 
 def process():
   input_video = entry_in_vid.get()
