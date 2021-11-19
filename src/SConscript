@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+Import(["env", "compiler", "cpp_flags", "is_linux",
+  "compiler_clangpp", "defines", "ld_flags"])
+sources = [
+  Glob("*.cpp"),
+  Glob("utils/*.cpp"),
+  Glob("video/*.cpp"),
+  Glob("image/*.cpp"),
+  Glob("plugins/*.cpp"),
+]
+inc_path = [
+  "../modules/DyLib",
+  "../modules/RPI",
+]
+lib_path = []
+used_libs = [
+  "pthread", "m",
+  "avcodec",
+  "avfilter",
+  "avformat",
+  "avutil",
+  "swscale",
+]
+
+if (not is_linux):
+  used_libs.extend(["mingw32", "SDL2main", "SDL2"])
+  inc_path.extend([
+    "../modules/ffmpeg/include",
+    "../modules/SDL2/include",
+  ])
+  lib_path.extend([
+    "../modules/SDL2/lib",
+    "../modules/ffmpeg/lib",
+  ])
+else:
+  used_libs.extend(["pthread", "SDL2", "dl"])
+
+env.Program(
+  target = "../bin/seze",
+  source = sources,
+  CXX = compiler,
+  CXXFLAGS = cpp_flags,
+  LIBPATH = lib_path,
+  CPPPATH = inc_path,
+  LINKFLAGS = ld_flags,
+  LIBS = used_libs,
+  CPPDEFINES = defines,
+)

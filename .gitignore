@@ -1,0 +1,20 @@
+*.dblite
+*.o
+*.a
+*.os
+*.so
+*.dll
+*.out
+*.svg
+*.exe
+run.bat
+clean.bat
+ignore me/
+bin/seze
+bin/seze-gui
+modules/ffmpeg/lib/
+modules/SDL2/lib/
+bin/plugins/
+.vscode
+*__pycache__
+output/
