@@ -31,7 +31,7 @@ color_type - тип данных пикселя
 */
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   auto size_in_bytes = my * stride;
-  // invert all pixel components
+  // инверсия всех компонентов пикселя
   std::transform(dst, dst + size_in_bytes, dst,
     [](byte pix)->byte { return ~pix; });
 }
