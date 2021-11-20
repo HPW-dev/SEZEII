@@ -6,7 +6,7 @@
 #include "plugin-api.hpp"
 #include <algorithm>
 
-// Для того чтобы функции именавались в C-стиле при компиляции в библиотеку
+// Для того чтобы функции именовались в C-стиле при компиляции в библиотеку
 extern "C" {
   PluginInfo init(const std::string& options);
   void core(byte* dst, int x, int y, int stride, color_t color_type);
