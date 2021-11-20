@@ -21,12 +21,14 @@ PluginInfo init(const std::string& options) {
   return info;
 }
 
-/* frame processing
+/*
+frame processing
 dst - RAW pixel data for input frame 
 mx - width of input frame
 my - width of input frame
 stride - size of pixel string (mx * pixel data size)
-color_type - type of pixel data */
+color_type - type of pixel data
+*/
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   auto size_in_bytes = my * stride;
   // invert all pixel components
@@ -34,7 +36,7 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
     [](byte pix)->byte { return ~pix; });
 }
 
-//! plugin close
+// plugin close
 void finalize() {}
 ```
 For build plugin: ```g++ -shared invert.cpp```\
