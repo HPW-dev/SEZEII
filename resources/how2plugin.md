@@ -25,7 +25,7 @@ PluginInfo init(const std::string& options) {
 frame processing
 dst - RAW pixel data for input frame 
 mx - width of input frame
-my - width of input frame
+my - height of input frame
 stride - size of pixel string (mx * pixel data size)
 color_type - type of pixel data
 */
