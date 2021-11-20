@@ -39,5 +39,5 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
 // plugin close
 void finalize() {}
 ```
-For build plugin: ```g++ -shared invert.cpp```\
+For build plugin: ```g++ -shared invert.cpp -o invert.dll```\
 Launch ```seze``` or ```seze-gui``` and find your plugin & test it
