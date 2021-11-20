@@ -1,7 +1,7 @@
 # SEZE II
 [Смотреть на русском](README_RU.md)
 
-SEZE is a plugin-based video converter for Windows/Linux. You can write your video filter in C++ (see section "How to make video effect"). Output video is a lossless X264-RGB format and not contain audio stream.
+SEZE is a plugin-based video converter for Windows/Linux. You can write your video filter in C++ (see section "How to make video effect"). Output video is a lossless H264 RGB24 format and not contain audio.
 + CLI version usage example: ```seze -i "path_to_your_vid.mp4" -o "path_to_output.mkv" --plug "path_to_plugin"```.\
 Execute ```seze``` without options or with ```-h``` for watch avaliable commands
 + GUI version - launch ```seze-gui```
