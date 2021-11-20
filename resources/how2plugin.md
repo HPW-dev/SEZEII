@@ -21,7 +21,12 @@ PluginInfo init(const std::string& options) {
   return info;
 }
 
-//! frame processing
+/** frame processing
+* @param dst RAW pixel data for input frame 
+* @param mx width of input frame
+* @param my width of input frame
+* @param stride size of pixel string (mx * pixel data size)
+* @param color_type type of pixel data */
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   auto size_in_bytes = my * stride;
   // invert all pixel components
