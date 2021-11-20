@@ -1,7 +1,7 @@
 # How to build plugin
 Download [SEZE II plugin API](../plugin-api.hpp) and create your plugin on C++.\
 See [my plugins](../src/plugins) or use this example of color invesion:
-'''
+```cpp
 // invert.cpp
 #include "plugin-api.hpp"
 #include <algorithm>
@@ -32,6 +32,6 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
 
 //! plugin close
 void finalize() {}
-'''
+```
 For build plugin for Windows: ```g++ -shared invert.cpp -o inversion.dll```\
 For build plugin for Linux: ```g++ -shared invert.cpp -o inversion.dll```
