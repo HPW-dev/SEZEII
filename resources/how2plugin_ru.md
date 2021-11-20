@@ -39,5 +39,5 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
 // Действия по завершению работы плагина
 void finalize() {}
 ```
-Для компиляции: ```g++ -shared invert.cpp```\
+Для компиляции: ```g++ -shared invert.cpp -o invert.dll```\
 Запустите ```seze``` или ```seze-gui``` и найдите файл своего плагина чтобы протестировать его работу
