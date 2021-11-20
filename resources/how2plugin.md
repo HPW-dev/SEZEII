@@ -32,5 +32,4 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
 //! plugin close
 void finalize() {}
 ```
-For build plugin for Windows: ```g++ -shared invert.cpp -o inversion.dll```\
-For build plugin for Linux: ```g++ -shared invert.cpp -o inversion.so```
+For build plugin for Windows: ```g++ -shared invert.cpp
