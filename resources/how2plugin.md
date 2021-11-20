@@ -18,7 +18,6 @@ PluginInfo init(const std::string& options) {
   PluginInfo info;
   info.color_type = color_t::RGB24;
   info.title = "Color inversion";
-  info.multithread = true;
   return info;
 }
 
