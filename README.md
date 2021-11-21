@@ -22,6 +22,10 @@ Fast drag'n'drop scripts avaliable for Windows (see ```bin/scripts``` folder)
 * See [Build info](resources/how2build.md)
 ### How to make video effect
 * See [Plugin dev. info](resources/how2plugin.md)
+### Donate
+* Visa/MCard: 5469 1300 1242 7256
+* [ЮMoney](yoomoney.ru/to/410017516566873)
+* [PayPal](paypal.me/AtariSMN81)
 ### SEZEII License
 * [MIT license](LICENSE)
 ***
