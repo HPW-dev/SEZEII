@@ -14,10 +14,10 @@ Fast drag'n'drop scripts avaliable for Windows (see ```bin/scripts``` folder)
 + [DyLib](https://github.com/tocola/DyLib) (1.6.1) - © Martin Olivier, MIT license
 + [SDL2](https://www.libsdl.org) (2.0.12) - © Sam Lantinga, [Zlib license](https://www.zlib.net/zlib_license.html)
 + [libgcc, libstdc++](http://fsf.org/) (tdm-1 10.3.0) - © Free Software Foundation, Inc
-
 ### Used tools
 + [UPX](https://upx.github.io) - © Мarkus Oberhumer, Laszlo Molnar & John Reiser
 + [pyinstaller](https://www.pyinstaller.org/) - © PyInstaller Development Team, [GPL](https://www.pyinstaller.org/license.html)
++ [SCons](https://scons.org/) - © SCons Foundation, MIT
 ### How to build
 * See [Build info](resources/how2build.md)
 ### How to make video effect
