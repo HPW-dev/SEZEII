@@ -8,6 +8,9 @@ Execute ```seze``` without options or with ```-h``` for watch avaliable commands
 
 Fast drag'n'drop scripts avaliable for Windows (see ```bin/scripts``` folder)
 ### Example effects
+[Video demo + tutorial on russian](https://youtu.be/Knt6QhNY00c)
+
+Gif demo:\
 ![](resources/SEZEII.gif)
 ### Used libs
 + [FFmpeg](https://github.com/FFmpeg/FFmpeg) (4.3.1) - © Free Software Foundation, Inc. [License](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md)
