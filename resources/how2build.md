@@ -1,11 +1,11 @@
 ### How to build SEZE II
 + Install [Python3](https://www.python.org/downloads/) and [Scons](https://scons.org/doc/production/HTML/scons-user/ch01s02.html).
-+ For Linux install FFmpeg and SDL2 dev-packages.
++ To build under Linux, install FFmpeg and SDL2 dev-packages.
 + Download SEZE dev. release from github .
 
-execute this commands in project root:
-+ For build SEZE II: ```scons .```
-+ For build free plugins (output in ./bin/plugins/): ```scons . -Q build_plugins=1```
+execute these commands in project root:
++ For building SEZE II: ```scons .```
++ For building free plugins (output in ./bin/plugins/): ```scons . -Q build_plugins=1```
 + For debug & watch ffmpeg debug log:
 ```
 scons -Q debug=0 -Q build_plugins=0 -Q fflog=0
