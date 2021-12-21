@@ -47,14 +47,9 @@ Image::~Image() {
     destroy_pixels(data);
 }
 
-byte* Image::get_data() const { return data; }
-CP(byte) Image::get_cdata() const { return data; }
 CN(color_t) Image::type() const { return TYPE; }
-CN(int) Image::get_x() const { return X; }
-CN(int) Image::get_y() const { return Y; }
 CN(int) Image::get_stride() const { return STRIDE; }
 CN(int) Image::size() const { return SIZE; }
-CN(int) Image::bytes() const { return BYTES; }
 void Image::fast_copy_to(Image& dst) const
   { memcpy(dst.get_data(), data, BYTES); }
 

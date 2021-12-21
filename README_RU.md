@@ -16,6 +16,7 @@ SEZE это плагин-ориентированный видео кодиро�
 ### Используемые модули
 + [FFmpeg](https://github.com/FFmpeg/FFmpeg) (4.3.1) - © Free Software Foundation, Inc. [License](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md)
 + [DyLib](https://github.com/tocola/DyLib) (1.6.1) - © Martin Olivier, MIT license
++ [itlib](https://github.com/iboB/itlib) - © Borislav Stanimirov, Chobolabs Inc. MIT license
 + [SDL2](https://www.libsdl.org) (2.0.12) - © Sam Lantinga, [Zlib license](https://www.zlib.net/zlib_license.html)
 + [libgcc, libstdc++](http://fsf.org/) (tdm-1 10.3.0) - © Free Software Foundation, Inc
 ### Используемые инструменты

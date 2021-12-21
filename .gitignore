@@ -9,7 +9,7 @@
 *.exe
 *.code-workspace
 perf*
-run.bat
+run.*
 clean.bat
 ignore me/
 bin/seze

@@ -18,13 +18,13 @@ public:
   //! init by prepeared data
   Image(byte* data_, int x, int y, color_t color_type);
   ~Image();
-  byte* get_data() const;
-  CP(byte) get_cdata() const;
-  CN(int) get_x() const;
-  CN(int) get_y() const;
+  constexpr byte* get_data() const { return data; }
+  constexpr CP(byte) get_cdata() const { return data; }
+  constexpr CN(int) get_x() const { return X; }
+  constexpr CN(int) get_y() const { return Y; }
   CN(int) get_stride() const;
   CN(int) size() const;
-  CN(int) bytes() const;
+  constexpr CN(int) bytes() const { return BYTES; }
   CN(color_t) type() const;
   void fast_copy_to(Image& dst) const;
 

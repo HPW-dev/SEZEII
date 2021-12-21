@@ -7,13 +7,16 @@ if (is_linux):
   platform_dir = "linux"
 plugin_out = "../../bin/plugins/" + platform_dir + "/free/"
 
+modules = ["../../modules/itlib/include"]
+
 env.SharedLibrary(
   target = plugin_out + "invert",
   source = "invert/invert.cpp",
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "colorop",
@@ -26,7 +29,8 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "pixelsort",
@@ -40,7 +44,8 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "lineswap",
@@ -52,7 +57,8 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "average",
@@ -66,7 +72,8 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "tvsim",
@@ -81,7 +88,8 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "stars",
@@ -96,7 +104,8 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
 
 env.SharedLibrary(
   target = plugin_out + "rdither",
@@ -111,4 +120,5 @@ env.SharedLibrary(
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags)
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)

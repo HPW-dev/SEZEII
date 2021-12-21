@@ -1,7 +1,7 @@
 #pragma once
 #include "../../image/color.hpp"
 #include "../../image/YUV.hpp"
-#include <vector>
+#include <itlib/pod_vector.hpp>
 /** @file
  * TVSIM_LD_COMPONENT - long double gray
  * TVSIM_FLOAT_COMPONENT - float gray
@@ -28,5 +28,5 @@ auto component_yuv_type = seze::color_t::YUVf;
 //! component stream
 struct Stream {
   int size = 0;
-  std::vector<component> data = {};
+  itlib::pod_vector<component> data = {};
 };

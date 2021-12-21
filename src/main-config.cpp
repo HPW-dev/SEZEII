@@ -39,9 +39,9 @@ seze::Plugin* new_plugin_by_ext(CN(Str) fname) {
 
 void print_help() {
   LOG(
-    "SEZE II. Plugin based video converter.\n"
+    "\nSEZE II. Plugin based video converter.\n"
     "Github page: github.com/HPW-dev\n"
-    "Copyright (c) HPW-dev (hpwdev0@gmail.com), 2021\n"
+    "Copyright (c) HPW-dev (hpwdev0@gmail.com), 2021-2022\n"
     "\nCommands:\n"
     "-i \"path to src video\"\t\tinput file path\n"
     "-o \"path to dst video\"\t\toutput file path\n"
@@ -50,9 +50,9 @@ void print_help() {
     "-j <num threads>\t\tnumber of threads (default -j 4)\n"
     "--plugin \"path\\to\\plugin\"\tpath to plugin file\n"
     "--opts '-a -b ... -c'\t\toptions for plugin\n"
-    "--nout\t\tdisable video output\n"
-    "--norend\t\tdisable video rendering\n"
-    "--noraw\t\tno lossless video encoding\n"
+    "--nout\t\t\t\tdisable video output\n"
+    "--norend\t\t\tdisable video rendering\n"
+    "--noraw\t\t\t\tno lossless video encoding\n"
     "-h, --help\t\t\tprint help\n"
     "\nUsage example:\nseze -i \"in.avi\" --plugin "
     "\"plugins\\free\\invert.dll\" -o \"out.mp4\"\n");

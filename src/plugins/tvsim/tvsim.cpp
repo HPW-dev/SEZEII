@@ -277,4 +277,4 @@ void TVsim::check_config() {
   iferror(tv::power_b < 0, "TVsim_BW: power b < 0");
   tv::empty_level = (tv::black_level
     + tv::blank_level) / component(2);
-}
+} // check_config

@@ -6,6 +6,7 @@ TVsim_YUV::TVsim_YUV(int mx, int my) {
   buffer_u = new seze::Image(mx, my, component_type);
   buffer_v = new seze::Image(mx, my, component_type);
   check_config();
+  mul_bw_diff = component(1) / (tv::white_level - tv::black_level);
 } // TVsim_YUV c-tor
 
 TVsim_YUV::~TVsim_YUV() {
@@ -196,11 +197,11 @@ CN(Stream) src_v) {
       is_data = true;
       auto Y = tv_ringing(src_y, i, tv::ringing_ratio,
         tv::ringing_length, tv::ringing_power);
+      auto yf = (Y - tv::black_level) * mul_bw_diff;
       auto U = src_u.data[i];
+      auto uf = (U - tv::black_level) * mul_bw_diff;
       auto V = src_v.data[i];
-      auto yf = (Y - tv::black_level) / (tv::white_level - tv::black_level);
-      auto uf = (U - tv::black_level) / (tv::white_level - tv::black_level);
-      auto vf = (V - tv::black_level) / (tv::white_level - tv::black_level);
+      auto vf = (V - tv::black_level) * mul_bw_diff;
       //LOG("YUV: " << yf << "," << uf << "," << vf << std::endl);
       auto rgb = yuv_to_RGB24(component_yuv(yf, uf, vf));
       auto p = display->get_ptr<seze::RGB24>(beam_x + tv::hbound,

@@ -1,6 +1,8 @@
 #include "utils.hpp"
 #include <cassert>
 #include <cstring>
+#include <algorithm>
+#include <cmath>
 
 void interpolate(Stream& dst, CN(Stream) src) {
   if (src.size == dst.size)
@@ -32,18 +34,18 @@ component shift) {
 
 void apply_noise(Stream& dst, component noise_level, component power,
 component shift) {
-  FOR (i, dst.size) {
+  for (auto ptr = dst.data.data();
+  ptr != dst.data.data() + dst.size; ++ptr) {
     // TODO randoms for "component"
     #ifdef TVSIM_LD_COMPONENT
     auto val = seze::ldrand(-noise_level, noise_level);
     #endif
     #ifdef TVSIM_FLOAT_COMPONENT
-    auto val = seze::frand(-noise_level, noise_level);
+    auto val = seze::frand_fast(-noise_level, noise_level);
     #endif
-    dst.data[i] += val + shift;
-    dst.data[i] *= power;
+    *ptr = (*ptr + val + shift) * power;
   }
-}
+} // apply_noise
 
 component RGB24_to_component(CN(seze::RGB24) src) {
   return (component(src.R + src.G + src.B) / component(3))
@@ -95,11 +97,15 @@ void fgray_to_gray(seze::Image& dst, CN(seze::Image) src) {
 void filter(Stream& dst, int window) {
   if (window < 1)
     return;
-  for (int i = window; i < dst.size - window; ++i) {
+  auto mul_doubled_wnd = component(1) / (window * 2);
+  for (auto global_ptr = dst.data.data() + window;
+  global_ptr != dst.data.data() + dst.size - window;
+  ++global_ptr) {
     component total = 0;
-    for (int j = -window; j < window; ++j)
-      total += dst.data[i + j];
-    dst.data[i] = total / (window * 2);
+    for (auto local_ptr = global_ptr - window;
+    local_ptr != global_ptr + window; ++local_ptr)
+      total += *local_ptr;
+    *global_ptr = total * mul_doubled_wnd;
   }
 }
 
@@ -128,9 +134,10 @@ void filter_accurate(Stream& dst, int window) {
 }
 
 component_yuv RGB24_to_yuv(CN(seze::RGB24) c) {
-  auto fr = c.R / component(255);
-	auto fg = c.G / component(255);
-	auto fb = c.B / component(255);
+  constexpr auto mul = component(1) / component(255);
+  auto fr = c.R * mul;
+	auto fg = c.G * mul;
+	auto fb = c.B * mul;
 	auto Y = 0.2989 * fr + 0.5866 * fg + 0.1145 * fb;
 	auto Cb = -0.1687 * fr - 0.3313 * fg + 0.5000 * fb;
 	auto Cr = 0.5000 * fr - 0.4184 * fg - 0.0816 * fb;
@@ -138,10 +145,14 @@ component_yuv RGB24_to_yuv(CN(seze::RGB24) c) {
 }
 
  seze::RGB24 yuv_to_RGB24(CN(component_yuv) c) {
+  constexpr auto mul = component(255);
   auto r = std::clamp<component>(c.Y + 0.0000 * c.U + 1.4022 * c.V, 0, 1);
+  r *= mul;
 	auto g = std::clamp<component>(c.Y - 0.3456 * c.U - 0.7145 * c.V, 0, 1);
+  g *= mul;
 	auto b = std::clamp<component>(c.Y + 1.7710 * c.U + 0.0000 * c.V, 0, 1);
-	return seze::RGB24(r * 255, g * 255, b * 255);
+  b *= mul;
+	return seze::RGB24(r, g, b);
 }
 
 component ringing(CN(Stream) dst, int i, component ratio, int len,

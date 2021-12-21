@@ -11,7 +11,8 @@ class TVsim_YUV: public TVsim {
   int sync_count = 0;
   bool is_data = false;
   bool is_color = false;
-  bool is_odd_string = false; ///< 4 interlace
+  bool is_odd_string = false; ///< for interlace
+  component mul_bw_diff = 0; ///< for optimization
 public:
   TVsim_YUV(int mx, int my);
   ~TVsim_YUV();
