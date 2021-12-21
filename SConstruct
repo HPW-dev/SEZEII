@@ -53,7 +53,7 @@ else:
 # debug/release settings:
 if is_debug:
   defines.extend(["-DDEBUG", ])
-  cpp_flags.extend(["-O0", "-ggdb3"])
+  cpp_flags.extend(["-Og", "-ggdb3"])
 else: # release
   defines.extend(["-DNDEBUG"])
   if (compiler != compiler_clangpp):
@@ -63,7 +63,8 @@ else: # release
     cpp_flags.extend(["-Ofast", "-march=x86-64"])
   else: # 32bit
     #cpp_flags.extend(["-O2"])
-    cpp_flags.extend(["-m32", "-Ofast", "-march=pentium2"])
+    #cpp_flags.extend(["-m32", "-Ofast", "-march=pentium2"])
+    cpp_flags.extend(["-m32", "-Ofast", "-march=core2", "-msse4.1"])
 
 # print selected compiler:
 print(f"compiler: {compiler}")
