@@ -62,7 +62,7 @@ else: # release
   if (arch_bit == bitness["x64"]):
     cpp_flags.extend(["-Ofast", "-march=x86-64"])
   else: # 32bit
-    cpp_flags.extend(["-m32", "-O2"])
+    cpp_flags.extend(["-m32", "-Ofast", "-march=pentium2"])
     #cpp_flags.extend(["-m32", "-Ofast", "-march=core2", "-msse4.1"])
 
 # print selected compiler:
