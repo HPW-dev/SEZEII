@@ -3,23 +3,16 @@
 
 Скачайте [SEZE II plugin API](../plugin-api.h) и приступите к созданию плагина на C++.\
 Посмотрите [код моих плагинов](../src/plugins) или воспользуйтесь этим примером инверсии цвета:
-```cpp
-// invert.cpp
-#include "plugin-api.hpp"
-#include <algorithm>
-
-// Для того чтобы функции именовались в C-стиле при компиляции в библиотеку
-extern "C" {
-  PluginInfo init(const std::string& options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
+```c
+// invert.c
+#include "plugin-api.h"
 
 // Инициализация плагина
-PluginInfo init(const std::string& options) {
-  PluginInfo info;
+struct PluginInfo init(const char* options) {
+  struct PluginInfo info;
+  PluginInfo_init(&info);
   info.color_type = seze_RGB24;
-  info.title = "Color inversion";
+  info.title = "color inversion";
   return info;
 }
 
@@ -31,15 +24,14 @@ my - высота кадра
 stride - размер строки кадра в байтах (mx * размер компонентов пикселя)
 color_type - тип данных пикселя
 */
-void core(byte* dst, int mx, int my, int stride, color_t color_type) {
-  auto size_in_bytes = my * stride;
-  // инверсия всех компонентов пикселя
-  std::transform(dst, dst + size_in_bytes, dst,
-    [](byte pix)->byte { return ~pix; });
+void core(byte* dst, int mx, int my, int stride, enum color_t color_type) {
+  int bytes = my * stride;
+  for (int i = 0; i < bytes; ++i)
+    dst[i] = ~dst[i];
 }
 
 // Действия по завершению работы плагина
 void finalize() {}
 ```
-Для компиляции: ```g++ -shared invert.cpp -o invert.dll```\
+Для компиляции: ```g++ -shared invert.c -o invert.dll```\
 Запустите ```seze``` или ```seze-gui``` и найдите файл своего плагина чтобы протестировать его работу
