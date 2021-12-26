@@ -27,7 +27,7 @@ color_type - тип данных пикселя
 void core(byte* dst, int mx, int my, int stride, enum color_t color_type) {
   int bytes = my * stride;
   for (int i = 0; i < bytes; ++i)
-    dst[i] = ~dst[i];
+    dst[i] = ~dst[i]; // инверсия каждого компонента пикселей
 }
 
 // Действия по завершению работы плагина
