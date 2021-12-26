@@ -1,4 +1,6 @@
-#include "../plugin-info.hpp"
+extern "C" {
+#include "../../../plugin-api.h"
+}
 #include "../../utils/error.hpp"
 //#include "../../utils/log.hpp"
 #include "../../utils/cmd-parser.hpp"
@@ -10,12 +12,6 @@
 #include <map>
 
 using namespace seze;
-
-extern "C" {
-  PluginInfo init(CN(std::string) options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
 
 enum class mode_e { average=0, xor_, or_, and_, sub, add, div, mul, min, max};
 
@@ -44,9 +40,10 @@ namespace {
   std::mutex mu = {};
 }
 
-PluginInfo init(CN(std::string) options) {
+PluginInfo init(const char* options) {
   PluginInfo info;
-  info.color_type = color_t::RGB24;
+  PluginInfo_init(&info);
+  info.color_type = seze_RGB24;
   info.title = "Frame average effect";
   info.info = "usage:\n"
     "-o, --op\tpixel operation [default average]\n"
@@ -81,7 +78,7 @@ PluginInfo init(CN(std::string) options) {
   // --glitch
   config::glitch_mode = (parser.opt_exists("-g")
     || parser.opt_exists("--glitch"));
-  info.multithread = config::glitch_mode;
+  bit_set_if(&info.flags, PLGNINF_MULTITHREAD, config::glitch_mode);
   return info;
 } // init
 

@@ -1,4 +1,6 @@
-#include "../plugin-info.hpp"
+extern "C" {
+#include "../../../plugin-api.h"
+}
 #include "../../utils/error.hpp"
 #include "../../image/image.hpp"
 #include "../../image/rgb24.hpp"
@@ -6,12 +8,6 @@
 #include "../../utils/random.hpp"
 
 using namespace seze;
-
-extern "C" {
-  PluginInfo init(CN(std::string) options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
 
 namespace config {
   float contrast = 0;
@@ -30,9 +26,10 @@ static void prepare_color(int& dst) {
   apply_brightness(dst, config::brightness);
 }
 
-PluginInfo init(CN(std::string) options) {
+PluginInfo init(const char* options) {
   PluginInfo info;
-  info.color_type = color_t::RGB24;
+  PluginInfo_init(&info);
+  info.color_type = seze_RGB24;
   info.title = "fast random dithering";
   info.info = "Usage:\n"
   "-c\tcontrast [-255..255]\n";
@@ -44,14 +41,14 @@ PluginInfo init(CN(std::string) options) {
   if (auto str = parser.get_option("-b"); !str.empty())
     config::brightness = std::stoi(str);
   seze::randomize_seed();
-  info.multithread = false;
+  bit_disable(&info.flags, PLGNINF_MULTITHREAD);
   return info;
 } // init
 
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   iferror( !dst, "core: dst is null");
   seze::Image dst_pic(dst, mx, my, color_type);
-  seze::Image rgbi_pic(mx, my, color_t::RGBi);
+  seze::Image rgbi_pic(mx, my, seze_RGBi);
 // copy dst to RGBi
   FOR (i, dst_pic.size()) {
     auto c = dst_pic.fast_get<seze::RGB24>(i);

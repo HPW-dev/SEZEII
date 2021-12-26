@@ -11,7 +11,7 @@ modules = ["../../modules/itlib/include"]
 
 env.SharedLibrary(
   target = plugin_out + "invert",
-  source = "invert/invert.cpp",
+  source = "invert/invert.c",
   CXX = compiler,
   CPPDEFINES = defines,
   LINKFLAGS = ld_flags,

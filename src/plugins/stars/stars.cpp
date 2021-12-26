@@ -1,4 +1,6 @@
-#include "../plugin-info.hpp"
+extern "C" {
+#include "../../../plugin-api.h"
+}
 #include "../../utils/error.hpp"
 #include "../../image/image.hpp"
 #include "../../image/rgb24.hpp"
@@ -8,12 +10,6 @@
 #include <map>
 
 using namespace seze;
-
-extern "C" {
-  PluginInfo init(CN(std::string) options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
 
 enum class star_mode_t { average=0, max3, rgb, red, green, blue };
 
@@ -30,9 +26,10 @@ namespace config {
   bool no_d = false;
 }
 
-PluginInfo init(CN(std::string) options) {
+PluginInfo init(const char* options) {
   PluginInfo info;
-  info.color_type = color_t::RGB24;
+  PluginInfo_init(&info);
+  info.color_type = seze_RGB24;
   info.title = "Lighten stars";
   info.info = "Usage:\n"
     "-l, --len\tlength of star beams\n"
@@ -77,9 +74,9 @@ PluginInfo init(CN(std::string) options) {
   }
   if (config::random_spawn or config::random_size) {
     seze::randomize_seed();
-    info.multithread = false;
+    bit_disable(&info.flags, PLGNINF_MULTITHREAD);
   }
-    info.multithread = true;
+    bit_enable(&info.flags, PLGNINF_MULTITHREAD);
   return info;
 } // init
 

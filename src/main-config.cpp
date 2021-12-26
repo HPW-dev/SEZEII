@@ -19,8 +19,8 @@ seze::Plugin* new_plugin_by_ext(CN(Str) fname) {
   namespace fs = std::filesystem;
   Str ext = fs::path(fname).extension().string();
   std::map<Str, seze::plugin_format_t> table = {
-    {".dll", seze::plugin_format_t::shared},
-    {".so", seze::plugin_format_t::shared},
+    {".dll", seze::plugin_format_t::seze},
+    {".so", seze::plugin_format_t::seze},
     {".rpi", seze::plugin_format_t::RPI},
   };
   try {
@@ -29,7 +29,7 @@ seze::Plugin* new_plugin_by_ext(CN(Str) fname) {
     plugin_format = seze::plugin_format_t::unknown;
   }
   switch (plugin_format) {
-    case seze::plugin_format_t::shared: return new seze::PluginShared(fname);
+    case seze::plugin_format_t::seze: return new seze::PluginShared(fname);
     case seze::plugin_format_t::RPI: error("new_plugin_by_ext: RPI plugins not supported");
     case seze::plugin_format_t::unknown:
     default: error("new_plugin_by_ext: unknown plugin format");
@@ -125,17 +125,18 @@ void print_converting_info() {
     width << "x" << height << " (0 is auto)\n\n");
 }
 
-void print_plugin_info(CN(seze::PluginInfo) x) {
+void print_plugin_info(CN(PluginInfo) x) {
   LOG("\nPlugin info:"
     << "\nopts = \"" << popts << "\""
     << "\ntitle = " << x.title
-    << "\nmultithread mode = " << (x.multithread ? "yes" : "no")
+    << "\nmultithread mode = "
+    << ((x.flags & PLGNINF_MULTITHREAD) ? "yes" : "no")
     << "\nversion = " << x.version
-    << "\ninfo = " << (x.info.empty() ? "none" : x.info));
+    << "\ninfo = " << (x.info ? x.info : "none"));
 }
 
-void enable_plugin_settings(CN(seze::PluginInfo) src) {
-  if ( !src.multithread)
+void enable_plugin_settings(CN(PluginInfo) src) {
+  if ( !(src.flags & PLGNINF_MULTITHREAD))
     num_threads = 1;
   if (src.in_x != 0)
     framebuffer_x = src.in_x;

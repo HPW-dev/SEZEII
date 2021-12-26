@@ -1,4 +1,6 @@
-#include "../plugin-info.hpp"
+extern "C" {
+#include "../../../plugin-api.h"
+}
 #include "../../utils/error.hpp"
 #include "../../utils/cmd-parser.hpp"
 #include "../../image/rgb24.hpp"
@@ -8,12 +10,6 @@
 #include <map>
 
 using namespace seze;
-
-extern "C" {
-  PluginInfo init(CN(std::string) options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
 
 enum class direction_t { horizontal, vertical };
 enum class sort_t { max3, average, red, green, blue };
@@ -34,9 +30,10 @@ namespace config {
   byte threashold = 220;
 }
 
-PluginInfo init(CN(std::string) options) {
+PluginInfo init(const char* options) {
   PluginInfo info;
-  info.color_type = color_t::RGB24;
+  PluginInfo_init(&info);
+  info.color_type = seze_RGB24;
   info.title = "Pixel sorter";
   info.info = "usage:\n"
     "-v, --threshold <0..255>\tthresholding value\n"

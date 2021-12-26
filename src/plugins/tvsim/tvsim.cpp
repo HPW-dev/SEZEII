@@ -1,4 +1,6 @@
-#include "../plugin-info.hpp"
+extern "C" {
+#include "../../../plugin-api.h"
+}
 #include "../../utils/cmd-parser.hpp"
 #include "bw.hpp"
 #include "tv-yuv.hpp"
@@ -6,25 +8,21 @@
 
 using namespace seze;
 
-extern "C" {
-  PluginInfo init(CN(std::string) options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
-
 namespace {
 TVsim* simulator = nullptr;
 }
 
-PluginInfo init(CN(std::string) options) {
+PluginInfo init(const char* options) {
   PluginInfo info;
+  PluginInfo_init(&info);
   std::string title = "Analog TV";
 #ifdef TVSIM_LD_COMPONENT
   title += " (LD precission mode)";
 #endif
-  info.title = title;
-  info.multithread = false;
-  info.info = "HPW-dev 15.11.2021\nUSAGE:\n"
+  info.version = 2;
+  info.title = title.c_str();
+  bit_disable(&info.flags, PLGNINF_MULTITHREAD);
+  std::string str_info = "HPW-dev 15.11.2021\nUSAGE:\n"
   "--first_bound\t\tlength of front porch (default 35)\n"
   "--second_bound\t\tlength of back porch (default 21)\n"
   "--hsync_size\t\tlength of h-sync (default 65)\n"
@@ -204,23 +202,24 @@ PluginInfo init(CN(std::string) options) {
   }
   switch (tv::tv_type) {
     case tv_t::yuv: {
-      info.info += "enabled TV-YUV mode\n";
-      info.color_type = color_t::RGB24; // TVsim_YUV сам сконвертит в YUV
+      str_info += "enabled TV-YUV mode\n";
+      info.color_type = seze_RGB24; // TVsim_YUV сам сконвертит в YUV
       break;
     }
     case tv_t::rgb: {
-      info.info += "enabled VGA-RGB mode\n";
-      info.color_type = color_t::RGB24;
+      str_info += "enabled VGA-RGB mode\n";
+      info.color_type = seze_RGB24;
       error("tv_t::rgb add impl");
       break;
     }
     case tv_t::bw:
     default: {
-      info.info += "enabled TV-GRAY mode\n";
-      info.color_type = color_t::gray;
+      str_info += "enabled TV-GRAY mode\n";
+      info.color_type = seze_gray;
       break;
     }
   } // switch type
+  info.info = str_info.c_str();
   return info;
 #undef SET_F_IF
 #undef SET_I_IF

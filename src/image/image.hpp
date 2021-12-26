@@ -6,7 +6,7 @@ namespace seze {
 class Image {
   int X = 0, Y = 0, STRIDE = 0, SIZE = 0;
   int BYTES = 0; ///< total bytes for pixel data
-  color_t TYPE = color_t::none; ///< pixel color type
+  color_t TYPE = seze_none; ///< pixel color type
   byte* data = nullptr; ///< pixel data
   //! if maked from input mem, not use free
   bool no_destroy = false;

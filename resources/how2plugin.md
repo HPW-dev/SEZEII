@@ -16,7 +16,7 @@ extern "C" {
 // plugin initialization
 PluginInfo init(const std::string& options) {
   PluginInfo info;
-  info.color_type = color_t::RGB24;
+  info.color_type = seze_RGB24;
   info.title = "Color inversion";
   return info;
 }

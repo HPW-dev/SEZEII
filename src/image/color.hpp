@@ -1,6 +1,8 @@
 #pragma once
 #include "../utils/macro.hpp"
-#include "../plugins/color-type.hpp"
+extern "C" {
+#include "../plugins/color-type.h"
+}
 
 namespace seze {
 

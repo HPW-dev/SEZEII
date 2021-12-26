@@ -24,5 +24,5 @@ void print_help();
 void opts_check();
 bool parse_args(int argc, char* argv[]);
 void print_converting_info();
-void print_plugin_info(CN(seze::PluginInfo) x);
-void enable_plugin_settings(CN(seze::PluginInfo) src);
+void print_plugin_info(CN(PluginInfo) x);
+void enable_plugin_settings(CN(PluginInfo) src);

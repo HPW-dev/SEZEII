@@ -19,7 +19,7 @@ PluginShared::PluginShared(CN(std::string) fname)
 PluginShared::~PluginShared() { delete lib; }
 
 PluginInfo PluginShared::init(CN(std::string) options)
-{ return f_init(options); }
+{ return f_init(options.c_str()); }
 
 void PluginShared::core(byte* dst, int mx, int my, int stride,
 color_t color_type)

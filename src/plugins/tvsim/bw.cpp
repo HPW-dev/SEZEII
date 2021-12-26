@@ -12,9 +12,9 @@ TVsim_BW::~TVsim_BW() {
 }
 
 void TVsim_BW::process(seze::Image& dst) {
-  if (dst.type() == seze::color_t::RGB24)
+  if (dst.type() == seze_RGB24)
     RGB24_to_gray(*buffer, dst);
-  else if (dst.type() == seze::color_t::gray)
+  else if (dst.type() == seze_gray)
     gray_to_fgray(*buffer, dst);
   else
     error("TVsim_BW.process: unsupported color format");
@@ -27,7 +27,7 @@ void TVsim_BW::process(seze::Image& dst) {
   if (tv::enable_AM)
     demodulate(stream, tv::AM_ratio_out, tv::AM_shift);
   decode_to(stream, *buffer);
-  if (dst.type() == seze::color_t::RGB24)
+  if (dst.type() == seze_RGB24)
     gray_to_RGB24(dst, *buffer);
   else
     fgray_to_gray(dst, *buffer);

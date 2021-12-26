@@ -10,7 +10,7 @@
 
 //! copy seze-image data 2 SDL surface
 void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
-  if (src->type() == seze::color_t::RGB24) {
+  if (src->type() == seze_RGB24) {
     auto pDst = rcast(byte*, dst->pixels);
     auto pSrc = src->get_cdata();
     auto pEnd = &pSrc[src->bytes()];
@@ -21,7 +21,7 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pDst += 4; // BGRA
       pSrc += 3; // RGB
     }
-  } else if (src->type() == seze::color_t::gray) {
+  } else if (src->type() == seze_gray) {
     auto pDst = rcast(byte*, dst->pixels);
     auto pSrc = src->get_cdata();
     auto pEnd = &pSrc[src->bytes()];
@@ -32,7 +32,7 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pDst += 4; // BGRA
       pSrc += 1; // luma
     }
-  } else if (src->type() == seze::color_t::RGB565) {
+  } else if (src->type() == seze_RGB565) {
     auto pDst = rcast(byte*, dst->pixels);
     auto pSrc = src->get_cdata();
     auto pEnd = &pSrc[src->bytes()];
@@ -46,7 +46,7 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pDst += 4; // BGRA
       pSrc += 2; // WORD
     }
-  } else if (src->type() == seze::color_t::RGB555) {
+  } else if (src->type() == seze_RGB555) {
     auto pDst = rcast(byte*, dst->pixels);
     auto pSrc = src->get_cdata();
     auto pEnd = &pSrc[src->bytes()];

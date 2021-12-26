@@ -27,7 +27,7 @@ struct ReaderCtx {
 
 struct FramebufferInfo {
   int x = 0, y = 0, stride = 0;
-  color_t type = color_t::none;
+  color_t type = seze_none;
 };
 
 //!@class global ffmpeg initializer

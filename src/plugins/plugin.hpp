@@ -1,5 +1,9 @@
 #pragma once
-#include "plugin-info.hpp"
+extern "C" {
+#include "plugin-info.h"
+}
+#include "../utils/macro.hpp"
+#include <string>
 #include <functional>
 
 namespace seze {
@@ -7,7 +11,7 @@ namespace seze {
 enum class plugin_format_t {
   unknown = 0,
   RPI, ///< Stive Snake format
-  shared, ///< HPW-dev format
+  seze, ///< HPW-dev format (shaled .dll/.so)
 };
 
 ///@class base class 4 plugins
@@ -23,14 +27,12 @@ public:
   * @param color_type image color type info */
   virtual void core(byte* dst, int mx, int my, int stride,
     color_t color_type) = 0;
-
   //! for user d-tor's & free data
   virtual void finalize() = 0;
-
   virtual ~Plugin();
 }; // Plugin
 
-using parm_init = PluginInfo(CN(std::string));
+using parm_init = PluginInfo(CP(char));
 using parm_core = void(byte*, int, int, int, color_t);
 using parm_finalize = void();
 using ft_init = std::function<parm_init>;

@@ -1,7 +1,7 @@
 #include "tv-yuv.hpp"
 
 TVsim_YUV::TVsim_YUV(int mx, int my) {
-  display = new seze::Image(mx, my, seze::color_t::RGB24);
+  display = new seze::Image(mx, my, seze_RGB24);
   buffer_y = new seze::Image(mx, my, component_type);
   buffer_u = new seze::Image(mx, my, component_type);
   buffer_v = new seze::Image(mx, my, component_type);
@@ -27,7 +27,7 @@ void TVsim_YUV::RGB24_to_buffers(CN(seze::Image) src) {
 }
 
 void TVsim_YUV::process(seze::Image& dst) {
-  iferror(dst.type() != seze::color_t::RGB24,
+  iferror(dst.type() != seze_RGB24,
     "TVsim_YUV: dst pix type != RGB24");
   RGB24_to_buffers(dst);
   auto stream_y = encode(*buffer_y);

@@ -14,14 +14,14 @@ namespace {
 #ifdef TVSIM_LD_COMPONENT
 using component = long double;
 using component_yuv = seze::YUVld;
-auto component_type = seze::color_t::ld_gray;
-auto component_yuv_type = seze::color_t::YUVld;
+auto component_type = seze_ld_gray;
+auto component_yuv_type = seze_YUVld;
 #endif
 #ifdef TVSIM_FLOAT_COMPONENT
 using component = float;
 using component_yuv = seze::YUVf;
-auto component_type = seze::color_t::f_gray;
-auto component_yuv_type = seze::color_t::YUVf;
+auto component_type = seze_f_gray;
+auto component_yuv_type = seze_YUVf;
 #endif
 }
 

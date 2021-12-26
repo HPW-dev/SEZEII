@@ -53,7 +53,7 @@ else:
 # debug/release settings:
 if is_debug:
   defines.extend(["-DDEBUG"])
-  cpp_flags.extend(["-Og", "-ggdb3"])
+  cpp_flags.extend(["-O0", "-ggdb3"])
 else: # release
   defines.extend(["-DNDEBUG"])
   if (compiler != compiler_clangpp):

@@ -1,4 +1,6 @@
-#include "../plugin-info.hpp"
+extern "C" {
+#include "../../../plugin-api.h"
+}
 #include "../../utils/cmd-parser.hpp"
 #include "../../utils/error.hpp"
 #include "../../utils/random.hpp"
@@ -8,12 +10,6 @@
 #include <sstream>
 
 using namespace seze;
-
-extern "C" {
-  PluginInfo init(CN(std::string) options);
-  void core(byte* dst, int x, int y, int stride, color_t color_type);
-  void finalize();
-}
 
 enum class op_t {and_, or_, xor_, add, sub, mul, div, min, max};
 using ft_operation = std::function<byte(byte, byte)>;
@@ -68,9 +64,10 @@ static void parse_value(CN(std::string) value_str) {
   r_value = x & 0xFF;
 }
 
-PluginInfo init(CN(std::string) options) {
+PluginInfo init(const char* options) {
   PluginInfo ret;
-  ret.color_type = color_t::RGB24;
+  PluginInfo_init(&ret);
+  ret.color_type = seze_RGB24;
   ret.title = "color operations";
   ret.info = "Usage:\n"
     "--op\toperarion name\n"
@@ -85,7 +82,7 @@ PluginInfo init(CN(std::string) options) {
     seze::randomize_seed();
     user_rnd = true;
   }
-  ret.multithread = user_rnd ? false : true;
+  bit_set_if(&ret.flags, PLGNINF_MULTITHREAD, user_rnd ? 0 : 1);
 // --op
   if (auto op_name = parser.get_option("--op"); !op_name.empty())
     operation_type = decode_op_t(op_name);

@@ -24,7 +24,7 @@ class Reader {
   uint vstream = -1;
 public:
   Reader(CN(Str) iname, int width=0, int height=0,
-    color_t col_type=color_t::RGB24);
+    color_t col_type=seze_RGB24);
   ~Reader();
   CN(FramebufferInfo) get_framebuffer_info() const;
   CP(AVStream) get_stream() const;
