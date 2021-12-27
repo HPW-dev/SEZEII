@@ -11,7 +11,7 @@ namespace seze {
 enum class plugin_format_t {
   unknown = 0,
   RPI, ///< Stive Snake format
-  seze, ///< HPW-dev format (shaled .dll/.so)
+  seze, ///< HPW-dev format (shared .dll/.so)
 };
 
 ///@class base class 4 plugins
