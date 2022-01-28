@@ -38,9 +38,9 @@ PluginInfo init(const char* options) {
     "-r, --rspawn\tenable random star swapning\n"
     "-s, --spawn\tpercent of spawn star (use with -r)\n"
     "--rsize\t\tenable random star size\n"
-    "-m, --mode\tdrawing mode. Avaliable: avr, max3, rgb, red, green, blue\n";
-    "--nv\tdisable vertical beams\n";
-    "--nh\tdisable horizontal beams\n";
+    "-m, --mode\tdrawing mode. Avaliable: avr, max3, rgb, red, green, blue\n"
+    "--nv\tdisable vertical beams\n"
+    "--nh\tdisable horizontal beams\n"
     "--nd\tdisable diagonal beams\n";
 // parse opts:
   CmdParser parser(options);

@@ -4,7 +4,6 @@
 using ldouble = long double;
 using uint = unsigned int;
 using byte = uint8_t;
-using size_t = std::size_t;
 
 #define scast(T, X) static_cast<T>(X)
 #define rcast(T, X) reinterpret_cast<T>(X)
