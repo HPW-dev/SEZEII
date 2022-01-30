@@ -8,7 +8,7 @@ compiler_clangpp = "clang++"
 is_debug = bool(int(ARGUMENTS.get("debug", 0)))
 build_plugins = bool(int(ARGUMENTS.get("build_plugins", 0)))
 fflog = bool(int(ARGUMENTS.get("fflog", 0)))
-compiler_gpp = ARGUMENTS.get("cxx", "g++")
+compiler_cpp = ARGUMENTS.get("cxx", "g++")
 
 # quess architecture
 arch_raw = architecture()
@@ -22,7 +22,7 @@ print(f"system executable format: {arch_exe_fmt}")
 print(f"debug mode: {is_debug}")
 
 # var for build
-compiler = ARGUMENTS.get("cxx", compiler_gpp)
+compiler = ARGUMENTS.get("cxx", compiler_cpp)
 cpp_flags = [
   "-std=c++20", "-pipe",
 ]
