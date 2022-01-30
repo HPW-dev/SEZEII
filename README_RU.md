@@ -34,4 +34,4 @@ SEZE это плагин-ориентированный видео кодиро�
 ### SEZEII лицензия
 * [MIT license](LICENSE)
 ***
-Copyright © 2021, [HPW-dev](mailto:hpwdev0@gmail.com)
+Copyright © 2021-2022, [HPW-dev](mailto:hpwdev0@gmail.com)
