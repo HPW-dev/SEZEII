@@ -2,9 +2,12 @@ extern "C" {
 #include "plugin-api.h"
 }
 #include "image/image.hpp"
+#include "image/rgb24.hpp"
 #include "utils/cmd-parser.hpp"
 #include "utils/error.hpp"
+#include "utils/random.hpp"
 #include <map>
+#include <mutex>
 
 enum style_e { avg, mid, max, min, end, begin };
 
@@ -14,6 +17,7 @@ namespace {
     bool random_len = false;
     style_e style = style_e::avg;
   } config = {};
+  std::recursive_mutex rand_mu = {};
 }
 
 struct PluginInfo init(const char* options) {
@@ -45,7 +49,7 @@ struct PluginInfo init(const char* options) {
     try {
       config.style = table.at(str);
     } catch (...) {
-      error("init: tv_type mapping error");
+      error("shatter init: bad name for shake style: " + str);
     }
   } // -s --style
   return info;
@@ -53,6 +57,21 @@ struct PluginInfo init(const char* options) {
 
 void core(byte* dst, int mx, int my, int stride, enum color_t color_type) {
   seze::Image dst_pic(dst, mx, my, color_type);
+  seze::Image buffer(dst_pic);
+// единичный вектор направления:
+  rand_mu.lock();
+  auto rnd_f = seze::frand(-6, 6);
+  rand_mu.unlock();
+  auto dir_x = std::cos(rnd_f);
+  auto dir_y = std::sin(rnd_f);
+// вставка со смешиванием
+  FOR (y, buffer.get_y())
+  FOR (x, buffer.get_x()) {
+    auto past_y = y + dir_y * config.len;
+    auto past_x = x + dir_x * config.len;
+    auto col = buffer.fast_get<seze::RGB24>(x, y);
+    dst_pic.set<seze::RGB24>(past_x, past_y, col);
+  }
 }
 
 void finalize() {}

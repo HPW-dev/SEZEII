@@ -77,6 +77,7 @@ size_t get_size(color_t type) {
   } catch (...) {
     error("get_size: mapping error");
   }
+  return 0;
 } // get_size
 
 } // seze ns

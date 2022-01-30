@@ -38,7 +38,7 @@ Image::Image(CN(Image) src)
 , BYTES(src.bytes())
 , TYPE(src.type())
 { 
-  data = new byte[BYTES];
+  data = make_pixels(TYPE, SIZE);
   memcpy(data, src.get_cdata(), BYTES);
 }
 

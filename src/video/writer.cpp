@@ -160,7 +160,7 @@ void Writer::operator << (Image* image) {
     if (av_interleaved_write_frame(format_context, &pkt) < 0)
       error("Writer.<<: Could not write the received packet");
   } else 
-    error("Writer.<<: avcodec_receive_packet error")
+    error("Writer.<<: avcodec_receive_packet error");
   av_packet_unref(&pkt);
 } // <<
 
