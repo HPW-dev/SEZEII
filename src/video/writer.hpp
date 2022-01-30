@@ -1,6 +1,6 @@
 #pragma once
-#include "../utils/str.hpp"
-#include "../image/image.hpp"
+#include "utils/str.hpp"
+#include "image/image.hpp"
 #include "ffcommon.hpp"
 
 namespace seze {

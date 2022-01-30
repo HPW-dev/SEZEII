@@ -11,6 +11,8 @@ sources = [
 inc_path = [
   "../modules/DyLib",
   "../modules/RPI",
+  ".", # src
+  "..", # plugin api
 ]
 lib_path = []
 used_libs = [

@@ -1,6 +1,6 @@
 #pragma once
-#include "../../image/color.hpp"
-#include "../../image/YUV.hpp"
+#include "image/color.hpp"
+#include "image/YUV.hpp"
 #include <itlib/pod_vector.hpp>
 /** @file
  * TVSIM_LD_COMPONENT - long double gray

@@ -1,10 +1,10 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/cmd-parser.hpp"
-#include "../../utils/error.hpp"
-#include "../../utils/random.hpp"
-#include "../../image/rgb24.hpp"
+#include "utils/cmd-parser.hpp"
+#include "utils/error.hpp"
+#include "utils/random.hpp"
+#include "image/rgb24.hpp"
 #include <functional>
 #include <map>
 #include <sstream>

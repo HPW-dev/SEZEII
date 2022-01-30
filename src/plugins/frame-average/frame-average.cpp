@@ -1,12 +1,12 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/error.hpp"
-//#include "../../utils/log.hpp"
-#include "../../utils/cmd-parser.hpp"
-#include "../../utils/random.hpp"
-#include "../../image/rgb24.hpp"
-#include "../../image/image.hpp"
+#include "utils/error.hpp"
+//#include "utils/log.hpp"
+#include "utils/cmd-parser.hpp"
+#include "utils/random.hpp"
+#include "image/rgb24.hpp"
+#include "image/image.hpp"
 #include <cstring>
 #include <atomic>
 #include <map>

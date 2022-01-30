@@ -1,7 +1,7 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/cmd-parser.hpp"
+#include "utils/cmd-parser.hpp"
 #include "bw.hpp"
 #include "tv-yuv.hpp"
 #include <map>

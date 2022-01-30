@@ -1,6 +1,6 @@
 #include "reader.hpp"
-#include "../utils/error.hpp"
-#include "../utils/log.hpp"
+#include "utils/error.hpp"
+#include "utils/log.hpp"
 
 namespace seze {
 

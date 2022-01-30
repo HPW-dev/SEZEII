@@ -1,8 +1,8 @@
 #pragma once
-#include "../../utils/macro.hpp"
-#include "../../image/image.hpp"
-#include "../../image/rgb24.hpp"
-#include "../../utils/random.hpp"
+#include "utils/macro.hpp"
+#include "image/image.hpp"
+#include "image/rgb24.hpp"
+#include "utils/random.hpp"
 #include "component.hpp"
 
 void apply_noise(Stream& dst, component noise_level, component power=1,

@@ -1,6 +1,6 @@
 #include "plugin-shared.hpp"
-#include "../utils/error.hpp"
-#include "../utils/log.hpp"
+#include "utils/error.hpp"
+#include "utils/log.hpp"
 #include <DyLib.hpp>
 
 namespace seze {

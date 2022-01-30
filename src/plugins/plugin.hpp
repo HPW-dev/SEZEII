@@ -2,7 +2,7 @@
 extern "C" {
 #include "plugin-info.h"
 }
-#include "../utils/macro.hpp"
+#include "utils/macro.hpp"
 #include <string>
 #include <functional>
 

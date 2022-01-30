@@ -1,11 +1,11 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/error.hpp"
-#include "../../image/image.hpp"
-#include "../../image/rgb24.hpp"
-#include "../../utils/cmd-parser.hpp"
-#include "../../utils/random.hpp"
+#include "utils/error.hpp"
+#include "image/image.hpp"
+#include "image/rgb24.hpp"
+#include "utils/cmd-parser.hpp"
+#include "utils/random.hpp"
 
 using namespace seze;
 
