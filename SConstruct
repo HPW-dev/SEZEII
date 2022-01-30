@@ -5,10 +5,10 @@ env = Environment()
 # consts
 linux_exe_fmt = "ELF"
 compiler_clangpp = "clang++"
-compiler_gpp = "g++"
 is_debug = bool(int(ARGUMENTS.get("debug", 0)))
 build_plugins = bool(int(ARGUMENTS.get("build_plugins", 0)))
 fflog = bool(int(ARGUMENTS.get("fflog", 0)))
+compiler_gpp = ARGUMENTS.get("cxx", "g++")
 
 # quess architecture
 arch_raw = architecture()

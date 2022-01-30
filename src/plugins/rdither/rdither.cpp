@@ -32,8 +32,8 @@ PluginInfo init(const char* options) {
   info.color_type = seze_RGB24;
   info.title = "fast random dithering";
   info.info = "Usage:\n"
-  "-c\tcontrast [-255..255]\n";
-  "-b\tbrightness [-255..255]\n";
+    "-c\tcontrast [-255..255]\n"
+    "-b\tbrightness [-255..255]\n";
 // parse opts:
   CmdParser parser(options);
   if (auto str = parser.get_option("-c"); !str.empty())
