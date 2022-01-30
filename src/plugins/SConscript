@@ -137,6 +137,7 @@ env.SharedLibrary(
     src_dir + "image/image.cpp",
     src_dir + "image/color.cpp",
     src_dir + "utils/aalloc.cpp",
+    #src_dir + "utils/log.cpp",
     src_dir + "utils/random.cpp",
   ],
   CXX = compiler,
