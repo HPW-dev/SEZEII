@@ -108,8 +108,8 @@ template <auto func> static void stars_full(seze::Image& dst) {
   iferror(local_threshold <= 0, "stars_full: 255.0f - threshold <= 0");
   int ilen_bnd = std::ceil(config::len);
   auto threshold = config::threshold;
-  auto my = dst.get_y();
-  auto mx = dst.get_x();
+  auto my = dst.Y;
+  auto mx = dst.X;
   for (int y = ilen_bnd; y < my - ilen_bnd; ++y)
   for (int x = ilen_bnd; x < mx - ilen_bnd; ++x) {
     auto col = buffer.fast_get<seze::RGB24>(x, y);
@@ -166,8 +166,8 @@ static void stars_rgb(seze::Image& dst, bool use_red, bool use_green, bool use_b
   iferror(local_threshold <= 0, "stars_full: 255.0f - threshold <= 0");
   int ilen_bnd = std::ceil(config::len);
   auto threshold = config::threshold;
-  auto my = dst.get_y();
-  auto mx = dst.get_x();
+  auto my = dst.Y;
+  auto mx = dst.X;
   for (int y = ilen_bnd; y < my - ilen_bnd; ++y)
   for (int x = ilen_bnd; x < mx - ilen_bnd; ++x) {
     auto col = buffer.fast_get<seze::RGB24>(x, y);

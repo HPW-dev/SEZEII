@@ -98,9 +98,9 @@ CP(AVCodecContext) Reader::get_codec_ctx() const { return codec_context; }
 bool Reader::read_to(Image* dst) {
 #ifdef DEBUG
   iferror( !dst, "Writer <<: !image");
-  iferror(framebuffer_info.x != dst->get_x(),
+  iferror(framebuffer_info.x != dst->X,
     "Writer <<: framebuffer_info.x != dst.x");
-  iferror(framebuffer_info.y != dst->get_y(),
+  iferror(framebuffer_info.y != dst->Y,
     "Writer <<: framebuffer_info.y != dst.y");
 #endif
   uint timeout = 100;
@@ -148,10 +148,10 @@ AVCodecContext *pCodecContext, AVFrame *pFrame, Image* dst) {
     // перенос из av_frame в данные seze_image
       uint8_t* framebuffer_data[1] =
         { rcast(uint8_t*, dst->get_data()) };
-      int framebuffer_stride[1] = { dst->get_stride() };
-      av_image_copy_to_buffer(dst->get_data(), dst->bytes(),
+      int framebuffer_stride[1] = { dst->stride };
+      av_image_copy_to_buffer(dst->get_data(), dst->bytes,
         av_frame_output->data, av_frame_output->linesize, dst_pix_fmt,
-          dst->get_x(), dst->get_y(), 1); // use aligment 1 byte only
+          dst->X, dst->Y, 1); // use aligment 1 byte only
     }
   } // while response
   return 0;

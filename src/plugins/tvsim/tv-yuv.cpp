@@ -17,7 +17,7 @@ TVsim_YUV::~TVsim_YUV() {
 }
 
 void TVsim_YUV::RGB24_to_buffers(CN(seze::Image) src) {
-  FOR (i, src.size()) {
+  FOR (i, src.size) {
     auto rgb = src.fast_get<seze::RGB24>(i);
     auto yuv = RGB24_to_yuv(rgb);
     buffer_y->fast_set<component>(i, yuv.Y);
@@ -27,7 +27,7 @@ void TVsim_YUV::RGB24_to_buffers(CN(seze::Image) src) {
 }
 
 void TVsim_YUV::process(seze::Image& dst) {
-  iferror(dst.type() != seze_RGB24,
+  iferror(dst.type != seze_RGB24,
     "TVsim_YUV: dst pix type != RGB24");
   RGB24_to_buffers(dst);
   auto stream_y = encode(*buffer_y);
@@ -86,7 +86,7 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
       case State::first_str: {
         FOR (str, tv::first_strings) {
           // blank data
-          FOR (x, src.get_x() + tv::first_bound + tv::second_bound)
+          FOR (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
           FOR (x, tv::hsync_size) {
@@ -100,7 +100,7 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
       case State::second_str: {
         FOR (str, tv::second_strings) {
           // blank data
-          FOR (x, src.get_x() + tv::first_bound + tv::second_bound)
+          FOR (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
           FOR (x, tv::hsync_size) {
@@ -124,7 +124,7 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
         break;
       }
       case State::data: {
-        FOR (x, src.get_x()) {
+        FOR (x, src.X) {
           component luma;
           if (tv::interlace) {
             if (is_odd_string)
@@ -147,7 +147,7 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
           ret.data.push_back(level);
         }
         src_y += tv::interlace ? 2 : 1;
-        if (src_y >= src.get_y())
+        if (src_y >= src.Y)
           state = State::second_str;
         else
           state = State::first_bound;
@@ -174,7 +174,7 @@ void TVsim_YUV::decode_to_display(CN(Stream) src_y, CN(Stream) src_u,
 CN(Stream) src_v) {
   // color fading
   auto display_data_ptr = display->get_data();
-  FOR (i, display->bytes()) {
+  FOR (i, display->bytes) {
     auto& c = display_data_ptr[i];
     c = std::clamp<int>(c - tv::fading * 255, 0, 255);
   }
@@ -188,9 +188,9 @@ CN(Stream) src_v) {
   FOR (i, src_y.size) {
     // beam bounds:
     beam_x = std::clamp<component>(beam_x, -tv::hbound,
-      display->get_x() + tv::hbound);
+      display->X + tv::hbound);
     beam_y = std::clamp<component>(beam_y, -tv::hbound,
-      display->get_y() + tv::hbound);
+      display->Y + tv::hbound);
     // data
     if (src_y.data[i] >= tv::black_level) {
       beam_x += tv::beam_speed;

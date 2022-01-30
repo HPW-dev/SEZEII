@@ -125,12 +125,12 @@ Writer::~Writer() {
 void Writer::operator << (Image* image) {
 #ifdef DEBUG
   iferror( !image, "Writer <<: !image");
-  iferror(frame_x != image->get_x(), "Writer <<: frame_x != image->get_X()");
-  iferror(frame_y != image->get_y(), "Writer <<: frame_y != image->get_Y()");
+  iferror(frame_x != image->X, "Writer <<: frame_x != image->get_X()");
+  iferror(frame_y != image->Y, "Writer <<: frame_y != image->get_Y()");
 #endif
   if (raw_mode) {
     if (av_image_fill_arrays(av_frame->data, av_frame->linesize,
-    rcast(CP(uint8_t), image->get_data()),
+    rcast(CP(uint8_t), image->data),
     in_pix_fmt, frame_x, frame_y, 1) < 0) // use aligment 1 byte only
       error("Writer.<<: av_image_fill_arrays error");
   } else {

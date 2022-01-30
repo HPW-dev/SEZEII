@@ -25,6 +25,7 @@ AVPixelFormat convert(color_t type) {
   } catch(...) {
     error("convert color_t to avformat: mapping error");
   }
+  return AV_PIX_FMT_NONE;
 }
 
 color_t convert(AVPixelFormat type) {
@@ -42,6 +43,7 @@ color_t convert(AVPixelFormat type) {
   } catch(...) {
     error("convert avformat to color_t: mapping error");
   }
+  return color_t::seze_none;
 }
 
 } // seze ns

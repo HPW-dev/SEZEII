@@ -12,10 +12,10 @@ enum boundig_e {
 };
 
 class Image {
-  int X = 0, Y = 0, STRIDE = 0, SIZE = 0;
-  int BYTES = 0; ///< total bytes for pixel data
-  color_t TYPE = seze_none; ///< pixel color type
-  byte* data = nullptr; ///< pixel data
+  int X_ = 0, Y_ = 0, stride_ = 0, size_ = 0;
+  int bytes_ = 0; ///< total bytes for pixel data
+  color_t type_ = seze_none; ///< pixel color type
+  byte* data_ = nullptr; ///< pixel data
   //! if maked from input mem, not use free
   bool no_destroy = false;
 
@@ -23,6 +23,14 @@ class Image {
   bool prepare_cord(int& x, int& y, boundig_e mode) const;
 
 public:
+  CN(int) X = X_;
+  CN(int) Y = Y_;
+  CN(int) stride = stride_;
+  CN(int) size = size_;
+  CN(int) bytes = bytes_;
+  CN(color_t) type = type_;
+  CP(byte) data = data_;
+
   Image() = default;
   Image(CN(Image) src);
   //! init by size & pixel type
@@ -30,14 +38,7 @@ public:
   //! init by prepeared data
   Image(byte* data_, int x, int y, color_t color_type);
   ~Image();
-  constexpr byte* get_data() const { return data; }
-  constexpr CP(byte) get_cdata() const { return data; }
-  constexpr CN(int) get_x() const { return X; }
-  constexpr CN(int) get_y() const { return Y; }
-  CN(int) get_stride() const;
-  CN(int) size() const;
-  constexpr CN(int) bytes() const { return BYTES; }
-  CN(color_t) type() const;
+  byte* get_data();
   void fast_copy_to(Image& dst) const;
   // template members
   #include "image.inc"

@@ -10,10 +10,10 @@
 
 //! copy seze-image data 2 SDL surface
 void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
-  if (src->type() == seze_RGB24) {
+  if (src->type == seze_RGB24) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_cdata();
-    auto pEnd = &pSrc[src->bytes()];
+    auto pSrc = src->data;
+    auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       pDst[0] = pSrc[2];
       pDst[1] = pSrc[1];
@@ -21,10 +21,10 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pDst += 4; // BGRA
       pSrc += 3; // RGB
     }
-  } else if (src->type() == seze_gray) {
+  } else if (src->type == seze_gray) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_cdata();
-    auto pEnd = &pSrc[src->bytes()];
+    auto pSrc = src->data;
+    auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       pDst[0] = *pSrc;
       pDst[1] = *pSrc;
@@ -32,10 +32,10 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pDst += 4; // BGRA
       pSrc += 1; // luma
     }
-  } else if (src->type() == seze_RGB565) {
+  } else if (src->type == seze_RGB565) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_cdata();
-    auto pEnd = &pSrc[src->bytes()];
+    auto pSrc = src->data;
+    auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       seze::RGB565 col(*rcast(CP(uint16_t), pSrc));
       byte r, g, b;
@@ -46,10 +46,10 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pDst += 4; // BGRA
       pSrc += 2; // WORD
     }
-  } else if (src->type() == seze_RGB555) {
+  } else if (src->type == seze_RGB555) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_cdata();
-    auto pEnd = &pSrc[src->bytes()];
+    auto pSrc = src->data;
+    auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       seze::RGB555 col(*rcast(CP(uint16_t), pSrc));
       byte r, g, b;
@@ -138,8 +138,8 @@ int main(int argc, char* argv[]) {
       auto& p = vp_framebuffer[i];
       if (p) {
         v_thread[i] = std::thread([&]() {
-          plugin->core(p->get_data(), p->get_x(), p->get_y(),
-            p->get_stride(), p->type());
+          plugin->core(p->get_data(), p->X, p->Y,
+            p->stride, p->type);
         });
       }
     } // enable plugin

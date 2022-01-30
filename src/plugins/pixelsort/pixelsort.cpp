@@ -38,7 +38,7 @@ PluginInfo init(const char* options) {
   info.info = "usage:\n"
     "-v, --threshold <0..255>\tthresholding value\n"
     "-d, --dir <DIR>\tsorting direction\n"
-    "-t, --type <TYPE>\ttype of sorting\n"
+    "-t, --type <type_>\ttype of sorting\n"
     "-b, --bidir\tbidirectional sorting\n"
     "-f, --fast\tuse fast alg.\n"
     "avaliable directions: h, v\n"
