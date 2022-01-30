@@ -122,3 +122,19 @@ env.SharedLibrary(
   LINKFLAGS = ld_flags,
   CXXFLAGS = cpp_flags,
   CPPPATH = modules)
+
+env.SharedLibrary(
+  target = plugin_out + "shatter",
+  source = [
+    Glob("shatter/*.cpp"),
+    "../utils/cmd-parser.cpp",
+    "../image/image.cpp",
+    "../image/color.cpp",
+    "../utils/aalloc.cpp",
+    "../utils/random.cpp",
+  ],
+  CXX = compiler,
+  CPPDEFINES = defines,
+  LINKFLAGS = ld_flags,
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
