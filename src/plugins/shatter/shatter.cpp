@@ -20,6 +20,7 @@ namespace {
     float angle = 0;
     bool use_angle = false;
     float light_ratio = 0.4f;
+    seze::boundig_e bounding_mode = seze::boundig_e::clamp;
   } config = {};
   std::recursive_mutex rand_mu = {};
 }
@@ -34,8 +35,9 @@ struct PluginInfo init(const char* options) {
     "-rl, --random-len\trandomize motion length in interval of -l value\n"
     "-s, --style\t\tstyle of blending: none, avr, mid, max,"
       "min, end, begin [default: avr]\n"
-    "-a, --angle\tcustom motion angle\n"
+    "-a, --angle\t\tcustom motion angle\n"
     "-lr, --light-ratio\tmultipler for light style [default: 0.4]\n"
+    "-m, --mirror\t\tenable mirror image bounding\n"
   ;
   bit_enable(&info.flags, PLGNINF_MULTITHREAD);
 // parse opts:
@@ -67,6 +69,8 @@ struct PluginInfo init(const char* options) {
     }
     if (auto str = parser.get_options({"-lr", "--light-ratio"}); !str.empty())
       config.light_ratio = std::stof(str);
+    if (parser.opt_exists("-m") || parser.opt_exists("--mirror"))
+      config.bounding_mode = seze::boundig_e::mirror;
   } // -s --style
   return info;
 } // init
@@ -93,7 +97,7 @@ float dir_x, float dir_y) {
     auto col = src.fast_get<seze::RGB24>(x, y);
     dst.set<seze::RGB24>(past_x, past_y, col);
   }
-}
+} // motion_simple
 
 constexpr float blend(float dst, float src, float alpha) { return dst + (src - dst) * alpha; }
 constexpr void   blend_avr(float& dst, float src, float    , float     ) { dst = blend(dst, src, 0.5f); }
@@ -142,7 +146,7 @@ float dir_x, float dir_y) {
       ++path;
       auto get_x = x + path * dir_x;
       auto get_y = y + path * dir_y;
-      auto c2 = src.get<seze::RGB24>(get_x, get_y, seze::boundig_e::clamp);
+      auto c2 = src.get<seze::RGB24>(get_x, get_y, config.bounding_mode);
       seze::RGBf fc2 = convert(c2);
       get_alpha_f(fc1.R, fc2.R, len, path);
       get_alpha_f(fc1.G, fc2.G, len, path);
