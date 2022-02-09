@@ -12,7 +12,7 @@
 void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
   if (src->type == seze_RGB24) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->data;
+    auto pSrc = src->get_data();
     auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       pDst[0] = pSrc[2];
@@ -23,7 +23,7 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
     }
   } else if (src->type == seze_gray) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->data;
+    auto pSrc = src->get_data();
     auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       pDst[0] = *pSrc;
@@ -34,7 +34,7 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
     }
   } else if (src->type == seze_RGB565) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->data;
+    auto pSrc = src->get_data();
     auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       seze::RGB565 col(*rcast(CP(uint16_t), pSrc));
@@ -48,7 +48,7 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
     }
   } else if (src->type == seze_RGB555) {
     auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->data;
+    auto pSrc = src->get_data();
     auto pEnd = &pSrc[src->bytes];
     while (pSrc != pEnd) {
       seze::RGB555 col(*rcast(CP(uint16_t), pSrc));

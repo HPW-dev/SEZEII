@@ -39,7 +39,7 @@ Image::Image(CN(Image) src)
 , type_(src.type)
 { 
   data_ = make_pixels(type_, size_);
-  memcpy(data_, src.data, bytes_);
+  memcpy(data_, src.get_cdata(), bytes_);
 }
 
 Image::~Image() {
@@ -74,6 +74,7 @@ bool Image::prepare_cord(int& x, int& y, boundig_e mode) const {
   return false;
 } // prepare_cord
 
-byte* Image::get_data() { return data_; }
+byte* Image::get_data() const { return data_; }
+CP(byte) Image::get_cdata() const { return data_; }
 
 } // seze ns

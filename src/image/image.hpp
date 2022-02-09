@@ -29,7 +29,6 @@ public:
   CN(int) size = size_;
   CN(int) bytes = bytes_;
   CN(color_t) type = type_;
-  CP(byte) data = data_;
 
   Image() = default;
   Image(CN(Image) src);
@@ -38,7 +37,8 @@ public:
   //! init by prepeared data
   Image(byte* data_, int x, int y, color_t color_type);
   ~Image();
-  byte* get_data();
+  byte* get_data() const;
+  CP(byte) get_cdata() const;
   void fast_copy_to(Image& dst) const;
   // template members
   #include "image.inc"

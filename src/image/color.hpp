@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include "utils/macro.hpp"
 extern "C" {
 #include "plugins/color-type.h"
