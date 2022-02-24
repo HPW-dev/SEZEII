@@ -60,9 +60,9 @@ struct PluginInfo init(CP(char) options) {
   struct PluginInfo info;
   PluginInfo_init(&info);
   info.color_type = seze_RGB24;
-  info.title = "3d sharpenizer";
+  info.title = "3D Denoiser";
   bit_disable(&info.flags, PLGNINF_MULTITHREAD);
-  iferror(samples_ < 1, "3d-sharpen.init: samples_ < 1");
+  iferror(samples_ < 1, "3d-denoise.init: samples_ < 1");
   return info;
 }
 

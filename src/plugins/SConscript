@@ -147,9 +147,9 @@ env.SharedLibrary(
   CPPPATH = modules)
 
 env.SharedLibrary(
-  target = plugin_out + "3d-sharpen",
+  target = plugin_out + "3d-denoise",
   source = [
-    Glob("3d-sharpen/*.cpp"),
+    Glob("3d-denoise/*.cpp"),
     src_dir + "utils/cmd-parser.cpp",
     src_dir + "image/image.cpp",
     src_dir + "image/color.cpp",
