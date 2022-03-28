@@ -19,7 +19,7 @@ class Image {
   //! if maked from input mem, not use free
   bool no_destroy = false;
 
-  //! see boundig_e desc.
+  //! ret false if pixel pos not corrected
   bool prepare_cord(int& x, int& y, boundig_e mode) const;
 
 public:

@@ -162,14 +162,14 @@ env.SharedLibrary(
   CPPPATH = modules)
 
 env.SharedLibrary(
-  target = plugin_out + "stabelyzer",
+  target = plugin_out + "stabilyzer",
   source = [
-    Glob("stabelyzer/*.cpp"),
+    Glob("stabilyzer/*.cpp"),
     src_dir + "utils/cmd-parser.cpp",
     src_dir + "image/image.cpp",
     src_dir + "image/color.cpp",
     src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/log.cpp",
+    #src_dir + "utils/log.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,

@@ -32,8 +32,9 @@ boundig_e mode = boundig_e::none) const {
   }
   return nullptr;
 }
-template<class T> void set(int x, int y, CN(T) c) const {
-  if (uint(x) >= uint(X) or uint(y) >= uint(Y))
+template<class T> void set(int x, int y, CN(T) c, 
+boundig_e mode = boundig_e::none) const {
+  if ( !prepare_cord(x, y, mode))
     return;
   auto p = rcast(T*, data_);
   p[X * y + x] = c;

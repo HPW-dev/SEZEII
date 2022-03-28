@@ -68,7 +68,7 @@ bool Image::prepare_cord(int& x, int& y, boundig_e mode) const {
     default: {
       if (uint(x) >= uint(X) or uint(y) >= uint(Y))
         return false;
-      return false;
+      return true;
     }
   } // switch (mode)
   return false;
