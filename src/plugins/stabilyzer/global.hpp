@@ -10,7 +10,7 @@ namespace seze {
 struct Point;
 using v_pixel_t = std::vector<seze::RGB24>;
 using rotate_ft = void(*)(CN(seze::Image), seze::Image&, CN(Point), Real);
-using stretch_ft = void(*)(CN(v_pixel_t), v_pixel_t&);
+using stretch_ft = void(*)(CN(v_pixel_t), v_pixel_t&, int, int);
 using resize_ft = void(*)(CN(seze::Image), seze::Image&, CN(Point), int, int);
 
 extern bool first_init_flag;

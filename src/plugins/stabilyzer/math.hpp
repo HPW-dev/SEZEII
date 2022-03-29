@@ -9,7 +9,12 @@ struct Point {
   template <typename T>
   constexpr Point operator * (CN(T) val)
     { return {.x = x * val, .y = y * val}; }
-};
+  
+  constexpr void operator -= (CN(Point) other) {
+    x -= other.x;
+    y -= other.y;
+  }
+}; // Point
 
 //! узнаеёт угол в радианах между точкой a и b
 Real radian_btw_point(CN(Point) a, CN(Point) b);

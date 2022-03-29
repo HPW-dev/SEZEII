@@ -16,7 +16,33 @@ static void first_init(int mx, int my, color_t color_type) {
 }
 
 static void abcd_stabilyze(seze::Image& dst) {
-
+  /* abcd mode:
+  * 1. определение точек:
+      A ------- B
+      |         |
+      |         |
+      |         |
+      C ------- D
+  * 2. Поворот картинки, чтобы B был справа от A. Точки тоже повернуть
+  * 3. вставить картинку влево вверх, чтоы A стал нулём
+  * 4. растянуть C и B до dst.Y и dst.X 
+  * 5. растянуть строки чтобы d.x = dst.x
+  * 6. растянуть столбцы чтобы d.y = dst.y */
+  find_points(dst);
+  auto ab_rotation = to_radian(90) - radian_btw_point(pos_a, pos_b);
+  auto center = calc_center(*big_buffer, dst);
+  rotate_f(dst, *big_buffer, center, ab_rotation);
+  rotate_point(pos_a, pos_b, ab_rotation);
+  rotate_point(pos_a, pos_c, ab_rotation);
+  rotate_point(pos_a, pos_d, ab_rotation);
+  resize_f(*big_buffer, dst, pos_a * -1,
+    big_buffer->X + (big_buffer->X - pos_b.x) - pos_a.x,
+    big_buffer->Y + (big_buffer->Y - pos_c.y) - pos_a.y);
+  pos_b -= pos_a;
+  pos_c -= pos_a;
+  pos_d -= pos_a;
+  pos_a = {};
+  stretch(dst);
 } // abcd_stabilyze
 
 static void abc_stabilyze(seze::Image& dst) {
@@ -49,7 +75,7 @@ struct PluginInfo init(CP(char) options) {
   info.version = 4;
   bit_disable(&info.flags, PLGNINF_MULTITHREAD);
   rotate_f = &rotate_bicubic;
-  stretch_f = &stretch_fast;
+  stretch_f = &stretch_cubic;
   resize_f = &resize_bicubic;
   return info;
 } // init

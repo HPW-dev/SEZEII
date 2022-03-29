@@ -6,17 +6,18 @@
 #include "math.hpp"
 
 bool check_color(CN(seze::RGB24) a, CN(seze::RGB24) b);
+void find_point(CN(seze::Image) src, Point& dst, CN(seze::RGB24) color);
 void find_points(CN(seze::Image) src);
 Point calc_center(CN(seze::Image) dst, CN(seze::Image) src);
+void stretch(seze::Image& dst);
 
 inline seze::RGB24 neighbor_core(CN(seze::Image) src, Real gx, Real gy)
   { return src.get<seze::RGB24>(int(gx), int(gy)); }
 
-inline seze::RGB24 neighbor_1d_core(CN(seze::Image) src, Real gx, Real gy)
-  { return {}; /* TODO */ }
-
-inline seze::RGB24 linear_core(CN(seze::Image) src, Real gx, Real gy)
-  { return {}; /* TODO */ }
+inline seze::RGB24 neighbor_1d_core(CN(v_pixel_t) src, Real gi) {
+  auto i = std::clamp<int>(gi, 0, src.size());
+  return src[i];
+}
 
 inline seze::RGB24 lerp(CN(seze::RGB24) a, CN(seze::RGB24) b, Real t) {
   return seze::RGB24 {
@@ -40,6 +41,22 @@ CN(seze::RGB24) C, CN(seze::RGB24) D, Real t) {
     byte(std::clamp<int>(bcerp(A.G, B.G, C.G, D.G, t), 0, 255)),
     byte(std::clamp<int>(bcerp(A.B, B.B, C.B, D.B, t), 0, 255))
   };
+}
+
+inline seze::RGB24 linear_core(CN(v_pixel_t) src, Real gi) {
+  auto i0 = std::clamp<int>(gi, 0, src.size());
+  auto i1 = std::clamp<int>(gi+1, 0, src.size());
+  auto fx = gi - i0;
+  return lerp(src[i0], src[i1], fx);
+}
+
+inline seze::RGB24 cubic_core(CN(v_pixel_t) src, Real gi) {
+  auto i0 = std::clamp<int>(gi-1, 0, src.size());
+  auto i1 = std::clamp<int>(gi+0, 0, src.size());
+  auto i2 = std::clamp<int>(gi+1, 0, src.size());
+  auto i3 = std::clamp<int>(gi+2, 0, src.size());
+  auto fx = gi - i1;
+  return bcerp(src[i0], src[i1], src[i2], src[i3], fx);
 }
 
 inline seze::RGB24 bilinear_core(CN(seze::Image) src, Real gx, Real gy) {
@@ -121,8 +138,13 @@ CN(Point) offset, int new_x, int new_y) {
 
 //! растягивает один 1D массив цветов в другой
 template <auto core>
-void stretch_templ(CN(v_pixel_t) src, v_pixel_t& dst) {
-  // TODO
+void stretch_templ(CN(v_pixel_t) src, v_pixel_t& dst, int offset,
+int new_size) {
+  auto scale = Real(src.size()) / new_size;
+  FOR (i, dst.size()) {
+    auto src_i = i * scale - offset;
+    dst[i] = core(src, src_i);
+  }
 }
 
 #define rotate_fast rotate_templ<neighbor_core>
@@ -133,3 +155,4 @@ void stretch_templ(CN(v_pixel_t) src, v_pixel_t& dst) {
 #define resize_bicubic resize_templ<bicubic_core>
 #define stretch_fast stretch_templ<neighbor_1d_core>
 #define stretch_linear stretch_templ<linear_core>
+#define stretch_cubic stretch_templ<cubic_core>
