@@ -1,5 +1,5 @@
 #pragma once
-#include "../image/color.hpp"
+#include "image/color.hpp"
 // FFmpeg
 extern "C" {
 #include <libavformat/avformat.h>

@@ -1,7 +1,7 @@
 #pragma once
-#include "../utils/str.hpp"
-#include "../image/image.hpp"
-#include "../utils/macro.hpp"
+#include "utils/str.hpp"
+#include "image/image.hpp"
+#include "utils/macro.hpp"
 #include "ffcommon.hpp"
 
 namespace seze {

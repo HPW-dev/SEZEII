@@ -66,14 +66,14 @@ byte component_to_byte(component src) {
 }
 
 void gray_to_RGB24(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size()) {
+  FOR (i, src.size) {
     auto c = component_to_RGB24(src.fast_get<component>(i));
     dst.fast_set<seze::RGB24>(i, c);
   }
 }
 
 void RGB24_to_gray(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size()) {
+  FOR (i, src.size) {
     auto luma = RGB24_to_component(src.fast_get<seze::RGB24>(i));
     dst.fast_set<component>(i, luma);
   }
@@ -81,14 +81,14 @@ void RGB24_to_gray(seze::Image& dst, CN(seze::Image) src) {
 
 
 void gray_to_fgray(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size()) {
+  FOR (i, src.size) {
     auto luma = byte_to_component(src.fast_get<byte>(i));
     dst.fast_set<component>(i, luma);
   }
 }
 
 void fgray_to_gray(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size()) {
+  FOR (i, src.size) {
     auto luma = component_to_byte(src.fast_get<component>(i));
     dst.fast_set<byte>(i, luma);
   }

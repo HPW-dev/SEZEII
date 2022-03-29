@@ -5,10 +5,11 @@ env = Environment()
 # consts
 linux_exe_fmt = "ELF"
 compiler_clangpp = "clang++"
-compiler_gpp = "g++"
 is_debug = bool(int(ARGUMENTS.get("debug", 0)))
 build_plugins = bool(int(ARGUMENTS.get("build_plugins", 0)))
 fflog = bool(int(ARGUMENTS.get("fflog", 0)))
+is_core2_quad = bool(int(ARGUMENTS.get("core2_quad", 0)))
+compiler_cpp = ARGUMENTS.get("cxx", "g++")
 
 # quess architecture
 arch_raw = architecture()
@@ -22,14 +23,10 @@ print(f"system executable format: {arch_exe_fmt}")
 print(f"debug mode: {is_debug}")
 
 # var for build
-compiler = ARGUMENTS.get("cxx", compiler_gpp)
-cpp_flags = [
-  "-std=c++20", "-pipe",
-]
-defines = [
-  #"-DTVSIM_LD_COMPONENT",
-]
-ld_flags = []
+compiler = ARGUMENTS.get("cxx", compiler_cpp)
+cpp_flags = ["-std=c++20", "-pipe", "-fopenmp"]
+defines = [] #"-DTVSIM_LD_COMPONENT"
+ld_flags = ["-fopenmp"]
 
 # platform spec-s settings
 is_linux = bool(arch_exe_fmt == linux_exe_fmt)
@@ -62,8 +59,10 @@ else: # release
   if (arch_bit == bitness["x64"]):
     cpp_flags.extend(["-Ofast", "-march=x86-64"])
   else: # 32bit
-    cpp_flags.extend(["-m32", "-Ofast", "-march=pentium2"])
-    #cpp_flags.extend(["-m32", "-Ofast", "-march=core2", "-msse4.1"])
+    if (is_core2_quad):
+      cpp_flags.extend(["-m32", "-Ofast", "-march=core2", "-msse4.1"])
+    else:
+      cpp_flags.extend(["-m32", "-Ofast", "-march=pentium2"])
 
 # print selected compiler:
 print(f"compiler: {compiler}")

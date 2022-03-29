@@ -4,53 +4,77 @@
 namespace seze {
 
 Image::Image(int x, int y, color_t color_type)
-: X(x)
-, Y(y)
-, STRIDE(0)
-, SIZE(x * y)
-, BYTES(0)
-, TYPE(color_type)
-, data(make_pixels(color_type, x * y))
+: X_(x)
+, Y_(y)
+, stride_(0)
+, size_(x * y)
+, bytes_(0)
+, type_(color_type)
+, data_(make_pixels(color_type, x * y))
 { 
-  STRIDE = data ? get_size(color_type) * x : 0;
-  BYTES = STRIDE * y;
+  stride_ = data_ ? get_size(color_type) * x : 0;
+  bytes_ = stride_ * y;
 }
 
-Image::Image(byte* data_, int x, int y, color_t color_type)
-: X(x)
-, Y(y)
-, STRIDE(0)
-, SIZE(x * y)
-, BYTES(0)
-, TYPE(color_type)
-, data(data_)
+Image::Image(byte* _data_, int x, int y, color_t color_type)
+: X_(x)
+, Y_(y)
+, stride_(0)
+, size_(x * y)
+, bytes_(0)
+, type_(color_type)
+, data_(_data_)
 , no_destroy(true)
 { 
-  STRIDE = data ? get_size(color_type) * x : 0;
-  BYTES = STRIDE * y;
+  stride_ = data_ ? get_size(color_type) * x : 0;
+  bytes_ = stride_ * y;
 }
 
 Image::Image(CN(Image) src)
-: X(src.get_x())
-, Y(src.get_y())
-, STRIDE(src.get_stride())
-, SIZE(src.size())
-, BYTES(src.bytes())
-, TYPE(src.type())
+: X_(src.X)
+, Y_(src.Y)
+, stride_(src.stride)
+, size_(src.size)
+, bytes_(src.bytes)
+, type_(src.type)
 { 
-  data = new byte[BYTES];
-  memcpy(data, src.get_cdata(), BYTES);
+  data_ = make_pixels(type_, size_);
+  memcpy(data_, src.get_cdata(), bytes_);
 }
 
 Image::~Image() {
   if ( !no_destroy)
-    destroy_pixels(data);
+    destroy_pixels(data_);
 }
 
-CN(color_t) Image::type() const { return TYPE; }
-CN(int) Image::get_stride() const { return STRIDE; }
-CN(int) Image::size() const { return SIZE; }
 void Image::fast_copy_to(Image& dst) const
-  { memcpy(dst.get_data(), data, BYTES); }
+  { memcpy(dst.data_, data_, bytes_); }
+
+bool Image::prepare_cord(int& x, int& y, boundig_e mode) const {
+  switch (mode) {
+    case boundig_e::mirror: {
+      while (x < 0) x = X - (X + x);
+      while (x >= X) x = X - 1 + ((x - X) * -1);
+      while (y < 0) y = Y - (Y + y);
+      while (y >= Y) y = Y - 1 + ((y - Y) * -1);
+      return true;
+    }
+    case boundig_e::clamp: {
+      x = std::clamp(x, 0, X - 1);
+      y = std::clamp(y, 0, Y - 1);
+      return true;
+    }
+    case boundig_e::none:
+    default: {
+      if (uint(x) >= uint(X) or uint(y) >= uint(Y))
+        return false;
+      return true;
+    }
+  } // switch (mode)
+  return false;
+} // prepare_cord
+
+byte* Image::get_data() const { return data_; }
+CP(byte) Image::get_cdata() const { return data_; }
 
 } // seze ns

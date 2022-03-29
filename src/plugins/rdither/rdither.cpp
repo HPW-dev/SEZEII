@@ -1,11 +1,11 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/error.hpp"
-#include "../../image/image.hpp"
-#include "../../image/rgb24.hpp"
-#include "../../utils/cmd-parser.hpp"
-#include "../../utils/random.hpp"
+#include "utils/error.hpp"
+#include "image/image.hpp"
+#include "image/rgb24.hpp"
+#include "utils/cmd-parser.hpp"
+#include "utils/random.hpp"
 
 using namespace seze;
 
@@ -32,8 +32,8 @@ PluginInfo init(const char* options) {
   info.color_type = seze_RGB24;
   info.title = "fast random dithering";
   info.info = "Usage:\n"
-  "-c\tcontrast [-255..255]\n";
-  "-b\tbrightness [-255..255]\n";
+    "-c\tcontrast [-255..255]\n"
+    "-b\tbrightness [-255..255]\n";
 // parse opts:
   CmdParser parser(options);
   if (auto str = parser.get_option("-c"); !str.empty())
@@ -50,20 +50,20 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   seze::Image dst_pic(dst, mx, my, color_type);
   seze::Image rgbi_pic(mx, my, seze_RGBi);
 // copy dst to RGBi
-  FOR (i, dst_pic.size()) {
+  FOR (i, dst_pic.size) {
     auto c = dst_pic.fast_get<seze::RGB24>(i);
     rgbi_pic.fast_set<seze::RGBi>(i, seze::RGBi(c.R, c.G, c.B));
   }
 // dithering:
   auto ptr = rcast(int*, rgbi_pic.get_data());
-  auto end = rcast(int*, rgbi_pic.get_data() + rgbi_pic.bytes());
+  auto end = rcast(int*, rgbi_pic.get_data() + rgbi_pic.bytes);
   while (ptr < end) {
     prepare_color(*ptr);
     *ptr = (*ptr > (seze::irand_fast() % 255)) ? 255 : 0;
     ++ptr;
   }
 // copy dst to RGBi
-  FOR (i, rgbi_pic.size()) {
+  FOR (i, rgbi_pic.size) {
     auto c = rgbi_pic.fast_get<seze::RGBi>(i);
     auto r = std::clamp(c.R, 0, 255);
     auto g = std::clamp(c.G, 0, 255);

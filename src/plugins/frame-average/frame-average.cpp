@@ -1,12 +1,12 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/error.hpp"
-//#include "../../utils/log.hpp"
-#include "../../utils/cmd-parser.hpp"
-#include "../../utils/random.hpp"
-#include "../../image/rgb24.hpp"
-#include "../../image/image.hpp"
+#include "utils/error.hpp"
+//#include "utils/log.hpp"
+#include "utils/cmd-parser.hpp"
+#include "utils/random.hpp"
+#include "image/rgb24.hpp"
+#include "image/image.hpp"
 #include <cstring>
 #include <atomic>
 #include <map>
@@ -98,7 +98,7 @@ static void frame_push(CN(seze::Image) src) {
 
 static void average_to_frame(seze::Image& dst) {
   if (config::mode == mode_e::average) { // avr
-    FOR (i, dst.size()) {
+    FOR (i, dst.size) {
       int R = 0, G = 0, B = 0;
       for (CN(auto) frame: frames) {
         auto c = frame->fast_get<RGB24>(i);
@@ -112,7 +112,7 @@ static void average_to_frame(seze::Image& dst) {
         B / config::count));
     }
   } else { // other bitop's
-    FOR (i, dst.size()) {
+    FOR (i, dst.size) {
       auto& dc = dst.fast_get<RGB24>(i);
       byte &R = dc.R, &G = dc.G, &B = dc.B;
       for (CN(auto) frame: frames) {

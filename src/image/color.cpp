@@ -1,7 +1,7 @@
 #include "color.hpp"
-#include "../utils/error.hpp"
+#include "utils/error.hpp"
 #ifndef NOAALLOC
-#include "../utils/aalloc.hpp"
+#include "utils/aalloc.hpp"
 #endif
 #include "RGB555-RGB565.hpp"
 #include "rgb24.hpp"
@@ -77,6 +77,7 @@ size_t get_size(color_t type) {
   } catch (...) {
     error("get_size: mapping error");
   }
+  return 0;
 } // get_size
 
 } // seze ns

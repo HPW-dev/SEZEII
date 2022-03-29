@@ -1,6 +1,6 @@
 #pragma once
-#include "../../image/image.hpp"
-#include "../../utils/error.hpp"
+#include "image/image.hpp"
+#include "utils/error.hpp"
 #include "config.hpp"
 
 ///! tv sim's base class

@@ -1,5 +1,5 @@
 #include "tvsim.hpp"
-#include "../color-type.h"
+#include "color-type.h"
 #include "utils.hpp"
 
 class TVsim_YUV: public TVsim {

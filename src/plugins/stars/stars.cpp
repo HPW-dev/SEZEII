@@ -1,12 +1,12 @@
 extern "C" {
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 }
-#include "../../utils/error.hpp"
-#include "../../image/image.hpp"
-#include "../../image/rgb24.hpp"
-//#include "../../utils/log.hpp"
-#include "../../utils/cmd-parser.hpp"
-#include "../../utils/random.hpp"
+#include "utils/error.hpp"
+#include "image/image.hpp"
+#include "image/rgb24.hpp"
+//#include "utils/log.hpp"
+#include "utils/cmd-parser.hpp"
+#include "utils/random.hpp"
 #include <map>
 
 using namespace seze;
@@ -38,9 +38,9 @@ PluginInfo init(const char* options) {
     "-r, --rspawn\tenable random star swapning\n"
     "-s, --spawn\tpercent of spawn star (use with -r)\n"
     "--rsize\t\tenable random star size\n"
-    "-m, --mode\tdrawing mode. Avaliable: avr, max3, rgb, red, green, blue\n";
-    "--nv\tdisable vertical beams\n";
-    "--nh\tdisable horizontal beams\n";
+    "-m, --mode\tdrawing mode. Avaliable: avr, max3, rgb, red, green, blue\n"
+    "--nv\tdisable vertical beams\n"
+    "--nh\tdisable horizontal beams\n"
     "--nd\tdisable diagonal beams\n";
 // parse opts:
   CmdParser parser(options);
@@ -108,8 +108,8 @@ template <auto func> static void stars_full(seze::Image& dst) {
   iferror(local_threshold <= 0, "stars_full: 255.0f - threshold <= 0");
   int ilen_bnd = std::ceil(config::len);
   auto threshold = config::threshold;
-  auto my = dst.get_y();
-  auto mx = dst.get_x();
+  auto my = dst.Y;
+  auto mx = dst.X;
   for (int y = ilen_bnd; y < my - ilen_bnd; ++y)
   for (int x = ilen_bnd; x < mx - ilen_bnd; ++x) {
     auto col = buffer.fast_get<seze::RGB24>(x, y);
@@ -166,8 +166,8 @@ static void stars_rgb(seze::Image& dst, bool use_red, bool use_green, bool use_b
   iferror(local_threshold <= 0, "stars_full: 255.0f - threshold <= 0");
   int ilen_bnd = std::ceil(config::len);
   auto threshold = config::threshold;
-  auto my = dst.get_y();
-  auto mx = dst.get_x();
+  auto my = dst.Y;
+  auto mx = dst.X;
   for (int y = ilen_bnd; y < my - ilen_bnd; ++y)
   for (int x = ilen_bnd; x < mx - ilen_bnd; ++x) {
     auto col = buffer.fast_get<seze::RGB24>(x, y);

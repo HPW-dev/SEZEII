@@ -12,9 +12,9 @@ TVsim_BW::~TVsim_BW() {
 }
 
 void TVsim_BW::process(seze::Image& dst) {
-  if (dst.type() == seze_RGB24)
+  if (dst.type == seze_RGB24)
     RGB24_to_gray(*buffer, dst);
-  else if (dst.type() == seze_gray)
+  else if (dst.type == seze_gray)
     gray_to_fgray(*buffer, dst);
   else
     error("TVsim_BW.process: unsupported color format");
@@ -27,7 +27,7 @@ void TVsim_BW::process(seze::Image& dst) {
   if (tv::enable_AM)
     demodulate(stream, tv::AM_ratio_out, tv::AM_shift);
   decode_to(stream, *buffer);
-  if (dst.type() == seze_RGB24)
+  if (dst.type == seze_RGB24)
     gray_to_RGB24(dst, *buffer);
   else
     fgray_to_gray(dst, *buffer);
@@ -63,7 +63,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
       case State::first_str: {
         FOR (str, tv::first_strings) {
           // blank data
-          FOR (x, src.get_x() + tv::first_bound + tv::second_bound)
+          FOR (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
           FOR (x, tv::hsync_size)
@@ -75,7 +75,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
       case State::second_str: {
         FOR (str, tv::second_strings) {
           // blank data
-          FOR (x, src.get_x() + tv::first_bound + tv::second_bound)
+          FOR (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
           FOR (x, tv::hsync_size)
@@ -97,7 +97,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
         break;
       }
       case State::data: {
-        FOR (x, src.get_x()) {
+        FOR (x, src.X) {
           component luma;
           if (tv::interlace) {
             if (is_odd_string)
@@ -118,7 +118,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
         FOR (x, tv::hsync_size)
           ret.data.push_back(tv::sync_level);
         src_y += tv::interlace ? 2 : 1;
-        if (src_y >= src.get_y())
+        if (src_y >= src.Y)
           state = State::second_str;
         else
           state = State::first_bound;
@@ -141,7 +141,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
 
 void TVsim_BW::decode_to(CN(Stream) src, seze::Image& dst) {
   // color fading
-  FOR (i, display->size()) {
+  FOR (i, display->size) {
     auto& c = display->fast_get<component>(i);
     c -= tv::fading;
   }
@@ -156,9 +156,9 @@ void TVsim_BW::decode_to(CN(Stream) src, seze::Image& dst) {
     auto val = src.data[i];
     // beam bounds:
     beam_x = std::clamp<component>(beam_x, -tv::hbound,
-      display->get_x() + tv::hbound);
+      display->X + tv::hbound);
     beam_y = std::clamp<component>(beam_y, -tv::hbound,
-      display->get_y() + tv::hbound);
+      display->Y + tv::hbound);
     // data
     if (val >= tv::black_level) {
       beam_x += tv::beam_speed;

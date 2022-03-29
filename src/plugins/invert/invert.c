@@ -1,4 +1,4 @@
-#include "../../../plugin-api.h"
+#include "plugin-api.h"
 
 struct PluginInfo init(const char* options) {
   struct PluginInfo info;

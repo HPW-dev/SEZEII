@@ -7,7 +7,13 @@ if (is_linux):
   platform_dir = "linux"
 plugin_out = "../../bin/plugins/" + platform_dir + "/free/"
 
-modules = ["../../modules/itlib/include"]
+modules = [
+  "../../modules/itlib/include",
+  ".",
+  "..",
+  "../..", # for plugin-api
+]
+src_dir = "../"
 
 env.SharedLibrary(
   target = plugin_out + "invert",
@@ -22,9 +28,9 @@ env.SharedLibrary(
   target = plugin_out + "colorop",
   source = [
     "colorop/colorop.cpp",
-    "../utils/cmd-parser.cpp",
-    "../utils/random.cpp",
-    "../utils/aalloc.cpp",
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "utils/random.cpp",
+    src_dir + "utils/aalloc.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
@@ -36,10 +42,10 @@ env.SharedLibrary(
   target = plugin_out + "pixelsort",
   source = [
     "pixelsort/pixelsort.cpp",
-    "../image/image.cpp",
-    "../image/color.cpp",
-    "../utils/aalloc.cpp",
-    "../utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    src_dir + "utils/cmd-parser.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
@@ -51,8 +57,8 @@ env.SharedLibrary(
   target = plugin_out + "lineswap",
   source = [
     "lineswap/lineswap.cpp",
-    "../utils/cmd-parser.cpp",
-    "../utils/random.cpp",
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "utils/random.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
@@ -64,10 +70,10 @@ env.SharedLibrary(
   target = plugin_out + "average",
   source = [
     "frame-average/frame-average.cpp",
-    "../utils/cmd-parser.cpp",
-    "../image/image.cpp",
-    "../image/color.cpp",
-    "../utils/aalloc.cpp",
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
@@ -79,11 +85,11 @@ env.SharedLibrary(
   target = plugin_out + "tvsim",
   source = [
     Glob("tvsim/*.cpp"),
-    "../utils/cmd-parser.cpp",
-    "../image/image.cpp",
-    "../image/color.cpp",
-    "../utils/aalloc.cpp",
-    "../utils/random.cpp",
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    src_dir + "utils/random.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
@@ -95,11 +101,11 @@ env.SharedLibrary(
   target = plugin_out + "stars",
   source = [
     Glob("stars/*.cpp"),
-    "../utils/cmd-parser.cpp",
-    "../image/image.cpp",
-    "../image/color.cpp",
-    "../utils/aalloc.cpp",
-    "../utils/random.cpp",
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    src_dir + "utils/random.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
@@ -111,11 +117,59 @@ env.SharedLibrary(
   target = plugin_out + "rdither",
   source = [
     Glob("rdither/*.cpp"),
-    "../utils/cmd-parser.cpp",
-    "../image/image.cpp",
-    "../image/color.cpp",
-    "../utils/aalloc.cpp",
-    "../utils/random.cpp",
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    src_dir + "utils/random.cpp",
+  ],
+  CXX = compiler,
+  CPPDEFINES = defines,
+  LINKFLAGS = ld_flags,
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
+
+env.SharedLibrary(
+  target = plugin_out + "shatter",
+  source = [
+    Glob("shatter/*.cpp"),
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    src_dir + "utils/random.cpp",
+  ],
+  CXX = compiler,
+  CPPDEFINES = defines,
+  LINKFLAGS = ld_flags,
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
+
+env.SharedLibrary(
+  target = plugin_out + "3d-denoise",
+  source = [
+    Glob("3d-denoise/*.cpp"),
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    src_dir + "utils/log.cpp",
+  ],
+  CXX = compiler,
+  CPPDEFINES = defines,
+  LINKFLAGS = ld_flags,
+  CXXFLAGS = cpp_flags,
+  CPPPATH = modules)
+
+env.SharedLibrary(
+  target = plugin_out + "stabilyzer",
+  source = [
+    Glob("stabilyzer/*.cpp"),
+    src_dir + "utils/cmd-parser.cpp",
+    src_dir + "image/image.cpp",
+    src_dir + "image/color.cpp",
+    src_dir + "utils/aalloc.cpp",
+    #src_dir + "utils/log.cpp",
   ],
   CXX = compiler,
   CPPDEFINES = defines,
