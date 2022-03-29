@@ -46,7 +46,7 @@ struct PluginInfo init(CP(char) options) {
   PluginInfo_init(&info);
   info.color_type = seze_RGB24;
   info.title = "Video stabilyzer";
-  info.version = 3;
+  info.version = 4;
   bit_disable(&info.flags, PLGNINF_MULTITHREAD);
   rotate_f = &rotate_bicubic;
   stretch_f = &stretch_fast;
