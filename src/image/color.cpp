@@ -21,7 +21,6 @@ byte* _make_pixels(size_t size) {
 
 byte* make_pixels(color_t type, int pixel_count) {
   auto size = pixel_count * get_size(type);
-  // TODO aligned alloc
   switch (type) {
     case seze_RGB555: return _make_pixels<RGB555>(size); break;
     case seze_RGB565: return _make_pixels<RGB565>(size); break;

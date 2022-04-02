@@ -161,6 +161,8 @@ env.SharedLibrary(
   CXXFLAGS = cpp_flags,
   CPPPATH = modules)
 
+'''
+пока не могу добавить это
 env.SharedLibrary(
   target = plugin_out + "stabilyzer",
   source = [
@@ -176,3 +178,4 @@ env.SharedLibrary(
   LINKFLAGS = ld_flags,
   CXXFLAGS = cpp_flags,
   CPPPATH = modules)
+'''
