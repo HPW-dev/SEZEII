@@ -16,7 +16,7 @@ namespace seze {
 
 struct ReaderCtx {
   double framerate = 0;
-  AVCodec* codec = nullptr;
+  CP(AVCodec) codec = nullptr;
   AVFrame* av_frame = nullptr;
   AVStream* stream = nullptr;
   AVPacket* av_packet = nullptr;

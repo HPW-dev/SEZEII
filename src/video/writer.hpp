@@ -8,14 +8,14 @@ namespace seze {
 class Writer {
   ReaderCtx reader_ctx = {};
   int64_t pts = 0;
-  AVCodec* codec = nullptr;
-  AVFrame* av_frame = nullptr;
-  AVStream* stream = nullptr;
-  AVStream* video_avs = nullptr;
-  SwsContext* swsctx = nullptr;
-  AVOutputFormat* format = nullptr;
-  AVCodecContext* codec_context = nullptr;
-  AVFormatContext* format_context = nullptr;
+  CP(AVCodec) codec = {};
+  AVFrame* av_frame = {};
+  AVStream* stream = {};
+  AVStream* video_avs = {};
+  SwsContext* swsctx = {};
+  CP(AVOutputFormat) format = {};
+  AVCodecContext* codec_context = {};
+  AVFormatContext* format_context = {};
   AVPixelFormat in_pix_fmt = AV_PIX_FMT_NONE;
   AVPixelFormat out_pix_fmt = AV_PIX_FMT_NONE;
   int frame_x = 0, frame_y = 0;

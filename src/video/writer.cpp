@@ -27,7 +27,7 @@ int out_x, int out_y, CN(ReaderCtx) reader_ctx_, bool simple_encoder) {
 // guess format
   format = av_guess_format(NULL, oname.c_str(), NULL);
   iferror( !format, "Writer: Could not create format");
-  format->video_codec = codec->id;
+  const_cast<AVOutputFormat*>(format)->video_codec = codec->id;
 // encoding settings:
   codec_context = avcodec_alloc_context3(codec);
   iferror( !codec_context, "Writer: Could not allocate context for the codec");
@@ -56,10 +56,11 @@ int out_x, int out_y, CN(ReaderCtx) reader_ctx_, bool simple_encoder) {
   codec_context->max_b_frames = 0; 
   codec_context->thread_count = 4;
   codec_context->refs = 3;
-  if (auto ret = avformat_alloc_output_context2(&format_context, format,
-  NULL, NULL); ret < 0 || !format_context)
+  if (auto ret = avformat_alloc_output_context2(&format_context,
+    const_cast<AVOutputFormat*>(format),
+    NULL, NULL); ret < 0 || !format_context)
     error("Writer: Could not allocate format context");
-  format_context->oformat = format;
+  format_context->oformat = const_cast<AVOutputFormat*>(format);
   format_context->video_codec_id = codec->id;
 // init stream
   stream = avformat_new_stream(format_context, codec);

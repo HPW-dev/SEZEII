@@ -10,16 +10,16 @@ namespace seze {
 class Reader {
   FramebufferInfo framebuffer_info = {};
   double framerate = 0;
-  AVCodec* codec = nullptr;
-  AVFrame* av_frame = nullptr;
-  AVFrame* av_frame_output = nullptr;
-  AVStream* in_stream = nullptr;
-  AVPacket* av_packet = nullptr;
-  SwsContext* swsctx = nullptr;
-  SwsContext* swsctx4seze = nullptr;
-  AVCodecContext* codec_context = nullptr;
-  AVFormatContext* format_context = nullptr;
-  AVCodecParameters* codec_parms = nullptr;
+  CP(AVCodec) codec = {};
+  AVFrame* av_frame = {};
+  AVFrame* av_frame_output = {};
+  AVStream* in_stream = {};
+  AVPacket* av_packet = {};
+  SwsContext* swsctx = {};
+  SwsContext* swsctx4seze = {};
+  AVCodecContext* codec_context = {};
+  AVFormatContext* format_context = {};
+  AVCodecParameters* codec_parms = {};
   AVPixelFormat dst_pix_fmt = AV_PIX_FMT_NONE;
   uint vstream = -1;
 public:
