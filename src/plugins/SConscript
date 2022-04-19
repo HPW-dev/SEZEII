@@ -15,167 +15,110 @@ modules = [
 ]
 src_dir = "../"
 
-env.SharedLibrary(
-  target = plugin_out + "invert",
-  source = "invert/invert.c",
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+def make_shared_lib(name, sources):
+  env.SharedLibrary(
+    target = plugin_out + "name",
+    source = sources,
+    CXX = compiler,
+    CPPDEFINES = defines,
+    LINKFLAGS = ld_flags,
+    CXXFLAGS = cpp_flags,
+    CPPPATH = modules
+  )
 
-env.SharedLibrary(
-  target = plugin_out + "colorop",
-  source = [
-    "colorop/colorop.cpp",
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "utils/random.cpp",
-    src_dir + "utils/aalloc.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("invert", "invert/invert.c")
 
-env.SharedLibrary(
-  target = plugin_out + "pixelsort",
-  source = [
-    "pixelsort/pixelsort.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/cmd-parser.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("colorop", [
+  "colorop/colorop.cpp",
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "utils/random.cpp",
+  src_dir + "utils/aalloc.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "lineswap",
-  source = [
-    "lineswap/lineswap.cpp",
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "utils/random.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("pixelsort", [
+  "pixelsort/pixelsort.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/cmd-parser.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "average",
-  source = [
-    "frame-average/frame-average.cpp",
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("lineswap", [
+  "lineswap/lineswap.cpp",
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "utils/random.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "tvsim",
-  source = [
-    Glob("tvsim/*.cpp"),
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/random.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("average", [
+  "frame-average/frame-average.cpp",
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "stars",
-  source = [
-    Glob("stars/*.cpp"),
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/random.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("tvsim", [
+  Glob("tvsim/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/random.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "rdither",
-  source = [
-    Glob("rdither/*.cpp"),
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/random.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("stars", [
+  Glob("stars/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/random.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "shatter",
-  source = [
-    Glob("shatter/*.cpp"),
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/random.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("rdither", [
+  Glob("rdither/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/random.cpp",
+])
 
-env.SharedLibrary(
-  target = plugin_out + "3d-denoise",
-  source = [
-    Glob("3d-denoise/*.cpp"),
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/log.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("shatter", [
+  Glob("shatter/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/random.cpp",
+])
+
+make_shared_lib("3d-denoise", [
+  Glob("3d-denoise/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/log.cpp",
+])
 
 '''
 пока не могу добавить это
-env.SharedLibrary(
-  target = plugin_out + "stabilyzer",
-  source = [
-    Glob("stabilyzer/*.cpp"),
-    src_dir + "utils/cmd-parser.cpp",
-    src_dir + "image/image.cpp",
-    src_dir + "image/color.cpp",
-    src_dir + "utils/aalloc.cpp",
-    src_dir + "utils/log.cpp",
-  ],
-  CXX = compiler,
-  CPPDEFINES = defines,
-  LINKFLAGS = ld_flags,
-  CXXFLAGS = cpp_flags,
-  CPPPATH = modules)
+make_shared_lib("stabilyzer", [
+  Glob("stabilyzer/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/log.cpp",
+])
 '''
+
+make_shared_lib("gigascreen", [
+  Glob("gigascreen/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "utils/log.cpp",
+])
