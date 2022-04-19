@@ -17,7 +17,7 @@ src_dir = "../"
 
 def make_shared_lib(name, sources):
   env.SharedLibrary(
-    target = plugin_out + "name",
+    target = plugin_out + name,
     source = sources,
     CXX = compiler,
     CPPDEFINES = defines,
