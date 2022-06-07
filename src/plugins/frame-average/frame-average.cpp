@@ -1,3 +1,8 @@
+#include <omp.h>
+#include <cstring>
+#include <atomic>
+#include <map>
+#include <mutex>
 extern "C" {
 #include "plugin-api.h"
 }
@@ -7,9 +12,6 @@ extern "C" {
 #include "utils/random.hpp"
 #include "image/rgb24.hpp"
 #include "image/image.hpp"
-#include <cstring>
-#include <atomic>
-#include <map>
 
 using namespace seze;
 
@@ -28,16 +30,17 @@ void bitop_min(byte& y, CN(byte) x) { y = std::min(x, y); }
 void bitop_max(byte& y, CN(byte) x) { y = std::max(x, y); }
 
 namespace config {
-  int count = 6; ///< count of frames 4 avr
+  uint count = 6; ///< count of frames 4 avr
   bool glitch_mode = false;
   mode_e mode = mode_e::average;
   ft_bitop bitop = nullptr;
 }
 
 namespace {
-  std::vector<Image*> frames = {};
+  std::vector<shared_p<Image>> frames = {};
   std::atomic_int current_frame = 0;
   std::mutex mu = {};
+  inline std::once_flag frame_init_once_flag = {};
 }
 
 PluginInfo init(const char* options) {
@@ -84,11 +87,10 @@ PluginInfo init(const char* options) {
 
 static void init_frames(CN(seze::Image) src) {
   std::lock_guard<decltype(mu)> lock(mu);
-  if (frames.empty())
-    FOR (i, config::count) {
-      auto pic = new seze::Image(src);
-      frames.push_back(pic);
-    }
+  FOR (i, config::count) {
+    auto pic = make_shared_p<seze::Image>(src);
+    frames.push_back(pic);
+  }
 }
 
 static void frame_push(CN(seze::Image) src) {
@@ -96,21 +98,26 @@ static void frame_push(CN(seze::Image) src) {
   current_frame = (++current_frame) % config::count;
 }
 
-static void average_to_frame(seze::Image& dst) {
-  if (config::mode == mode_e::average) { // avr
-    FOR (i, dst.size) {
-      int R = 0, G = 0, B = 0;
-      for (CN(auto) frame: frames) {
-        auto c = frame->fast_get<RGB24>(i);
-        R += c.R;
-        G += c.G;
-        B += c.B;
-      }
-      dst.fast_set(i, RGB24(
-        R / config::count,
-        G / config::count,
-        B / config::count));
+void average_process(seze::Image &dst) {
+  #pragma omp parallel for
+  FOR (i, dst.size) {
+    uint R = 0, G = 0, B = 0;
+    for (CN(auto) frame: frames) {
+      auto c = frame->fast_get<RGB24>(i);
+      R += c.R;
+      G += c.G;
+      B += c.B;
     }
+    dst.fast_set(i, RGB24(
+      R / config::count,
+      G / config::count,
+      B / config::count) );
+  }
+} // average_process
+
+static void average_to_frame(seze::Image &dst) {
+  if (config::mode == mode_e::average) {
+    average_process(dst);
   } else { // other bitop's
     FOR (i, dst.size) {
       auto& dc = dst.fast_get<RGB24>(i);
@@ -128,12 +135,11 @@ static void average_to_frame(seze::Image& dst) {
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   iferror( !dst, "core: dst is null");
   seze::Image dst_pic(dst, mx, my, color_type);
-  init_frames(dst_pic);
+  std::call_once(frame_init_once_flag, &init_frames, dst_pic);
   frame_push(dst_pic);
   average_to_frame(dst_pic);
 } // core
 
 void finalize() {
-  for (auto& va: frames)
-    delete va;
+  frames.clear();
 }
