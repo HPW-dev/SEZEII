@@ -6,6 +6,7 @@ extern "C" {
 #include "utils/cmd-parser.hpp"
 #include "utils/random.hpp"
 #include <cstring>
+#include <algorithm>
 
 using namespace seze;
 

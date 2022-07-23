@@ -2,6 +2,7 @@
 #include <cstring>
 #include <vector>
 #include <numeric>
+#include <algorithm>
 extern "C" {
 #include "plugin-api.h"
 }

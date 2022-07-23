@@ -23,7 +23,7 @@ template <class T>
 using shared_p = std::shared_ptr<T>;
 
 template <class T, typename... Args>
-inline shared_p<T> make_shared_p(Args&&... args)
+shared_p<T> make_shared_p(Args&&... args)
   { return std::make_shared<T>(args...); }
 
 #ifndef ALIGN

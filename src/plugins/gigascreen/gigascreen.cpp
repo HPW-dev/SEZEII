@@ -1,4 +1,5 @@
 #include <map>
+#include <atomic>
 extern "C" {
 #include "plugin-api.h"
 }

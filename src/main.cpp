@@ -1,30 +1,30 @@
+#include <iostream>
+#include <vector>
+#include <thread>
+#include <SDL2/SDL.h>
 #include "video/reader.hpp"
 #include "video/writer.hpp"
 #include "image/rgb24.hpp"
 #include "image/RGB555-RGB565.hpp"
 #include "main-config.hpp"
-#include <SDL2/SDL.h>
-#include <iostream>
-#include <vector>
-#include <thread>
 
 //! copy seze-image data 2 SDL surface
-void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
+void image_to_surface(CP(seze::Image) src, SDL_Surface *dst) {
   if (src->type == seze_RGB24) {
-    auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_data();
-    auto pEnd = &pSrc[src->bytes];
+    auto pDst {rcast(byte*, dst->pixels)};
+    auto pSrc {src->get_cdata()};
+    auto pEnd {&pSrc[src->bytes]};
     while (pSrc != pEnd) {
-      pDst[0] = pSrc[2];
-      pDst[1] = pSrc[1];
       pDst[2] = pSrc[0];
+      pDst[1] = pSrc[1];
+      pDst[0] = pSrc[2];
       pDst += 4; // BGRA
       pSrc += 3; // RGB
     }
   } else if (src->type == seze_gray) {
-    auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_data();
-    auto pEnd = &pSrc[src->bytes];
+    auto pDst {rcast(byte*, dst->pixels)};
+    auto pSrc {src->get_cdata()};
+    auto pEnd {&pSrc[src->bytes]};
     while (pSrc != pEnd) {
       pDst[0] = *pSrc;
       pDst[1] = *pSrc;
@@ -33,9 +33,9 @@ void image_to_surface(CP(seze::Image) src, SDL_Surface* dst) {
       pSrc += 1; // luma
     }
   } else if (src->type == seze_RGB565) {
-    auto pDst = rcast(byte*, dst->pixels);
-    auto pSrc = src->get_data();
-    auto pEnd = &pSrc[src->bytes];
+    auto pDst {rcast(byte*, dst->pixels)};
+    auto pSrc {src->get_cdata()};
+    auto pEnd {&pSrc[src->bytes]};
     while (pSrc != pEnd) {
       seze::RGB565 col(*rcast(CP(uint16_t), pSrc));
       byte r, g, b;

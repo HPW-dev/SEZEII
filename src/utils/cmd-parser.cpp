@@ -1,6 +1,7 @@
 #include "cmd-parser.hpp"
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 CmdParser::CmdParser(int argc, char *argv[]) {
   for (int i = 1; i < argc; ++i) // ignore first arg
