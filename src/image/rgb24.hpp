@@ -7,7 +7,7 @@ template <typename T>
 struct RGB_base {
 public:
   T R = 0, G = 0, B = 0;
-  RGB_base(T r=0, T g=0, T b=0): R(r), G(g), B(b) {}
+  constexpr RGB_base(T r=0, T g=0, T b=0): R(r), G(g), B(b) {}
 
   template <typename T2>
   bool operator ==(CN(RGB_base<T2>) other) const

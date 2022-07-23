@@ -122,3 +122,19 @@ make_shared_lib("gigascreen", [
   src_dir + "utils/aalloc.cpp",
   src_dir + "utils/log.cpp",
 ])
+
+make_shared_lib("quantizer", [
+  Glob("quantizer/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+])
+
+make_shared_lib("old pc", [
+  Glob("old.pc/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "utils/aalloc.cpp",
+])
