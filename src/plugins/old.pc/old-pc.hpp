@@ -8,6 +8,7 @@ namespace seze { class Image; }
 class Color_finder;
 class Color_selector;
 class Palette_accepter;
+class Dither;
 
 class Old_pc {
   Palette pal {};
@@ -15,12 +16,13 @@ class Old_pc {
   Color_finder *color_finder {};
   Color_selector *color_selector {};
   Palette_accepter *palette_accepter {};
+  Dither *dither {};
 
   void process_block(seze::Image &dst, CN(urect) area);
 
 public:
   Old_pc(CN(Palette) pal_, CN(vec2u) block_size_,
     Color_finder *color_finder_, Color_selector *color_selector_,
-    Palette_accepter *palette_accepter_);
+    Palette_accepter *palette_accepter_, Dither *dither_);
   void operator()(seze::Image &dst);
 };

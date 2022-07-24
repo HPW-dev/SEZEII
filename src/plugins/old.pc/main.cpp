@@ -12,6 +12,8 @@ extern "C" {
 #include "color-finder-most-common.hpp"
 #include "color-selector-diff.hpp"
 #include "palette-accepter-diff.hpp"
+#include "palette-accepter-empty.hpp"
+#include "dither.hpp"
 
 using namespace seze;
 
@@ -19,6 +21,7 @@ static shared_p<Old_pc> old_pc {};
 static shared_p<Color_finder> color_finder {};
 static shared_p<Color_selector> сolor_selector {};
 static shared_p<Palette_accepter> palette_accepter {};
+static shared_p<Dither> dither {};
 
 void parse_opts(CP(char) options) { 
 // parse opts:
@@ -64,8 +67,10 @@ PluginInfo init(CP(char) options) {
   color_finder = make_shared_p<Color_finder_minmax>();
   сolor_selector = make_shared_p<Color_selector_diff>();
   palette_accepter = make_shared_p<Palette_accepter_diff>();
-  old_pc = make_shared_p<Old_pc>(pal, vec2u{16, 16},
-    color_finder.get(), сolor_selector.get(), palette_accepter.get());
+  //dither = make_shared_p<Dither_empty>();
+  old_pc = make_shared_p<Old_pc>(pal, vec2u{32, 32},
+    color_finder.get(), сolor_selector.get(),
+    palette_accepter.get(), dither.get());
 
   return info;
 } // init

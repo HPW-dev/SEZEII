@@ -1,30 +1,39 @@
+#include <vector>
+#include <algorithm>
 #include "color-finder-most-common.hpp"
 #include "image/image.hpp"
 
+struct Color_count {
+  seze::RGB24 col {};
+  uint cnt {0};
+};
+
+static bool operator ==(CN(Color_count) src, CN(seze::RGB24) col)
+  { return src.col == col; }
+
 void Color_finder_most_common::operator()(CN(seze::Image) src, CN(urect) area,
 seze::RGB24 &a, seze::RGB24 &b) {
-  // создать список самых часто встречаемых цветов и сохранить выбрать из них a и b
-  /*seze::RGB24 col_min {};
-  seze::RGB24 col_max {};
-  uint col_max_sum {};
-  uint col_min_sum {};
-  col_max_sum = 0;
-  col_min_sum = 255 + 255 + 255;
-  col_max = col_min = {};
-  // найти два цвета для блока
-  for (uint y = area.pos.y; y < area.pos.y + area.size.y; ++y)
-  for (uint x = area.pos.x; x < area.pos.x + area.size.x; ++x) {
+  /* создать список самых часто встречаемых цветов и
+  выбрать из них последний и первый цвет в списке*/
+  std::vector<Color_count> most_common;
+  for (uint y {area.pos.y}; y < area.pos.y + area.size.y; ++y)
+  for (uint x {area.pos.x}; x < area.pos.x + area.size.x; ++x) {
     auto col_src {src.fast_get<seze::RGB24>(x, y)};
-    auto sum {col_src.R + col_src.G + col_src.B};
-    if (sum > col_max_sum) {
-      col_max_sum = sum;
-      col_max = col_src;
-    }
-    if (sum < col_min_sum) {
-      col_min_sum = sum;
-      col_min = col_src;
-    }
+    auto it {std::find(most_common.begin(), most_common.end(), col_src)};
+    if (it == most_common.end())
+      most_common.push_back({col_src, 0});
+    else
+      ++it->cnt;
   }
-  a = col_min;
-  b = col_max;*/
+  // отсортировать по ворзастанию
+  std::sort(most_common.begin(), most_common.end(), 
+    [](CN(Color_count) a, CN(Color_count) b)->bool
+      { return a.cnt < b.cnt; }
+  );
+  // если список из одного элемента:
+  b = most_common.back().col;
+  if (most_common.size() > 1)
+    a = most_common.front().col;
+  else
+    a = b;
 } // ()

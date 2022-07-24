@@ -7,12 +7,13 @@
 
 Old_pc::Old_pc(CN(Palette) pal_, CN(vec2u) block_size_,
 Color_finder *color_finder_, Color_selector *color_selector_,
-Palette_accepter *palette_accepter_)
+Palette_accepter *palette_accepter_, Dither *dither_)
 : pal{pal_}
 , block_size{block_size_}
 , color_finder{color_finder_}
 , color_selector{color_selector_}
-, palette_accepter{palette_accepter_} {
+, palette_accepter{palette_accepter_}
+, dither{dither_} {
   iferror(pal.empty(), "Old_pc(): empty palette");
   iferror(block_size.x == 0 || block_size.y == 0,
     "Old_pc(): block_size is null len");
@@ -36,14 +37,15 @@ void Old_pc::operator()(seze::Image &dst) {
 
 void Old_pc::process_block(seze::Image &dst, CN(urect) area) {
   seze::RGB24 a, b;
-  (*color_finder)(dst, area, a, b);
-  //a = (*palette_accepter)(a, pal);
-  //b = (*palette_accepter)(b, pal);
-  for (uint y = area.pos.y; y < area.pos.y + area.size.y; ++y)
-  for (uint x = area.pos.x; x < area.pos.x + area.size.x; ++x) {
-    auto &col {dst.fast_get<seze::RGB24>(x, y)};
-    //col = (*palette_accepter)(col, pal);
-    col = (*color_selector)(col, a, b);
-    col = (*palette_accepter)(col, pal);
+  if (dither) {
+    // TODO
+  } else {
+    (*color_finder)(dst, area, a, b);
+    for (uint y = area.pos.y; y < area.pos.y + area.size.y; ++y)
+    for (uint x = area.pos.x; x < area.pos.x + area.size.x; ++x) {
+      auto &col {dst.fast_get<seze::RGB24>(x, y)};
+      col = (*color_selector)(col, a, b);
+      col = (*palette_accepter)(col, pal);
+    }
   }
 } // process_block
