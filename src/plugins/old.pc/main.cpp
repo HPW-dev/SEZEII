@@ -6,8 +6,19 @@ extern "C" {
 #include "utils/random.hpp"
 #include "image/rgb24.hpp"
 #include "image/image.hpp"
+#include "palette.hpp"
+#include "old-pc.hpp"
+#include "color-finder-minmax.hpp"
+#include "color-finder-most-common.hpp"
+#include "color-selector-diff.hpp"
+#include "palette-accepter-diff.hpp"
 
 using namespace seze;
+
+static shared_p<Old_pc> old_pc {};
+static shared_p<Color_finder> color_finder {};
+static shared_p<Color_selector> сolor_selector {};
+static shared_p<Palette_accepter> palette_accepter {};
 
 void parse_opts(CP(char) options) { 
 // parse opts:
@@ -47,6 +58,15 @@ PluginInfo init(CP(char) options) {
   info.info = "usage:\n";
   bit_enable(&info.flags, PLGNINF_MULTITHREAD);
   parse_opts(options);
+
+  Palette pal;
+  init_rgb1b(pal);
+  color_finder = make_shared_p<Color_finder_minmax>();
+  сolor_selector = make_shared_p<Color_selector_diff>();
+  palette_accepter = make_shared_p<Palette_accepter_diff>();
+  old_pc = make_shared_p<Old_pc>(pal, vec2u{16, 16},
+    color_finder.get(), сolor_selector.get(), palette_accepter.get());
+
   return info;
 } // init
 
@@ -55,6 +75,7 @@ void core(byte* p_dst, int mx, int my, int stride, color_t color_type) {
   iferror( color_type != color_t::seze_RGB24,
     "core: color_type is not RGB24");
   seze::Image dst_pic(p_dst, mx, my, color_type);
+  (*old_pc)(dst_pic);
 } // core
 
 void finalize() {}
