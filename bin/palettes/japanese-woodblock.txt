@@ -1,0 +1,17 @@
+;paint.net Palette File
+;Downloaded from Lospec.com/palette-list
+;Palette Name: Japanese Woodblock
+;Description: 12 colours sampled from old Japanese woodblock prints.
+;Colors: 12
+FF2b2821
+FF624c3c
+FFd9ac8b
+FFe3cfb4
+FF243d5c
+FF5d7275
+FF5c8b93
+FFb1a58d
+FFb03a48
+FFd4804d
+FFe0c872
+FF3e6958

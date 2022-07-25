@@ -1,0 +1,13 @@
+;paint.net Palette File
+;Downloaded from Lospec.com/palette-list
+;Palette Name: SLSO8
+;Description: 
+;Colors: 8
+FF0d2b45
+FF203c56
+FF544e68
+FF8d697a
+FFd08159
+FFffaa5e
+FFffd4a3
+FFffecd6

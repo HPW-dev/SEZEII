@@ -1,0 +1,20 @@
+;paint.net Palette File
+;Downloaded from Lospec.com/palette-list
+;Palette Name: ZX Spectrum
+;Description: A true-to-hardware palette. Please note that the luminesence of the ZX Spectrum is dictated by the voltage output of the hardware (85% voltage for non-bright, 100% for bright) - so instead of using E/F values as dictated in the wikipedia article in the hex for non-bright/bright, the colours are instead D8/FF (D8 being 85% of FF). For example, non-bright red is given as EE0000 in the article - instead it has been portrayed here as D80000 to give as close to hardware output as possible on modern screens.
+;Colors: 15
+FF000000
+FF0000d8
+FF0000ff
+FFd80000
+FFff0000
+FFd800d8
+FFff00ff
+FF00d800
+FF00ff00
+FF00d8d8
+FF00ffff
+FFd8d800
+FFffff00
+FFd8d8d8
+FFffffff
