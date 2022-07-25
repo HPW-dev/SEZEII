@@ -20,3 +20,4 @@ bin/plugins/
 .vscode
 *__pycache__
 output/
+buid_gui/

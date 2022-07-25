@@ -41,7 +41,7 @@ PluginInfo init(CP(char) options) {
   info.color_type = seze_RGB24;
   info.title = "Color quantization plugin";
   info.info = "Usage:\n"
-    "-p, --palette\tpalette type name\n";
+    "-p, --palette\tpalette type name\n"
     "Available palette types: bw, rgb1bit, rgb2bit, rgb242";
   bit_enable(&info.flags, PLGNINF_MULTITHREAD);
   parse_opts(options);
