@@ -58,24 +58,38 @@ PluginInfo init(CP(char) options) {
   PluginInfo info;
   PluginInfo_init(&info);
   info.color_type = seze_RGB24;
-  info.title = "Frame average effect";
-  info.info = "usage:\n";
+  info.title = "Emulator for old pc graphic (MSX, ZX Spectrum)";
+  info.info = "Usage:\n"
+    "-f, --color-find\talg/ for find two colors in color block\n"
+    //#"-s, --color-select\talg/ for select result color in two finded colors\n"
+    "-a, --palette-alg\talg. for accept color from palette\n"
+    "-d, --dither\t\tdithering alg.\n"
+    "-v, --dither-value\tpower of dither effect\n"
+    "-p, --palette\t\tpdn palette file (.txt with hex)\n"
+    "-w, --width\t\twidth of color block\n"
+    "-h, --height\t\theight of color block\n"
+    "Avaliable dithers: 2x2, 16x16\n"
+    "Avaliable color find algs: mc, diff\n"
+    "Avaliable palette accept algs: none, diff\n"
+    "Example usage: -f diff -a diff -d 16x16 -v 2 -p \"path to palette.txt\" -w 16 -h 16\n"
+    ;
   bit_enable(&info.flags, PLGNINF_MULTITHREAD);
   parse_opts(options);
 
   Palette pal;
-  init_rgb1b(pal);
+  //init_rgb1b(pal);
+  load_pdn_pal(pal, "C:\\Users\\GANE standart\\Documents\\paint.net User Files\\Palettes\\ZeroRanger_GREEN_ORANGE.txt");
   color_finder = make_shared_p<Color_finder_minmax>();
   сolor_selector = make_shared_p<Color_selector_diff>();
   palette_accepter = make_shared_p<Palette_accepter_diff>();
-  dither = make_shared_p<Dither_bayer_16x16>();
+  dither = make_shared_p<Dither_bayer_2x2>();
   // настройка эффекта Old_pc:
   old_pc = make_shared_p<Old_pc>();
   old_pc->set_pal(pal);
   old_pc->set_block_size(vec2u{16, 16}); // TODO
   old_pc->set_color_finder(color_finder.get());
   old_pc->set_color_selector(сolor_selector.get());
-  old_pc->set_dither(dither.get(), 0.5);
+  old_pc->set_dither(dither.get(), 1);
   old_pc->set_palette_accepter(palette_accepter.get());
 
   return info;
