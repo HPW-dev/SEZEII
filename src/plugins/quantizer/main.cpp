@@ -19,7 +19,7 @@ static shared_p<Quantizer> quantizer {};
 
 void parse_opts(CP(char) options) {
   CmdParser parser(options);
-  // --op
+  // выбор палитры
   std::string pal_str {parser.get_options({"-p", "--palette"})};
   std::map<std::string, void (*)()> pal_table {
     {"bw", []{ quantizer = make_shared_p<BW_qnt>(); } },

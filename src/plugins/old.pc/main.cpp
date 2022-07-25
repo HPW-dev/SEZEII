@@ -1,3 +1,5 @@
+#include <map>
+#include <iostream>
 extern "C" {
 #include "plugin-api.h"
 }
@@ -24,35 +26,85 @@ static shared_p<Color_selector> сolor_selector {};
 static shared_p<Palette_accepter> palette_accepter {};
 static shared_p<Dither> dither {};
 
-void parse_opts(CP(char) options) { 
-// parse opts:
-  /*CmdParser parser(options);
-  // --op
-  std::string op_str = parser.get_options({"-o", "--op"});
-  static std::map<std::string, std::pair<ft_bitop, mode_e>>
-  op_table = {
-    {"average", {nullptr, mode_e::average}},
-    {"xor", {bitop_xor, mode_e::xor_}},
-    {"and", {bitop_and, mode_e::and_}},
-    {"or", {bitop_or, mode_e::or_}},
-    {"add", {bitop_add, mode_e::add}},
-    {"sub", {bitop_sub, mode_e::sub}},
-    {"mul", {bitop_mul, mode_e::mul}},
-    {"min", {bitop_min, mode_e::min}},
-    {"max", {bitop_max, mode_e::max}},
-  };
-  if ( !op_str.empty()) {
-    auto pair = op_table.at(op_str);
-    config::bitop = pair.first;
-    config::mode = pair.second;
+void parse_opts(CP(char) options) {
+  CmdParser parser(options);
+  Str str;
+// color finder
+  str = parser.get_options({"-f", "--color-find"});
+  if (str.empty()) {
+    color_finder = make_shared_p<Color_finder_minmax>();
+  } else {
+    std::map<Str, void (*)()> cf_table {
+      {"minmax", []{ color_finder = make_shared_p<Color_finder_minmax>(); } },
+      {"mc", []{ color_finder = make_shared_p<Color_finder_most_common>(); } },
+    };
+    try {
+      auto exec {cf_table.at(str)};
+      (*exec)();
+    } catch (...) {
+      error("core: need correct name for color finder");
+    }
   }
-  // --count
-  if (auto str = parser.get_options({"-c", "--count"}); !str.empty())
-    config::count = std::max(1, std::stoi(str));
-  // --glitch
-  config::glitch_mode = (parser.opt_exists("-g")
-    || parser.opt_exists("--glitch"));*/
-}
+
+// palette
+  Palette pal;
+  str = parser.get_options({"-p", "--palette"});
+  if (str.empty())
+    init_rgb1b(pal);
+  else
+    load_pdn_pal(pal, str);
+
+// palette accepter
+  str = parser.get_options({"-a", "--palette-alg"});
+  if (str.empty()) {
+    palette_accepter = make_shared_p<Palette_accepter_diff>();
+  } else {
+    std::map<Str, void (*)()> pal_table {
+      {"diff", []{ palette_accepter = make_shared_p<Palette_accepter_diff>(); } },
+      {"none", []{ palette_accepter = make_shared_p<Palette_accepter_empty>(); } },
+    };
+    try {
+      auto exec {pal_table.at(str)};
+      (*exec)();
+    } catch (...) {
+      error("core: need correct name for palette accept alg.");
+    }
+  }
+  
+// dither
+  str = parser.get_options({"-d", "--dither"});
+  if ( !str.empty()) {
+    std::map<Str, void (*)()> dith_table {
+      {"2x2", []{ dither = make_shared_p<Dither_bayer_2x2>(); } },
+      {"16x16", []{ dither = make_shared_p<Dither_bayer_16x16>(); } },
+    };
+    try {
+      auto exec {dith_table.at(str)};
+      (*exec)();
+    } catch (...) {
+      error("core: need correct name dithering alg.");
+    }
+  }
+
+  str = parser.get_options({"-w", "--width"});
+  auto w {std::stoi(str)};
+
+  str = parser.get_options({"-h", "--height"});
+  auto h {std::stoi(str)};
+
+  str = parser.get_options({"-v", "--dither-value"});
+  auto dither_power {std::stoi(str)};
+
+  // настройка эффекта Old_pc:
+  old_pc = make_shared_p<Old_pc>();
+  old_pc->set_pal(pal);
+  old_pc->set_block_size(vec2u{w, h});
+  old_pc->set_color_finder(color_finder.get());
+  сolor_selector = make_shared_p<Color_selector_diff>();
+  old_pc->set_color_selector(сolor_selector.get());
+  old_pc->set_dither(dither.get(), dither_power);
+  old_pc->set_palette_accepter(palette_accepter.get());
+} // parse_opts
 
 PluginInfo init(CP(char) options) {
   PluginInfo info;
@@ -69,29 +121,12 @@ PluginInfo init(CP(char) options) {
     "-w, --width\t\twidth of color block\n"
     "-h, --height\t\theight of color block\n"
     "Avaliable dithers: 2x2, 16x16\n"
-    "Avaliable color find algs: mc, diff\n"
+    "Avaliable color find algs: mc, minmax\n"
     "Avaliable palette accept algs: none, diff\n"
-    "Example usage: -f diff -a diff -d 16x16 -v 2 -p \"path to palette.txt\" -w 16 -h 16\n"
+    "Example usage: -f minmax -a diff -d 16x16 -v 2 -p \"path to palette.txt\" -w 16 -h 16\n"
     ;
   bit_enable(&info.flags, PLGNINF_MULTITHREAD);
   parse_opts(options);
-
-  Palette pal;
-  //init_rgb1b(pal);
-  load_pdn_pal(pal, "C:\\Users\\GANE standart\\Documents\\paint.net User Files\\Palettes\\ZeroRanger_GREEN_ORANGE.txt");
-  color_finder = make_shared_p<Color_finder_minmax>();
-  сolor_selector = make_shared_p<Color_selector_diff>();
-  palette_accepter = make_shared_p<Palette_accepter_diff>();
-  dither = make_shared_p<Dither_bayer_2x2>();
-  // настройка эффекта Old_pc:
-  old_pc = make_shared_p<Old_pc>();
-  old_pc->set_pal(pal);
-  old_pc->set_block_size(vec2u{16, 16}); // TODO
-  old_pc->set_color_finder(color_finder.get());
-  old_pc->set_color_selector(сolor_selector.get());
-  old_pc->set_dither(dither.get(), 1);
-  old_pc->set_palette_accepter(palette_accepter.get());
-
   return info;
 } // init
 
