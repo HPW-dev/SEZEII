@@ -87,13 +87,25 @@ void parse_opts(CP(char) options) {
   }
 
   str = parser.get_options({"-w", "--width"});
-  auto w {std::stoi(str)};
+  uint w;
+  if (str.empty())
+    w = 16;
+  else
+    w = std::stoul(str);
 
   str = parser.get_options({"-h", "--height"});
-  auto h {std::stoi(str)};
+  uint h;
+  if (str.empty())
+    h = 16;
+  else
+    h = std::stoul(str);
 
   str = parser.get_options({"-v", "--dither-value"});
-  auto dither_power {std::stoi(str)};
+  Real dither_power;
+  if (str.empty())
+    dither_power = 1.0f;
+  else
+    dither_power = std::stof(str);
 
   // настройка эффекта Old_pc:
   old_pc = make_shared_p<Old_pc>();
