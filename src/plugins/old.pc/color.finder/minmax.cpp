@@ -1,4 +1,4 @@
-#include "color-finder-minmax.hpp"
+#include "minmax.hpp"
 #include "image/image.hpp"
 
 void Color_finder_minmax::operator()(CN(seze::Image) src, CN(urect) area,

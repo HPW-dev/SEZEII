@@ -1,5 +1,5 @@
 #include <cmath>
-#include "color-selector-diff.hpp"
+#include "diff.hpp"
 
 seze::RGB24 Color_selector_diff::operator()(CN(seze::RGB24) src,
 CN(seze::RGB24) a, CN(seze::RGB24) b) {

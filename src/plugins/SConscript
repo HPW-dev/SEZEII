@@ -133,6 +133,10 @@ make_shared_lib("quantizer", [
 
 make_shared_lib("old pc", [
   Glob("old.pc/*.cpp"),
+  Glob("old.pc/palette.accepter/*.cpp"),
+  Glob("old.pc/color.finder/*.cpp"),
+  Glob("old.pc/color.selector/*.cpp"),
+  Glob("old.pc/dither/*.cpp"),
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",

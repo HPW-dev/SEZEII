@@ -23,12 +23,36 @@ public:
     { return R < other.R && G < other.G && B < other.B; }
   
   template <typename T2>
-  RGB_base<T> operator - (CN(RGB_base<T2>) other) const
-    { return RGB_base<T>(std::max(int(R - other.R), 0), std::max(int(G - other.G), 0), std::max(int(B - other.B), 0)); }
+  RGB_base<T> operator - (CN(RGB_base<T2>) other) const {
+    return RGB_base<T>(
+      std::clamp(int(R - other.R), 0, 255),
+      std::clamp(int(G - other.G), 0, 255),
+      std::clamp(int(B - other.B), 0, 255)
+    );
+  }
+
+  template <typename T2>
+  RGB_base<T> operator + (CN(RGB_base<T2>) other) const {
+    return RGB_base<T>(
+      std::clamp(int(R + other.R), 0, 255),
+      std::clamp(int(G + other.G), 0, 255),
+      std::clamp(int(B + other.B), 0, 255)
+    );
+  }
   
   template <typename T2>
-  RGB_base<T> operator + (CN(RGB_base<T2>) other) const
-    { return RGB_base<T>(std::min(int(R + other.R), 255), std::min(int(G + other.G), 255), std::min(int(B + other.B), 255)); }
+  void operator += (CN(RGB_base<T2>) other) {
+    R = std::clamp(int(R + other.R), 0, 255);
+    G = std::clamp(int(G + other.G), 0, 255);
+    B = std::clamp(int(B + other.B), 0, 255);
+  }
+
+  template <typename T2>
+  void operator += (T2 other) {
+    R = std::clamp(int(R + other), 0, 255);
+    G = std::clamp(int(G + other), 0, 255);
+    B = std::clamp(int(B + other), 0, 255);
+  }
 }; // RGB24
 
 using RGB24 = RGB_base<byte>;

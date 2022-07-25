@@ -1,5 +1,5 @@
 #include <cmath>
-#include "palette-accepter-diff.hpp"
+#include "diff.hpp"
 
 seze::RGB24 Palette_accepter_diff::operator()
 (CN(seze::RGB24) src, CN(Palette) pal) {

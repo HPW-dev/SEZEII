@@ -1,6 +1,6 @@
 #pragma once
 #include "image/rgb24.hpp"
-#include "palette.hpp"
+#include "src/plugins/old.pc/palette.hpp"
 
 //! функтор для конвертирования цвета в палитровый цвет
 class Palette_accepter {

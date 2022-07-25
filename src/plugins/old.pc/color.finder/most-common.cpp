@@ -1,6 +1,6 @@
 #include <vector>
 #include <algorithm>
-#include "color-finder-most-common.hpp"
+#include "most-common.hpp"
 #include "image/image.hpp"
 
 struct Color_count {

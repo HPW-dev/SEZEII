@@ -8,12 +8,13 @@ extern "C" {
 #include "image/image.hpp"
 #include "palette.hpp"
 #include "old-pc.hpp"
-#include "color-finder-minmax.hpp"
-#include "color-finder-most-common.hpp"
-#include "color-selector-diff.hpp"
-#include "palette-accepter-diff.hpp"
-#include "palette-accepter-empty.hpp"
-#include "dither.hpp"
+#include "color.finder/minmax.hpp"
+#include "color.finder/most-common.hpp"
+#include "color.selector/diff.hpp"
+#include "palette.accepter/diff.hpp"
+#include "palette.accepter/empty.hpp"
+#include "dither/bayer-2x2.hpp"
+#include "dither/bayer-16x16.hpp"
 
 using namespace seze;
 
@@ -67,10 +68,15 @@ PluginInfo init(CP(char) options) {
   color_finder = make_shared_p<Color_finder_minmax>();
   сolor_selector = make_shared_p<Color_selector_diff>();
   palette_accepter = make_shared_p<Palette_accepter_diff>();
-  //dither = make_shared_p<Dither_empty>();
-  old_pc = make_shared_p<Old_pc>(pal, vec2u{32, 32},
-    color_finder.get(), сolor_selector.get(),
-    palette_accepter.get(), dither.get());
+  dither = make_shared_p<Dither_bayer_16x16>();
+  // настройка эффекта Old_pc:
+  old_pc = make_shared_p<Old_pc>();
+  old_pc->set_pal(pal);
+  old_pc->set_block_size(vec2u{16, 16}); // TODO
+  old_pc->set_color_finder(color_finder.get());
+  old_pc->set_color_selector(сolor_selector.get());
+  old_pc->set_dither(dither.get(), 0.5);
+  old_pc->set_palette_accepter(palette_accepter.get());
 
   return info;
 } // init
