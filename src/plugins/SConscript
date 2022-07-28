@@ -142,3 +142,10 @@ make_shared_lib("old pc", [
   src_dir + "image/color.cpp",
   src_dir + "utils/aalloc.cpp",
 ])
+
+make_shared_lib("warpscan", [
+  Glob("warpscan/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "utils/random.cpp",
+  src_dir + "utils/aalloc.cpp",
+])
