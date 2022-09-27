@@ -7,7 +7,7 @@ Str iname = {};
 Str oname = {};
 Str pname = {};
 Str popts = {};
-uint num_threads = 4;
+uint num_threads {};
 int width = 0, height = 0;
 int framebuffer_x = 0, framebuffer_y = 0;
 seze::plugin_format_t plugin_format = seze::plugin_format_t::unknown;
@@ -71,6 +71,7 @@ void opts_check() {
 }
 
 bool parse_args(int argc, char* argv[]) {
+  num_threads = std::thread::hardware_concurrency();
   if (argc < 2) {
     LOG("Pls, use commands from list.");
     print_help();

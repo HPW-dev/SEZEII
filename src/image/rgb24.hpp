@@ -19,8 +19,10 @@ public:
     { return R != other.R || G != other.G || B != other.B; }
   
   template <typename T2>
-  bool operator < (CN(RGB_base<T2>) other) const
-    { return R < other.R && G < other.G && B < other.B; }
+  bool operator < (CN(RGB_base<T2>) other) const {
+    return (int(int(int(R << 8) | G) << 8 ) | B)
+    < (int(int(int(other.R << 8) | other.G) << 8 ) | other.B);
+  }
   
   template <typename T2>
   RGB_base<T> operator - (CN(RGB_base<T2>) other) const {
