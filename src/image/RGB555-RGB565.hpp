@@ -1,5 +1,6 @@
 #pragma once
 #include "utils/macro.hpp"
+#include "utils/types.hpp"
 
 namespace seze {
 

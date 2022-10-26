@@ -1,8 +1,9 @@
 #pragma once
 ///@file thread safe random gen
-#include "macro.hpp"
 #include <mutex>
 #include <random>
+#include "macro.hpp"
+#include "types.hpp"
 
 namespace seze {
 

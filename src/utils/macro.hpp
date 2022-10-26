@@ -1,10 +1,5 @@
 #pragma once
 #include <memory>
-#include <cstdint>
-
-using ldouble = long double;
-using uint = unsigned int;
-using byte = uint8_t;
 
 #define scast(T, X) static_cast<T>(X)
 #define rcast(T, X) reinterpret_cast<T>(X)
@@ -14,18 +9,19 @@ using byte = uint8_t;
 
 #define FOR(name, mx) \
 for (auto name = decltype(mx){0}; name < mx; ++name)
+
 template <typename T> void zero_delete(T& p) {
   delete p;
   p = nullptr;
 }
 
-template <class T>
-using shared_p = std::shared_ptr<T>;
-
-template <class T, typename... Args>
-shared_p<T> make_shared_p(Args&&... args)
-  { return std::make_shared<T>(args...); }
-
 #ifndef ALIGN
 #define ALIGN 64
 #endif
+
+//! макрос для классов запрещающий копирование
+#define nocopy(class_name) \
+class_name(CN(class_name)) = delete; \
+class_name& operator = (CN(class_name)) = delete; \
+class_name(class_name&&) = delete; \
+class_name& operator = (class_name&&) = delete;

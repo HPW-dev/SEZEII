@@ -2,9 +2,10 @@
 extern "C" {
 #include "plugin-info.h"
 }
-#include "utils/macro.hpp"
 #include <string>
 #include <functional>
+#include "utils/macro.hpp"
+#include "utils/types.hpp"
 
 namespace seze {
 

@@ -1,7 +1,7 @@
-#include "random.hpp"
-#include "table_rand.inc"
 #include <ctime>
 #include <atomic>
+#include "random.hpp"
+#include "table_rand.inc"
 
 namespace seze {
 
