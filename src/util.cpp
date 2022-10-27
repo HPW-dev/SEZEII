@@ -13,6 +13,7 @@
 #include "utils/pparser.hpp"
 #include "utils/log.hpp"
 #include "global.hpp"
+#include "video/reader.hpp"
 
 void convert_rgb24(CN(seze::Image) src, SDL_Surface *dst) {
   auto pDst {rcast(byte*, dst->pixels)};
@@ -90,7 +91,8 @@ void opts_check() {
     if (seze::num_threads)
       seze::num_threads = 4;
   }
-  assert(seze::nout || !seze::oname.empty());
+  if (seze::oname.empty())
+    assert(seze::nout);
   assert(seze::height > -1);
   assert(seze::width > -1);
 } // opts_check
@@ -140,7 +142,7 @@ void parse_args(int argc, char** argv) {
     {
       {"-n", "--nout"},
       "disable video output",
-      [](CN(Str) arg) { seze::nout = true; }
+      [](CN(Str) arg) { seze::nout = false; }
     },
     {
       {"--norend"},
@@ -167,7 +169,7 @@ void parse_args(int argc, char** argv) {
   opts_check();
 } // parse args
 
-void enable_plugin_settings(PluginInfo &src) {
+void correct_plugin_settings(PluginInfo &src) {
   if ( !(src.flags & PLGNINF_MULTITHREAD))
     seze::num_threads = 1;
   if (src.in_x != 0)
@@ -178,26 +180,26 @@ void enable_plugin_settings(PluginInfo &src) {
 
 void print_plugin_info(CN(PluginInfo) x) {
   LOG("\nPlugin info:"
-    << "\nopts = \"" << seze::popts << "\""
-    << "\ntitle = " << x.title
-    << "\nmultithread mode = "
+    << "\nopts: \"" << seze::popts << "\""
+    << "\ntitle: \"" << x.title << "\""
+    << "\nmultithread mode: "
     << ((x.flags & PLGNINF_MULTITHREAD) ? "yes" : "no")
-    << "\nversion = " << x.version
-    << "\ninfo = " << (x.info ? x.info : "none"));
+    << "\nversion: " << x.version
+    << "\ninfo: " << (x.info ? x.info : "none"));
 }
 
 void print_converting_info() {
   LOG("\nConverting info:\n"
-    "threads = " << seze::num_threads << "\n"
-    "lossless = " << (seze::simple_encoder ? "no" : "yes") << "\n"
-    "input = \"" << seze::iname << "\"\n"
-    "output = \"" << seze::oname << "\"\n"
-    "plugin = \"" << seze::pname << "\"\n"
-    "output resolution = " <<
+    "threads: " << seze::num_threads << "\n"
+    "lossless: " << (seze::simple_encoder ? "no" : "yes") << "\n"
+    "input: \"" << seze::iname << "\"\n"
+    "output: \"" << seze::oname << "\"\n"
+    "plugin: \"" << seze::pname << "\"\n"
+    "output resolution: " <<
     seze::width << "x" << seze::height << " (0 is auto)\n\n");
 }
 
-seze::Plugin* new_plugin_by_ext(CN(Str) fname) {
+shared_p<seze::Plugin> new_plugin(CN(Str) fname) {
   namespace fs = std::filesystem;
   Str ext = fs::path(fname).extension().string();
   std::map<Str, seze::plugin_format_t> table {
@@ -211,7 +213,7 @@ seze::Plugin* new_plugin_by_ext(CN(Str) fname) {
     seze::plugin_format = seze::plugin_format_t::unknown;
   }
   switch (seze::plugin_format) {
-    case seze::plugin_format_t::seze: return new seze::PluginShared(fname);
+    case seze::plugin_format_t::seze: return make_shared_p<seze::PluginShared>(fname);
     case seze::plugin_format_t::RPI: throw std::invalid_argument("new_plugin_by_ext: RPI plugins not supported");
     case seze::plugin_format_t::unknown:
     default: throw std::invalid_argument("new_plugin_by_ext: unknown plugin format");

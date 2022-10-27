@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include <thread>
 #include <SDL2/SDL.h>
@@ -7,45 +6,61 @@
 #include "video/reader.hpp"
 #include "video/writer.hpp"
 #include "plugins/plugin.hpp"
+#include "utils/log.hpp"
+#include "utils/time.hpp"
 
-#ifdef WINDOWS
-int SDL_main(int argc, char* argv[]) {
-#else
-int main(int argc, char* argv[]) {
-#endif
-  parse_args(argc, argv);
-// load plugin
-  auto plugin = new_plugin_by_ext(seze::pname);
-  auto pligin_info = plugin->init(seze::popts);
+std::atomic_bool is_end {false};
+std::atomic_int64_t current_frame {0};
+std::atomic_int64_t total_frames {0};
+
+void print_progress() {
+  using namespace std::literals::chrono_literals;
+  static TimePoint tm {};
+  constexpr real time_protion (3);
+  auto diff {time_diff_sec(get_time(), tm)};
+  if (diff >= time_protion) {
+    LOG("progress: " << int(double(current_frame) / total_frames * 100.0)
+      << "%\n");
+    tm = get_time();
+  }
+}
+
+auto load_plugin() {
+  auto plugin {new_plugin(seze::pname)};
+  auto pligin_info {plugin->init(seze::popts)};
   print_plugin_info(pligin_info);
-  enable_plugin_settings(pligin_info);
+  correct_plugin_settings(pligin_info);
   print_converting_info();
-// init video reader
-  seze::Reader reader(seze::iname, pligin_info.in_x, pligin_info.in_y,
+  return std::tuple(plugin, pligin_info);
+}
+
+auto init_render(CN(auto) pligin_info) {
+  auto reader = make_shared_p<seze::Reader>(seze::iname,
+    pligin_info.in_x, pligin_info.in_y,
     pligin_info.color_type);
-  auto reader_ctx = reader.get_ctx();
-// init thred buffers
-  std::vector<seze::Image*> vp_framebuffer(seze::num_threads);
-  auto framebuffer_info = reader.get_framebuffer_info();
+  return std::tuple(reader, reader->get_ctx());
+}
+
+auto init_thread_buffers(CN(auto) reader) {
+  std::vector<shared_p<seze::Image>> vp_framebuffer(seze::num_threads);
+  auto framebuffer_info {reader.get_framebuffer_info()};
   seze::framebuffer_x = framebuffer_info.x;
   seze::framebuffer_y = framebuffer_info.y;
-  // use input video res if out res not defined
+  // make buffers for threads
+  for (auto &fb: vp_framebuffer)
+    fb = make_shared_p<seze::Image>(seze::framebuffer_x,
+      seze::framebuffer_y, framebuffer_info.type);
+  return std::tuple(vp_framebuffer, framebuffer_info);
+}
+
+void fix_output_resolution(CN(auto) reader_ctx) {
   if (seze::width == 0)
     seze::width = reader_ctx.in_vid_x;
   if (seze::height == 0)
     seze::height = reader_ctx.in_vid_y;
-// make buffers for threads
-  FOR (i, seze::num_threads)
-    vp_framebuffer[i] = new seze::Image(seze::framebuffer_x,
-      seze::framebuffer_y, framebuffer_info.type);
-// init video writer
-  seze::Writer* writer;
-  if (seze::nout)
-    writer = nullptr;
-  else
-    writer = new seze::Writer(seze::oname, framebuffer_info, seze::width, seze::height,
-      reader_ctx, seze::simple_encoder);
-// init SDL2
+}
+
+auto init_sdl() {
   SDL_Window* window = nullptr;
   SDL_Surface* surface = nullptr;
   SDL_Event event;
@@ -57,45 +72,62 @@ int main(int argc, char* argv[]) {
     surface = SDL_GetWindowSurface(window);
     SDL_memset(surface->pixels, 0, surface->h * surface->pitch);
   }
+  return std::tuple(window, surface, event);
+}
+
+SDL_MAIN {
+  parse_args(argc, argv);
+  auto [plugin, pligin_info] {load_plugin()};
+  auto [reader, reader_ctx] {init_render(pligin_info)};
+  auto [vp_framebuffer, framebuffer_info] {init_thread_buffers(*reader)};
+  fix_output_resolution(reader_ctx);
+  shared_p<seze::Writer> writer {
+    seze::nout
+    ? nullptr
+    : make_shared_p<seze::Writer>(seze::oname,
+      framebuffer_info, seze::width, seze::height,
+      reader_ctx, seze::simple_encoder)
+  };
+  // я не знаю как узнать сколько кадров в видео ;]
+  total_frames = reader_ctx.duration / (reader_ctx.framerate * 1000.0);
+  auto [window, surface, event] {init_sdl()};
 // video reading/processing/writing loop
-  bool is_end = false;
   std::vector<std::thread> v_thread(seze::num_threads);
   while ( !is_end) {
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
       break;
     // read 2 buffers
-    FOR (i, seze::num_threads) {
-      auto& p = vp_framebuffer[i];
+    for (auto &fb: vp_framebuffer) {
       if (is_end) {
-        zero_delete(p);
+        fb.reset();
         continue;
       }
-      if ( !reader.read_to(p)) {
-        zero_delete(p);
+      if ( !reader->read_to(fb.get())) {
+        fb.reset();
         is_end = true;
       }
     } // read 2 frame
     // multithread processing
-    FOR (i, seze::num_threads) {
-      auto& p = vp_framebuffer[i];
-      if (p) {
+    for (uint i {0}; auto &fb: vp_framebuffer) {
+      if (fb) {
         v_thread[i] = std::thread([&]() {
-          plugin->core(p->get_data(), p->X, p->Y,
-            p->stride, p->type);
+          plugin->core(fb->get_data(), fb->X, fb->Y,
+            fb->stride, fb->type);
+          ++current_frame;
         });
       }
+      ++i;
     } // enable plugin
     // stop threads
-    FOR (i, seze::num_threads)
-      if (v_thread[i].joinable())
-        v_thread[i].join();
+    for (auto &th: v_thread)
+      if (th.joinable())
+        th.join();
     // render frame:
     if ( !seze::nrend) {
-      FOR (i, seze::num_threads) {
-        auto& p = vp_framebuffer[i];
-        if (p) {
+      for (auto &fb: vp_framebuffer) {
+        if (fb) {
           SDL_LockSurface(surface);
-          image_to_surface(*p, surface);
+          image_to_surface(*fb, surface);
           SDL_UnlockSurface(surface);
           SDL_UpdateWindowSurface(window);
         }
@@ -103,19 +135,15 @@ int main(int argc, char* argv[]) {
     } // if !nrend
     // write frame 2 file
     if ( !seze::nout) {
-      FOR (i, seze::num_threads) {
-        auto& p = vp_framebuffer[i];
-        if (p)
-          *writer << p;
-      }
+      for (auto &fb: vp_framebuffer)
+        if (fb)
+          *writer << fb.get();
     } // write
+
+    print_progress();
   } // loop
-// free SEZE
+
   plugin->finalize();
-  for (auto& p: vp_framebuffer)
-    delete p;
-  delete writer;
-// free SDL
   if ( !seze::nrend) {
     SDL_FreeSurface(surface);
     SDL_DestroyWindow(window);

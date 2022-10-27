@@ -111,7 +111,7 @@ int out_x, int out_y, CN(ReaderCtx) reader_ctx_, bool simple_encoder) {
 
 Writer::~Writer() {
   if (format_context) {
-    LOG("Writer: closing output")
+    LOG("Writer: closing output\n");
     av_write_trailer(format_context);
     if ( !(format_context->flags & AVFMT_NOFILE))
 		  avio_closep(&format_context->pb); 

@@ -23,6 +23,7 @@ struct ReaderCtx {
   AVCodecContext* codec_context = nullptr;
   AVFormatContext* format_context = nullptr;
   int in_vid_x = 0, in_vid_y = 0;
+  int64_t duration {0};
 };
 
 struct FramebufferInfo {

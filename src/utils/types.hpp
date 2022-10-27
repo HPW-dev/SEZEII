@@ -7,7 +7,8 @@
 using ldouble = long double;
 using uint = unsigned int;
 using byte = uint8_t;
-using Real = float;
+using real = float;
+using Real = real;
 using Str = std::string;
 
 template <class T>

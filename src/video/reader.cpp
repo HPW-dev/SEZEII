@@ -66,6 +66,7 @@ Reader::Reader(CN(Str) iname, int width, int height, color_t col_type) {
     av_frame_output->height, dst_pix_fmt,
     SWS_BICUBIC, nullptr, nullptr, nullptr);
   iferror( !swsctx, "Reader: fail to sws_getCachedContext");
+  duration = format_context->duration;
   swsctx4seze = sws_getContext(width, height, dst_pix_fmt,
     width, height, dst_pix_fmt, SWS_POINT, nullptr, nullptr, nullptr);
   iferror( !swsctx4seze, "Reader: fail to sws_getCachedContext (swsctx4seze)");
@@ -168,6 +169,7 @@ ReaderCtx Reader::get_ctx() const {
   ret.format_context = format_context;
   ret.framerate = framerate;
   ret.stream = in_stream;
+  ret.duration = duration;
   return ret;
 }
 
