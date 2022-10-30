@@ -8,12 +8,17 @@ sources = [
   Glob(src_dir + "utils/*.cpp"),
   Glob(src_dir + "image/*.cpp"),
   Glob(src_dir + "plugins/*.cpp"),
+  Glob(thirdparty_path + "imgui/*.cpp"),
+  thirdparty_path + "imgui/backends/imgui_impl_sdl.cpp",
+  thirdparty_path + "imgui/backends/imgui_impl_sdlrenderer.cpp",
 ]
 inc_path = [
   thirdparty_path + "DyLib",
   ".",
   src_dir,
-  src_dir + "plugins/"
+  src_dir + "plugins/",
+  thirdparty_path + "imgui",
+  thirdparty_path + "imgui/backends",
 ]
 lib_path = []
 used_libs = []
@@ -26,6 +31,7 @@ else:
   inc_path.extend([
     thirdparty_path + "DyLib",
     thirdparty_path + "SDL2/include",
+    thirdparty_path + "SDL2/include/SDL2",
   ])
   lib_path.extend([
     thirdparty_path + "SDL2/lib",
