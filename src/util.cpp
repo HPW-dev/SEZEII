@@ -142,7 +142,7 @@ void parse_args(int argc, char** argv) {
     {
       {"-n", "--nout"},
       "disable video output",
-      [](CN(Str) arg) { seze::nout = false; }
+      [](CN(Str) arg) { seze::nout = true; }
     },
     {
       {"--norend"},

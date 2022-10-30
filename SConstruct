@@ -42,7 +42,9 @@ cpp_flags.extend(cxx_arch)
 if (use_fflog):
   defines.extend(["-DFFLOG"])
 
+script = ARGUMENTS.get("script", "src/SConscript")
+
 SConscript(
-  "src/SConscript",
+  script,
   exports=["cxx", "cpp_flags", "env", "is_linux", "defines", "ld_flags"]
 )

@@ -1,6 +1,6 @@
 #include "bayer-16x16.hpp"
 #include "image/image.hpp"
-#include "src/plugins/old.pc/palette.accepter/palette-accepter.hpp"
+#include "old.pc/palette.accepter/palette-accepter.hpp"
 
 Dither_bayer_16x16::Dither_bayer_16x16() {
   Real tmp[16][16] {

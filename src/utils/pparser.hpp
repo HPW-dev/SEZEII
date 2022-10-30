@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <functional>
 #include "types.hpp"
 #include "macro.hpp"
@@ -27,8 +28,9 @@ public:
 private:
   v_param_t v_param {};
 
-  Str get_option(vector_t<Str> tokens, CN(Str) option) const;
-  Str get_options(vector_t<Str> tokens, CN(vector_t<Str>) options) const;
+  //! вернет nullopt если не нашли ключ
+  std::optional<Str> get_option(vector_t<Str> tokens, CN(Str) option) const;
+  std::optional<Str> get_options(vector_t<Str> tokens, CN(vector_t<Str>) options) const;
   vector_t<Str> get_tokens(int argc, char** argv) const;
 };
 

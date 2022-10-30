@@ -14,20 +14,20 @@ typedef uint8_t byte;
 //! avaliable color formats
 enum color_t {
   seze_none,
-  _no_used_seze_RAW,
-  _no_used_seze_RGB8,
+  seze_RAW,
+  seze_RGB8,
   seze_RGB24, ///< RGB 8:8:8
   seze_BGR24, ///< BGR 8:8:8
   seze_RGB555, ///< RGB 5:5:5
   seze_RGB565, ///< RGB 5:6:5
   seze_YUV24, ///< YUV 4:4:4 (24bit)
-  _no_used_seze_YUVf,
-  _no_used_seze_YUVld,
-  _no_used_seze_RGBi,
-  _no_used_seze_RGBf,
-  _no_used_seze_RGBld,
-  _no_used_seze_f_gray,
-  _no_used_seze_ld_gray,
+  seze_YUVf,
+  seze_YUVld,
+  seze_RGBi,
+  seze_RGBf,
+  seze_RGBld,
+  seze_f_gray,
+  seze_ld_gray,
   seze_gray, ///< 1 byte grayscale
 }; // color_t
 #endif

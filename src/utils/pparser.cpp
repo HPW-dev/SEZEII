@@ -16,33 +16,36 @@ void pparser::operator ()(int argc, char** argv) const {
   auto tokens {get_tokens(argc, argv)};
   for (auto param: v_param) {
     auto opt {get_options(tokens, param.keys)};
-    if (opt.empty()) {
-      if (param.needed) {
+    if (opt) {
+      if (opt->empty() && param.needed) {
         Str msg {"need param for "};
         for (auto key: param.keys)
           msg += key + ' ';
         throw std::invalid_argument(msg);
       }
-    } else
-      param.action(opt);
-  }
-}
+      param.action(*opt);
+    }
+  } // for v_param
+} // op ()
 
-Str pparser::get_option(vector_t<Str> tokens, CN(Str) option) const {
+std::optional<Str> pparser::get_option(vector_t<Str> tokens, CN(Str) option) const {
   auto itr {std::find(tokens.begin(), tokens.end(), option)};
-  if (itr != tokens.end() && ++itr != tokens.end())
-    return *itr;
-  return {};
+  if (itr != tokens.end()) { // найден ключ
+    if (++itr != tokens.end()) // найдена команда после ключа
+      return *itr;
+    return "";
+  }
+  return std::nullopt;
 }
 
-Str pparser::get_options(vector_t<Str> tokens,
+std::optional<Str> pparser::get_options(vector_t<Str> tokens,
 CN(vector_t<Str>) options) const {
   for (auto va: options) {
     auto ret {get_option(tokens, va)};
-    if ( !ret.empty())
+    if (ret)
       return ret;
   }
-  return {};
+  return std::nullopt;
 }
 
 vector_t<Str> pparser::get_tokens(int argc, char** argv) const {

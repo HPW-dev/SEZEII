@@ -1,6 +1,6 @@
 #include "bayer-2x2.hpp"
 #include "image/image.hpp"
-#include "src/plugins/old.pc/palette.accepter/palette-accepter.hpp"
+#include "old.pc/palette.accepter/palette-accepter.hpp"
 
 void Dither_bayer_2x2::operator()(seze::Image &dst,
 CN(urect) area, CN(Palette) pal,

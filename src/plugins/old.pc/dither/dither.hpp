@@ -1,5 +1,5 @@
 #pragma once
-#include "src/plugins/old.pc/palette.hpp"
+#include "old.pc/palette.hpp"
 #include "utils/types.hpp"
 #include "utils/rect.hpp"
 

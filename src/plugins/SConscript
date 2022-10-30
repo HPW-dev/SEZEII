@@ -1,29 +1,27 @@
 #!/usr/bin/env python
-Import(["env", "is_linux", "compiler", "defines",
+Import(["env", "is_linux", "cxx", "defines",
   "cpp_flags", "ld_flags"])
+import os
 
-platform_dir = "windows"
-if (is_linux):
-  platform_dir = "linux"
-plugin_out = "../../bin/plugins/" + platform_dir + "/free/"
+platform_dir = "linux" if is_linux else "windows"
+plug_rel_dir = "../../bin/plugins/" + platform_dir + "/free/"
 
-modules = [
-  "../../modules/itlib/include",
-  ".",
-  "..",
-  "../..", # for plugin-api
-]
 src_dir = "../"
+cpp_path = [
+  "../../thirdparty/itlib/include",
+  ".", # plugin dir
+  src_dir,
+]
 
 def make_shared_lib(name, sources):
   env.SharedLibrary(
-    target = plugin_out + name,
+    target = plug_rel_dir + name,
     source = sources,
-    CXX = compiler,
+    CXX = cxx,
     CPPDEFINES = defines,
     LINKFLAGS = ld_flags,
     CXXFLAGS = cpp_flags,
-    CPPPATH = modules
+    CPPPATH = cpp_path,
   )
 
 make_shared_lib("invert", "invert/invert.c")
