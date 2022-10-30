@@ -8,6 +8,7 @@ sources = [
   Glob(src_dir + "utils/*.cpp"),
   Glob(src_dir + "image/*.cpp"),
   Glob(src_dir + "plugins/*.cpp"),
+  Glob(src_dir + "plugins/tvsim2bw/*.cpp"),
   Glob(thirdparty_path + "imgui/*.cpp"),
   thirdparty_path + "imgui/backends/imgui_impl_sdl.cpp",
   thirdparty_path + "imgui/backends/imgui_impl_sdlrenderer.cpp",
@@ -38,7 +39,7 @@ else:
   ])
 
 env.Program(
-  target = bin_path + "tvsim 2 conf",
+  target = bin_path + "tvsim2bw-conf",
   source = sources,
   CXX = cxx,
   CXXFLAGS = cpp_flags,

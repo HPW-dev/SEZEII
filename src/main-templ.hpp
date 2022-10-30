@@ -136,6 +136,7 @@ void proc_sdl(auto event) {
       case SDL_KEYDOWN: {
         if (event.key.keysym.sym == SDLK_SPACE)
           seze::is_pause = !seze::is_pause;
+        break;
       }
       default: {}
     } // switch event.type

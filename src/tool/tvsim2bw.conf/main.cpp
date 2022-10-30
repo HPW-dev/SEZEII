@@ -1,15 +1,23 @@
 #include <cstdlib>
 #include "util.hpp"
-#include "tvsim2/tvsim2.hpp"
+#include "tvsim2bw/tvsim2bw.hpp"
+
+void imgui_proc(auto &tvsim) {
+
+}
 
 SDL_MAIN {
   auto [window, renderer] = init_sdl();
   init_imgui(window, renderer);
+  Tvsim2bw tvsim;
+  seze::Image src, dst;
 
-  while ( !tvsim2::is_end) {
+  while ( !tvsim2bw::is_end) {
     proc_sdl_event(window);
     start_frame_imgui();
-    // imgui begin end TODO
+    imgui_proc(tvsim);
+    tvsim(src, dst);
+    draw_image(dst, renderer);
     draw_sdl_imgui(renderer);
   }
   
