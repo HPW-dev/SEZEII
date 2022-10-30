@@ -16,6 +16,17 @@ Image::Image(int x, int y, color_t color_type)
   bytes_ = stride_ * y;
 }
 
+void Image::init(int x, int y, color_t color_type) {
+  destroy_pixels(data_);
+  X_ = x;
+  Y_ = y;
+  size_ = x * y;
+  type_ = color_type;
+  data_ = make_pixels(color_type, x * y);
+  stride_ = data_ ? get_size(color_type) * x : 0;
+  bytes_ = stride_ * y;
+}
+
 Image::Image(byte* _data_, int x, int y, color_t color_type)
 : X_(x)
 , Y_(y)

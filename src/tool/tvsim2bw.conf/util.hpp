@@ -9,6 +9,12 @@
 #include "image/image.hpp"
 #include "image/rgb24.hpp"
 
+namespace seze {
+  class Image;
+}
+
+void load(seze::Image &dst, CN(Str) fname);
+
 #ifdef WINDOWS
 #define SDL_MAIN int SDL_main(int argc, char* argv[])
 #else
@@ -72,20 +78,26 @@ inline void start_frame_imgui() {
 inline void draw_sdl_imgui(auto renderer) {
   ImGui::Render();
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-  SDL_RenderClear(renderer);
   ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
   SDL_RenderPresent(renderer);
 }
   
-inline void finalize_sdl_imgui(auto window, auto renderer) {
+inline void finalize_sdl_imgui(auto window, auto renderer, auto tex) {
   ImGui_ImplSDLRenderer_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
+  SDL_DestroyTexture(tex);
   SDL_Quit();
 }
 
-inline void draw_image(auto &image, auto renderer) {
-
+inline void draw_image(seze::Image &image, auto tex, auto renderer) {
+  SDL_UpdateTexture(tex, nullptr, (CP(void))image.get_cdata(), image.stride);
+  SDL_Rect texture_rect;
+  texture_rect.x = 0;  //the x coordinate
+  texture_rect.y = 0; // the y coordinate
+  texture_rect.w = image.X; //the width of the texture
+  texture_rect.h = image.Y;
+  SDL_RenderCopy(renderer, tex, nullptr, &texture_rect);
 }

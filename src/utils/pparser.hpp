@@ -19,7 +19,7 @@ public:
   };
   using v_param_t = vector_t<Param>;
 
-  //! @param in vector of: {{"-i", "--input", ...}, "description", lambda}
+  //! @param in vector of: {{"-i", "--input", ...}, "description", lambda, is_needed}
   explicit pparser(v_param_t&& in) noexcept;
   void operator ()(int argc, char** argv) const;
   ~pparser() = default;

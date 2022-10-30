@@ -36,6 +36,7 @@ public:
   Image(int x, int y, color_t color_type);
   //! init by prepeared data
   Image(byte* data_, int x, int y, color_t color_type);
+  void init(int x, int y, color_t color_type);
   ~Image();
   byte* get_data() const;
   CP(byte) get_cdata() const;

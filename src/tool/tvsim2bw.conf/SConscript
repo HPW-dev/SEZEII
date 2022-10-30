@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 Import(["env", "cxx", "cpp_flags", "is_linux", "defines", "ld_flags"])
 
+if is_linux:
+  print("this program not for Linux!")
+  quit()
+
 src_dir = "../../../src/"
 thirdparty_path = "../../../thirdparty/"
 sources = [
   Glob("*.cpp"),
+  Glob("windows/*.cpp"),
   Glob(src_dir + "utils/*.cpp"),
   Glob(src_dir + "image/*.cpp"),
   Glob(src_dir + "plugins/*.cpp"),
@@ -20,6 +25,7 @@ inc_path = [
   src_dir + "plugins/",
   thirdparty_path + "imgui",
   thirdparty_path + "imgui/backends",
+  thirdparty_path,
 ]
 lib_path = []
 used_libs = []
