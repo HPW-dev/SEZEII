@@ -1,6 +1,7 @@
 #pragma once
+#include <mutex>
 #include "utils/macro.hpp"
-#include "utils/types.hpp"
+#include "types.hpp"
 
 namespace seze {
   class Image;
@@ -9,8 +10,11 @@ namespace seze {
 class Tvsim2bw final {
   nocopy(Tvsim2bw);
 
-public:
+  std::once_flag once_flag {};
+  shared_p<seze::Image> bw_img {};
 
+public:
+  desaturation_e desat_type {desaturation_e::average};
 
   Tvsim2bw() = default;
   ~Tvsim2bw() = default;

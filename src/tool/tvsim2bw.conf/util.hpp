@@ -69,10 +69,11 @@ inline void proc_sdl_event(auto window) {
   } // switch sdl event type
 }
 
-inline void start_frame_imgui() {
+inline void start_frame(auto renderer) {
   ImGui_ImplSDLRenderer_NewFrame();
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
+  SDL_RenderClear(renderer);
 }
 
 inline void draw_sdl_imgui(auto renderer) {

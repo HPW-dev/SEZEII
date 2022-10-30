@@ -33,10 +33,8 @@ else: # release
   ld_flags.extend(["-shared-libstdc++", "-shared-libgcc", "-flto"])
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])
-  #bitness specific
-  if (arch_bit == bitness["x64"]):
-    cxx_opts = ["-Ofast", "-march=x86-64"] if is_x64 else ["-m32", "-Ofast", "-march=pentium2"]
-    cpp_flags.extend(cxx_opts)
+  cxx_opts = ["-Ofast", "-march=x86-64"] if is_x64 else ["-m32", "-Ofast", "-march=pentium2"]
+  cpp_flags.extend(cxx_opts)
 cxx_arch = ["-m64"] if is_x64 else ["-m32"]
 cpp_flags.extend(cxx_arch)
 if (use_fflog):

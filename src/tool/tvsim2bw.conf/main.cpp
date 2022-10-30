@@ -1,14 +1,31 @@
+#include <array>
 #include <cstdlib>
 #include "util.hpp"
 #include "tvsim2bw/tvsim2bw.hpp"
 #include "utils/pparser.hpp"
+#include "utils/str.hpp"
+
+void imgui_desat(auto &tvsim) {
+  int sel {int(tvsim.desat_type)};
+  Cstr iteams {
+    "average\0"
+    "BT2001\0"
+    "BT709\0"
+    "BT601\0"
+    "HSL\0"
+    "Euclidian distance\0"
+    "Red\0"
+    "Green\0"
+    "Blue\0"
+  };
+  if (ImGui::Combo("desaturation", &sel, iteams))
+    tvsim.desat_type = desaturation_e(sel);
+} // imgui_desat
 
 void imgui_proc(auto &tvsim) {
-  /*ImGui::Begin("preview");
-  ImGui::Text("pointer = %p", my_image_texture);
-  ImGui::Text("size = %d x %d", my_image_width, my_image_height);
-  ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
-  ImGui::End();*/
+  ImGui::Begin("config");
+  imgui_desat(tvsim);
+  ImGui::End();
 }
 
 SDL_MAIN {
@@ -33,7 +50,7 @@ SDL_MAIN {
 
   while ( !tvsim2bw::is_end) {
     proc_sdl_event(window);
-    start_frame_imgui();
+    start_frame(renderer);
     imgui_proc(tvsim);
     tvsim(src, dst);
     draw_image(dst, tex, renderer);
