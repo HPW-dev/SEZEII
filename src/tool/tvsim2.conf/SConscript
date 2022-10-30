@@ -5,14 +5,15 @@ src_dir = "../../../src/"
 thirdparty_path = "../../../thirdparty/"
 sources = [
   Glob("*.cpp"),
-  Glob("src_dir/utils/*.cpp"),
-  Glob("src_dir/image/*.cpp"),
-  Glob("src_dir/plugins/*.cpp"),
+  Glob(src_dir + "utils/*.cpp"),
+  Glob(src_dir + "image/*.cpp"),
+  Glob(src_dir + "plugins/*.cpp"),
 ]
 inc_path = [
   thirdparty_path + "DyLib",
   ".",
   src_dir,
+  src_dir + "plugins/"
 ]
 lib_path = []
 used_libs = []
