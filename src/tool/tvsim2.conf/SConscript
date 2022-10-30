@@ -1,26 +1,22 @@
 #!/usr/bin/env python
 Import(["env", "cxx", "cpp_flags", "is_linux", "defines", "ld_flags"])
+
+src_dir = "../../../src/"
+thirdparty_path = "../../../thirdparty/"
 sources = [
   Glob("*.cpp"),
-  Glob("utils/*.cpp"),
-  Glob("video/*.cpp"),
-  Glob("image/*.cpp"),
-  Glob("plugins/*.cpp"),
+  Glob("src_dir/utils/*.cpp"),
+  Glob("src_dir/image/*.cpp"),
+  Glob("src_dir/plugins/*.cpp"),
 ]
 inc_path = [
-  "thirdparty/DyLib",
-  ".", # src
+  thirdparty_path + "DyLib",
+  ".",
+  src_dir,
 ]
 lib_path = []
-used_libs = [
-  "avcodec",
-  "avfilter",
-  "avformat",
-  "avutil",
-  "swscale",
-]
-thirdparty_path = "../thirdparty/"
-bin_path = "../bin/"
+used_libs = []
+bin_path = "../../../bin/"
 
 if (is_linux):
   used_libs.extend(["pthread", "m", "SDL2", "dl"])
@@ -28,16 +24,14 @@ else:
   used_libs.extend(["mingw32", "SDL2main", "SDL2"])
   inc_path.extend([
     thirdparty_path + "DyLib",
-    thirdparty_path + "ffmpeg/include",
     thirdparty_path + "SDL2/include",
   ])
   lib_path.extend([
     thirdparty_path + "SDL2/lib",
-    thirdparty_path + "ffmpeg/lib",
   ])
 
 env.Program(
-  target = bin_path + "seze",
+  target = bin_path + "tvsim 2 conf",
   source = sources,
   CXX = cxx,
   CXXFLAGS = cpp_flags,
