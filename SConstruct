@@ -2,87 +2,47 @@
 from platform import architecture
 env = Environment()
 
-# consts
-linux_exe_fmt = "ELF"
-compiler_clangpp = "clang++"
 is_debug = bool(int(ARGUMENTS.get("debug", 0)))
-build_plugins = bool(int(ARGUMENTS.get("build_plugins", 0)))
-fflog = bool(int(ARGUMENTS.get("fflog", 0)))
-is_core2_quad = bool(int(ARGUMENTS.get("core2_quad", 0)))
-compiler_cpp = ARGUMENTS.get("cxx", "g++")
+use_fflog = bool(int(ARGUMENTS.get("use_fflog", 0)))
+cxx = ARGUMENTS.get("cxx", "g++")
 
-# quess architecture
-arch_raw = architecture()
-arch_bit = arch_raw[0] # разрядность системы
-arch_exe_fmt = arch_raw[1] # формат экзешника
-bitness = {"x32": "32bit", "x64": "64bit"}
+# определение архитектуры
+arch = architecture()
+arch_bit = arch[0] # разрядность системы
+arch_exe_fmt = arch[1] # формат экзешника
+is_x64 = bool(arch_bit == "64bit")
+is_linux = bool(arch_exe_fmt == "ELF")
 
 # current compilation info
-print(f"system bitness: {arch_bit}")
+bitness = "x64" if is_x64 else "x32"
+print(f"system bitness: {bitness}")
 print(f"system executable format: {arch_exe_fmt}")
 print(f"debug mode: {is_debug}")
+print(f"compiler: {cxx}")
 
-# var for build
-compiler = ARGUMENTS.get("cxx", compiler_cpp)
 cpp_flags = ["-std=c++20", "-pipe", "-fopenmp"]
-defines = [] #"-DTVSIM_LD_COMPONENT"
+defines = []
 ld_flags = ["-fopenmp"]
 
-# platform spec-s settings
-is_linux = bool(arch_exe_fmt == linux_exe_fmt)
-if (is_linux): # linux
-  defines.append("-DLINUX")
-  #compiler = compiler_clangpp
-else: # windows
-  defines.append("-DWINDOWS")
-
-# exclude clibs
-if ((compiler != compiler_clangpp) and (not is_debug)):
-  ld_flags.extend(["-shared-libgcc", "-flto"])
-  if (not is_linux):
-    ld_flags.extend(["-shared-libstdc++"])
-
-#bitness specific
-if (arch_bit == bitness["x64"]):
-  cpp_flags.extend(["-m64"])
-else:
-  cpp_flags.extend(["-m32"])
-# debug/release settings:
-if is_debug:
+sysdef = ["-DLINUX"] if is_linux else ["-DWINDOWS"]
+defines.extend(sysdef)
+if (is_debug):
   defines.extend(["-DDEBUG"])
-  cpp_flags.extend(["-O0", "-ggdb3"])
+  cpp_flags.extend(["-O0", "-g"])
 else: # release
+  ld_flags.extend(["-shared-libstdc++", "-shared-libgcc", "-flto"])
   defines.extend(["-DNDEBUG"])
-  if (compiler != compiler_clangpp):
-    cpp_flags.append("-s") # stripping exec
+  cpp_flags.extend(["-s"])
   #bitness specific
   if (arch_bit == bitness["x64"]):
-    cpp_flags.extend(["-Ofast", "-march=x86-64"])
-  else: # 32bit
-    if (is_core2_quad):
-      cpp_flags.extend(["-m32", "-Ofast", "-march=core2", "-msse4.1"])
-    else:
-      cpp_flags.extend(["-m32", "-Ofast", "-march=pentium2"])
+    cxx_opts = ["-Ofast", "-march=x86-64"] if is_x64 else ["-m32", "-Ofast", "-march=pentium2"]
+    cpp_flags.extend(cxx_opts)
+cxx_arch = ["-m64"] if is_x64 else ["-m32"]
+cpp_flags.extend(cxx_arch)
+if (use_fflog):
+  defines.extend(["-DFFLOG"])
 
-# print selected compiler:
-print(f"compiler: {compiler}")
-
-# on/off ffmpeg debug logging
-if (fflog):
-  defines.append("-DFFLOG")
-
-# билд эффектов:
-if (build_plugins):
-  print("building plugins enabled")
-  SConscript("src/plugins/SConscript",
-  exports=[
-    "env", "is_linux", "compiler", "defines",
-    "cpp_flags", "ld_flags"
-  ])
-
-# билд seze
-if (not build_plugins):
-  print("building seze enabled")
-  SConscript("src/SConscript",
-  exports=["compiler", "cpp_flags", "compiler_clangpp",
-    "env", "is_linux", "defines", "ld_flags"])
+SConscript(
+  "src/SConscript",
+  exports=["cxx", "cpp_flags", "env", "is_linux", "defines", "ld_flags"]
+)
