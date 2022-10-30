@@ -4,6 +4,7 @@
 #include "tvsim2bw/tvsim2bw.hpp"
 #include "utils/pparser.hpp"
 #include "utils/str.hpp"
+#include "utils/time.hpp"
 
 void imgui_desat(auto &tvsim) {
   int sel {int(tvsim.desat_type)};
@@ -22,8 +23,23 @@ void imgui_desat(auto &tvsim) {
     tvsim.desat_type = desaturation_e(sel);
 } // imgui_desat
 
+void imgui_draw_fps() {
+  using namespace std::chrono_literals;
+  static auto st {get_time()};
+  static uint fps {0};
+  static uint fps_for_print {0};
+  if (get_time() - st >= 1s) {
+    st = get_time();
+    fps_for_print = fps;
+    fps = 0;
+  }
+  ++fps;
+  ImGui::Text(("fps: " + std::to_string(fps_for_print)).c_str());
+}
+
 void imgui_proc(auto &tvsim) {
   ImGui::Begin("config");
+  imgui_draw_fps();
   imgui_desat(tvsim);
   ImGui::End();
 }

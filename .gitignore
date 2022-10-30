@@ -21,3 +21,4 @@ bin/plugins/
 *__pycache__
 output/
 buid_gui/
+**/imgui.ini
