@@ -62,6 +62,27 @@ void imgui_scale_wh(auto &tvsim) {
 void imgui_scale_using(auto &tvsim)
   { ImGui::Checkbox("use scaling", &tvsim.use_scale); }
 
+void imgui_tvsim_opts(auto &tvsim) {
+  ImGui::DragInt("H front", &tvsim.hfront,   1.0f, 0, 1'000);
+  ImGui::DragInt("H back",  &tvsim.hback,    1.0f, 0, 1'000);
+  ImGui::DragInt("H sync",  &tvsim.hsync_sz, 1.0f, 0, 1'000);
+  ImGui::DragInt("V front", &tvsim.vfront,   6.5f, 0, 5'000);
+  ImGui::DragInt("V back",  &tvsim.vback,    6.5f, 0, 5'000);
+  ImGui::DragInt("V sync",  &tvsim.vsync_sz, 6.5f, 0, 7'000);
+  ImGui::DragInt("V sync detect count",
+    rcast(int*, &tvsim.vsync_needed_cnt), 0, 10'000);
+  ImGui::DragFloat("beam speed x", &tvsim.beam_spd_x, 1.0f, 0, 10.0f);
+  ImGui::DragFloat("beam speed y", &tvsim.beam_spd_y, 1.0f, 0, 10.0f);
+  ImGui::DragFloat("beam reverse speed", &tvsim.beam_spd_back, 1.0f, 0, 100.0f);
+  ImGui::DragFloat("white level", &tvsim.white_lvl, 1.0f, -2.0f, 2.0f);
+  ImGui::DragFloat("black level", &tvsim.black_lvl, 1.0f, -2.0f, 2.0f);
+  ImGui::DragFloat("beam off signal value",
+    &tvsim.beam_off_signal, -10.0f, 10.0f);
+  ImGui::DragFloat("sync level", &tvsim.sync_lvl, 1.0f, -2.0f, 2.0f);
+  ImGui::DragFloat("sync signal value", &tvsim.sync_signal, 1.0f, -2.0f, 2.0f);
+  ImGui::Checkbox("fix options", &tvsim.fix_opts);
+} // imgui_tvsim_opts
+
 void imgui_proc(auto &tvsim) {
   ImGui::Begin("config");
   imgui_draw_fps();
@@ -69,6 +90,7 @@ void imgui_proc(auto &tvsim) {
   imgui_scale_wh(tvsim);
   imgui_scale_in_out(tvsim);
   imgui_scale_using(tvsim);
+  imgui_tvsim_opts(tvsim);
   ImGui::End();
 }
 
