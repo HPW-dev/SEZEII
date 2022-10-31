@@ -25,3 +25,7 @@ class_name(CN(class_name)) = delete; \
 class_name& operator = (CN(class_name)) = delete; \
 class_name(class_name&&) = delete; \
 class_name& operator = (class_name&&) = delete;
+
+#define return_if(cond) \
+if (cond) \
+  return;

@@ -21,4 +21,6 @@ enum class scale_e {
   nearest = 0,
   bilinear,
   bicubic,
+  bilinear_fast,
+  bicubic_fast,
 }; // scale_e

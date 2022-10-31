@@ -43,7 +43,9 @@ void imgui_scale_in_out(auto &tvsim) {
   Cstr iteams {
     "nearest\0"
     "bilinear\0"
-    "bicubi\0"
+    "bicubic\0"
+    "bilinear_fast\0"
+    "bicubic_fast\0"
   };
   if (ImGui::Combo("scale in", &sel_1, iteams))
     tvsim.scale_type_in = scale_e(sel_1);

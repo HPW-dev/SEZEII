@@ -1,3 +1,4 @@
+#include <omp.h>
 #include <cmath>
 #include "util.hpp"
 #include "image/image.hpp"
@@ -104,13 +105,40 @@ void gray_to_rgb24(CN(seze::Image) src, seze::Image &dst) {
   }
 }
 
-void scale_gray_bilinear(CN(seze::Image) src, seze::Image &dst) {
+static real blerp(real c00, real c10, real c01,
+real c11, real tx, real ty)
+  { return std::lerp(std::lerp(c00, c10, tx), std::lerp(c01, c11, tx), ty); }
 
-} // scale_gray_bilinear
+static real bcerp (real A, real B, real C, real D, real t) {
+	return B + 0.5f * t * (C - A + t * (2.0f * A - 5.0f * B + 4.0f * C
+    - D + t * (3.0f * (B - C) + D - A)));
+}
 
-void scale_gray_nearest(CN(seze::Image) src, seze::Image &dst) {
+static void scale_gray_bilinear(CN(seze::Image) src, seze::Image &dst) {
   real scale_x {1.0f / (real(dst.X) / src.X)};
   real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  #pragma omp parallel for simd
+  FOR (y, dst.Y)
+  FOR (x, dst.X) {
+    real dx {x * scale_x};
+    real dy {y * scale_y};
+    int gxi (std::floor<int>(dx));
+    int gyi (std::floor<int>(dy));
+    auto c00 = src.fast_get<luma_t>(gxi,     gyi);
+    auto c10 =      src.get<luma_t>(gxi + 1, gyi);
+    auto c01 =      src.get<luma_t>(gxi,     gyi + 1);
+    auto c11 =      src.get<luma_t>(gxi + 1, gyi + 1);
+    auto tx = dx - gxi;
+    auto ty = dy - gyi;
+    auto l = blerp(c00, c10, c01, c11, tx, ty);
+    dst.fast_set<luma_t>(x, y, l);
+  }
+} // scale_gray_bilinear
+
+static void scale_gray_nearest(CN(seze::Image) src, seze::Image &dst) {
+  real scale_x {1.0f / (real(dst.X) / src.X)};
+  real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  #pragma omp parallel for simd
   FOR (y, dst.Y)
   FOR (x, dst.X) {
     real fx {x * scale_x};
@@ -122,9 +150,112 @@ void scale_gray_nearest(CN(seze::Image) src, seze::Image &dst) {
   }
 } // scale_gray_nearest
 
-void scale_gray_bicubic(CN(seze::Image) src, seze::Image &dst) {
-
+static void scale_gray_bicubic(CN(seze::Image) src, seze::Image &dst) {
+  real scale_x {1.0f / (real(dst.X) / src.X)};
+  real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  #pragma omp parallel for simd
+  FOR (y, dst.Y)
+  FOR (x, dst.X) {
+    real dx {x * scale_x};
+    real dy {y * scale_y};
+    int gxi (std::floor<int>(dx));
+    int gyi (std::floor<int>(dy));
+    double tx {dx - gxi};
+    double ty {dy - gyi};
+  // 16 points:
+    // 1st row
+    auto p00 = src.get<luma_t>(gxi - 1, gyi - 1);   
+    auto p10 = src.get<luma_t>(gxi + 0, gyi - 1);   
+    auto p20 = src.get<luma_t>(gxi + 1, gyi - 1);   
+    auto p30 = src.get<luma_t>(gxi + 2, gyi - 1);   
+    // 2nd row
+    auto p01 = src.get<luma_t>(gxi - 1, gyi + 0);   
+    auto p11 = src.get<luma_t>(gxi + 0, gyi + 0);   
+    auto p21 = src.get<luma_t>(gxi + 1, gyi + 0);   
+    auto p31 = src.get<luma_t>(gxi + 2, gyi + 0);
+    // 3rd row
+    auto p02 = src.get<luma_t>(gxi - 1, gyi + 1);   
+    auto p12 = src.get<luma_t>(gxi + 0, gyi + 1);   
+    auto p22 = src.get<luma_t>(gxi + 1, gyi + 1);   
+    auto p32 = src.get<luma_t>(gxi + 2, gyi + 1);
+    // 4th row
+    auto p03 = src.get<luma_t>(gxi - 1, gyi + 2);   
+    auto p13 = src.get<luma_t>(gxi + 0, gyi + 2);   
+    auto p23 = src.get<luma_t>(gxi + 1, gyi + 2);   
+    auto p33 = src.get<luma_t>(gxi + 2, gyi + 2);
+  // interpolate bi-cubically:
+    auto b0 = bcerp(p00, p10, p20, p30, tx);
+    auto b1 = bcerp(p01, p11, p21, p31, tx);
+    auto b2 = bcerp(p02, p12, p22, p32, tx);
+    auto b3 = bcerp(p03, p13, p23, p33, tx);
+    auto l = bcerp(b0, b1, b2, b3, ty);
+    dst.fast_set(x, y, l);
+  }
 } // scale_gray_bicubic
+
+static void scale_gray_bilinear_fast(CN(seze::Image) src, seze::Image &dst) {
+  real scale_x {1.0f / (real(dst.X) / src.X)};
+  real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  #pragma omp parallel for simd
+  FOR (y, dst.Y - 1)
+  FOR (x, dst.X - 1) {
+    real dx {x * scale_x};
+    real dy {y * scale_y};
+    int gxi = dx;
+    int gyi = dy;
+    auto c00 = src.fast_get<luma_t>(gxi,     gyi);
+    auto c10 = src.fast_get<luma_t>(gxi + 1, gyi);
+    auto c01 = src.fast_get<luma_t>(gxi,     gyi + 1);
+    auto c11 = src.fast_get<luma_t>(gxi + 1, gyi + 1);
+    auto tx = dx - gxi;
+    auto ty = dy - gyi;
+    auto l = blerp(c00, c10, c01, c11, tx, ty);
+    dst.fast_set<luma_t>(x, y, l);
+  }
+} // scale_gray_bilinear_fast
+
+static void scale_gray_bicubic_fast(CN(seze::Image) src, seze::Image &dst) {
+  real scale_x {1.0f / (real(dst.X) / src.X)};
+  real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  #pragma omp parallel for simd
+  for (int y = 8; y < dst.Y - 8; ++y)
+  for (int x = 8; x < dst.X - 8; ++x) {
+    real dx {x * scale_x};
+    real dy {y * scale_y};
+    int gxi = dx;
+    int gyi = dy;
+    real tx {dx - gxi};
+    real ty {dy - gyi};
+  // 16 points:
+    // 1st row
+    auto p00 = src.fast_get<luma_t>(gxi - 1, gyi - 1);   
+    auto p10 = src.fast_get<luma_t>(gxi + 0, gyi - 1);   
+    auto p20 = src.fast_get<luma_t>(gxi + 1, gyi - 1);   
+    auto p30 = src.fast_get<luma_t>(gxi + 2, gyi - 1);   
+    // 2nd row
+    auto p01 = src.fast_get<luma_t>(gxi - 1, gyi + 0);   
+    auto p11 = src.fast_get<luma_t>(gxi + 0, gyi + 0);   
+    auto p21 = src.fast_get<luma_t>(gxi + 1, gyi + 0);   
+    auto p31 = src.fast_get<luma_t>(gxi + 2, gyi + 0);
+    // 3rd row
+    auto p02 = src.fast_get<luma_t>(gxi - 1, gyi + 1);   
+    auto p12 = src.fast_get<luma_t>(gxi + 0, gyi + 1);   
+    auto p22 = src.fast_get<luma_t>(gxi + 1, gyi + 1);   
+    auto p32 = src.fast_get<luma_t>(gxi + 2, gyi + 1);
+    // 4th row
+    auto p03 = src.fast_get<luma_t>(gxi - 1, gyi + 2);   
+    auto p13 = src.fast_get<luma_t>(gxi + 0, gyi + 2);   
+    auto p23 = src.fast_get<luma_t>(gxi + 1, gyi + 2);   
+    auto p33 = src.fast_get<luma_t>(gxi + 2, gyi + 2);
+  // interpolate bi-cubically:
+    auto b0 = bcerp(p00, p10, p20, p30, tx);
+    auto b1 = bcerp(p01, p11, p21, p31, tx);
+    auto b2 = bcerp(p02, p12, p22, p32, tx);
+    auto b3 = bcerp(p03, p13, p23, p33, tx);
+    auto l = bcerp(b0, b1, b2, b3, ty);
+    dst.fast_set(x, y, l);
+  }
+} // scale_gray_bicubic_fast
 
 void scale_gray(CN(seze::Image) src, seze::Image &dst, scale_e type) {
   switch (type) {
@@ -132,5 +263,7 @@ void scale_gray(CN(seze::Image) src, seze::Image &dst, scale_e type) {
     case scale_e::bilinear: scale_gray_bilinear(src, dst); break;
     case scale_e::nearest: scale_gray_nearest(src, dst); break;
     case scale_e::bicubic: scale_gray_bicubic(src, dst); break;
+    case scale_e::bilinear_fast: scale_gray_bilinear_fast(src, dst); break;
+    case scale_e::bicubic_fast: scale_gray_bicubic_fast(src, dst); break;
   }
 } // scale_gray
