@@ -17,6 +17,12 @@ Image::Image(int x, int y, color_t color_type)
 }
 
 void Image::init(int x, int y, color_t color_type) {
+  // если размер новой пикчи равен существующей, то ничего не делать
+  if (x * y == this->size_ && color_type == this->type_) {
+    X_ = x;
+    Y_ = y;
+    return;
+  }
   destroy_pixels(data_);
   X_ = x;
   Y_ = y;

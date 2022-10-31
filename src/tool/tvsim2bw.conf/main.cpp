@@ -37,10 +37,32 @@ void imgui_draw_fps() {
   ImGui::Text(("fps: " + std::to_string(fps_for_print)).c_str());
 }
 
+void imgui_scale_in_out(auto &tvsim) {
+  int sel_1 {int(tvsim.scale_type_in)};
+  int sel_2 {int(tvsim.scale_type_out)};
+  Cstr iteams {
+    "nearest\0"
+    "bilinear\0"
+    "bicubi\0"
+  };
+  if (ImGui::Combo("scale in", &sel_1, iteams))
+    tvsim.scale_type_in = scale_e(sel_1);
+  if (ImGui::Combo("scale out", &sel_2, iteams))
+    tvsim.scale_type_out = scale_e(sel_2);
+} // imgui_scale_in_out
+
+void imgui_scale_wh(auto &tvsim) {
+  int v_int[2] {tvsim.scale_wh.x, tvsim.scale_wh.y};
+  if (ImGui::DragInt2("scale w/h", v_int, 1.0f, 1, 1280))
+    tvsim.scale_wh = {v_int[0], v_int[1]};
+}
+
 void imgui_proc(auto &tvsim) {
   ImGui::Begin("config");
   imgui_draw_fps();
   imgui_desat(tvsim);
+  imgui_scale_wh(tvsim);
+  imgui_scale_in_out(tvsim);
   ImGui::End();
 }
 

@@ -15,4 +15,10 @@ enum class desaturation_e {
   blue,
 
   _max_,
-};
+}; // desaturation_e
+
+enum class scale_e {
+  nearest = 0,
+  bilinear,
+  bicubic,
+}; // scale_e

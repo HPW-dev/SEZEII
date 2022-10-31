@@ -103,3 +103,24 @@ void gray_to_rgb24(CN(seze::Image) src, seze::Image &dst) {
     dst.fast_get<seze::RGB24>(i) = seze::RGB24(l, l, l);
   }
 }
+
+void scale_gray_bilinear(CN(seze::Image) src, seze::Image &dst) {
+
+}
+
+void scale_gray_nearest(CN(seze::Image) src, seze::Image &dst) {
+
+}
+
+void scale_gray_bicubic(CN(seze::Image) src, seze::Image &dst) {
+
+}
+
+void scale_gray(CN(seze::Image) src, seze::Image &dst, scale_e type) {
+  switch (type) {
+    default:
+    case scale_e::bilinear: scale_gray_bilinear(src, dst); break;
+    case scale_e::nearest: scale_gray_nearest(src, dst); break;
+    case scale_e::bicubic: scale_gray_bicubic(src, dst); break;
+  }
+} // scale_gray
