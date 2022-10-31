@@ -12,7 +12,8 @@ Tvsim2bw::Tvsim2bw()
 void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
   desaturate_(src);
   downscale();
-  // TODO
+  encode_stream(*bw_img_scaled);
+  decode_stream(*bw_img_scaled);
   upscale();
   convert_to_dst(dst);
 }
@@ -40,3 +41,19 @@ void Tvsim2bw::desaturate_(CN(seze::Image) src) {
 void Tvsim2bw::convert_to_dst(seze::Image &dst) {
   gray_to_rgb24(*bw_img, dst);
 }
+
+void Tvsim2bw::encode_stream(CN(seze::Image) src) {
+  resize_stream(src);
+}
+
+void Tvsim2bw::decode_stream(seze::Image &dst) {
+
+}
+
+void Tvsim2bw::resize_stream(CN(seze::Image) src) {
+  constexpr size_t option {8}; // дополнительные данные для забивки пространства
+  const size_t str_sz = src.X + hfront + hback + hsync_sz + option;
+  const size_t frame_sz = (src.Y * str_sz) + vfront + vback + vsync_sz;
+  stream.resize(frame_sz);
+}
+
