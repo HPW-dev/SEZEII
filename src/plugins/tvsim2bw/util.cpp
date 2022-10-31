@@ -106,15 +106,25 @@ void gray_to_rgb24(CN(seze::Image) src, seze::Image &dst) {
 
 void scale_gray_bilinear(CN(seze::Image) src, seze::Image &dst) {
 
-}
+} // scale_gray_bilinear
 
 void scale_gray_nearest(CN(seze::Image) src, seze::Image &dst) {
-
-}
+  real scale_x {1.0f / (real(dst.X) / src.X)};
+  real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  FOR (y, dst.Y)
+  FOR (x, dst.X) {
+    real fx {x * scale_x};
+    real fy {y * scale_y};
+    auto src_col {src.fast_get<luma_t>(
+      std::floor<int>(fx),
+      std::floor<int>(fy))};
+    dst.fast_set<luma_t>(x, y, src_col);
+  }
+} // scale_gray_nearest
 
 void scale_gray_bicubic(CN(seze::Image) src, seze::Image &dst) {
 
-}
+} // scale_gray_bicubic
 
 void scale_gray(CN(seze::Image) src, seze::Image &dst, scale_e type) {
   switch (type) {

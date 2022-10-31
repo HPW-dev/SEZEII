@@ -57,12 +57,16 @@ void imgui_scale_wh(auto &tvsim) {
     tvsim.scale_wh = {v_int[0], v_int[1]};
 }
 
+void imgui_scale_using(auto &tvsim)
+  { ImGui::Checkbox("use scaling", &tvsim.use_scale); }
+
 void imgui_proc(auto &tvsim) {
   ImGui::Begin("config");
   imgui_draw_fps();
   imgui_desat(tvsim);
   imgui_scale_wh(tvsim);
   imgui_scale_in_out(tvsim);
+  imgui_scale_using(tvsim);
   ImGui::End();
 }
 
