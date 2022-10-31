@@ -24,3 +24,10 @@ enum class scale_e {
   bilinear_fast,
   bicubic_fast,
 }; // scale_e
+
+enum class filter_e {
+  none = 0,
+  average,
+  average_fast,
+  median,
+};

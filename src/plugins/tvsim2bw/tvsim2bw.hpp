@@ -7,6 +7,36 @@ namespace seze {
   class Image;
 }
 
+struct tvsim_conf {
+  desaturation_e desat_type {desaturation_e::average};
+  scale_e scale_type_in {scale_e::bilinear};
+  scale_e scale_type_out {scale_e::bilinear};
+  Point<int> scale_wh {320, 240};
+  bool use_scale {true}; ///< при 0 юзает RAW разрешение
+  int hfront {35}; ///< отступ перед строкой
+  int hback {21}; ///< отступ после строки
+  int hsync_sz {65}; ///< длинна строчного импульса
+  int vfront {120}; ///< отступ перед кадром
+  int vback {80}; ///< отступ после кадра
+  int vsync_sz {6'571};  ///< длинна кадрового импульса
+  int vsync_needed_cnt {1'000}; ///< через сколько сихнхроимпульсов считается vsync
+  real beam_spd_x {1}; ///< скорость движения луча вправо
+  real beam_spd_y {1}; ///< скорость движения луча вниз
+  real beam_spd_back {10}; ///< скорость движения луча назад
+  real white_lvl {1}; ///< уровень белого
+  real black_lvl {0}; ///< уровень чёрного
+  real beam_off_signal {-0.1}; ///< сигнал гашения
+  real sync_lvl {-0.43f}; ///< уровень синхроимпульсов
+  real sync_signal {-0.5f}; ///< уровень синхроимпульсов
+  bool fix_opts {true}; ///< корректирование настроек
+  bool interlacing {true};
+  bool use_fading {true};
+  real fading {0.1};
+  real amp {1.0}; ///< усиление сигнала
+  filter_e filter_type {filter_e::average_fast};
+  int filter_power {3};
+}; // tvsim_conf
+
 class Tvsim2bw final {
   nocopy(Tvsim2bw);
 
@@ -34,31 +64,7 @@ class Tvsim2bw final {
   void display_simul(seze::Image &dst);
 
 public:
-  desaturation_e desat_type {desaturation_e::average};
-  scale_e scale_type_in {scale_e::bilinear};
-  scale_e scale_type_out {scale_e::bilinear};
-  Point<int> scale_wh {320, 240};
-  bool use_scale {true}; ///< при 0 юзает RAW разрешение
-  int hfront {35}; ///< отступ перед строкой
-  int hback {21}; ///< отступ после строки
-  int hsync_sz {65}; ///< длинна строчного импульса
-  int vfront {120}; ///< отступ перед кадром
-  int vback {80}; ///< отступ после кадра
-  int vsync_sz {6'571};  ///< длинна кадрового импульса
-  int vsync_needed_cnt {1'000}; ///< через сколько сихнхроимпульсов считается vsync
-  real beam_spd_x {1}; ///< скорость движения луча вправо
-  real beam_spd_y {1}; ///< скорость движения луча вниз
-  real beam_spd_back {10}; ///< скорость движения луча назад
-  real white_lvl {1}; ///< уровень белого
-  real black_lvl {0}; ///< уровень чёрного
-  real beam_off_signal {-0.1}; ///< сигнал гашения
-  real sync_lvl {-0.43f}; ///< уровень синхроимпульсов
-  real sync_signal {-0.5f}; ///< уровень синхроимпульсов
-  bool fix_opts {true}; ///< корректирование настроек
-  bool interlacing {true};
-  bool use_fading {true};
-  real fading {0.1};
-  real amp {1.0}; ///< усиление сигнала
+  tvsim_conf conf {};
 
   Tvsim2bw();
   ~Tvsim2bw() = default;

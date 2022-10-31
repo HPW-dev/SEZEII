@@ -267,3 +267,59 @@ void scale_gray(CN(seze::Image) src, seze::Image &dst, scale_e type) {
     case scale_e::bicubic_fast: scale_gray_bicubic_fast(src, dst); break;
   }
 } // scale_gray
+
+static void filter_average(vector_t<luma_t> &stream, int power = 3) {
+  return_if (power < 1);
+  const real power_mul {1.0f / power};
+  const int power_mid {power / 2};
+  vector_t<luma_t> buf(stream.size());
+  FOR (i, stream.size()) {
+    luma_t total {0};
+    FOR (wnd, power) {
+      try {
+        total += stream.at(i + wnd - power_mid);
+      } catch (...) {}
+    }
+    buf[i] = total * power_mul;
+  }
+  stream = buf;
+}
+
+static void filter_average_fast(vector_t<luma_t> &stream, int power = 3) {
+  return_if (power < 1);
+  const real power_mul {1.0f / power};
+  FOR (i, stream.size() - power) {
+    luma_t total {0};
+    FOR (_, power)
+      total += stream[i + _];
+    stream[i] = total * power_mul;
+  }
+}
+
+static void filter_median(vector_t<luma_t> &stream, int power = 3) {
+  return_if (power < 1);
+  const int power_mid {power / 2};
+  vector_t<luma_t> arr(power);
+  vector_t<luma_t> buf(stream.size());
+  FOR (i, stream.size()) {
+    FOR (wnd, power) {
+      try {
+        arr[wnd] = stream.at(i + wnd - power_mid);
+      } catch (...) {}
+    }
+    std::sort(arr.begin(), arr.end());
+    buf[i] = arr[power_mid];
+  }
+  stream = buf;
+}
+
+
+void filtering(vector_t<luma_t> &stream, int power, filter_e type) {
+  switch (type) {
+    default:
+    case filter_e::none: break;
+    case filter_e::average: filter_average(stream, power); break;
+    case filter_e::average_fast: filter_average_fast(stream, power); break;
+    case filter_e::median: filter_median(stream, power); break;
+  }
+}
