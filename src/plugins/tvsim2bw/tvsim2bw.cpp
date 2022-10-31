@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include "tvsim2bw.hpp"
 #include "util.hpp"
 #include "image/image.hpp"
@@ -7,6 +8,7 @@
 Tvsim2bw::Tvsim2bw()
 : bw_img {make_shared_p<seze::Image>()}
 , bw_img_scaled {make_shared_p<seze::Image>()}
+, display {make_shared_p<seze::Image>()}
 {}
 
 void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
@@ -62,6 +64,8 @@ void Tvsim2bw::encode_stream(CN(seze::Image) src) {
   }
 
   FOR (y, src.Y) {
+    if (interlacing && ((y + int(is_odd_str)) & 1))
+      continue;
     // hfront: off
     FOR (_, hfront) {
       stream[i] = beam_off_signal;
@@ -94,10 +98,12 @@ void Tvsim2bw::encode_stream(CN(seze::Image) src) {
     stream[i] = sync_signal;
     ++i;
   }
+
+  is_odd_str = !is_odd_str;
 } // encode_stream
 
 void Tvsim2bw::decode_stream(seze::Image &dst) {
-  std::fill(dst.get_data(), dst.get_data() + dst.bytes, 0); // TODO
+  std::fill(dst.get_data(), dst.get_data() + dst.bytes, 0);
   bool new_str {false};
   for (CN(auto) signal: stream) {
     // sync
@@ -115,29 +121,50 @@ void Tvsim2bw::decode_stream(seze::Image &dst) {
         new_str = false;
         beam.y = std::min(beam.y + beam_spd_y, 3'000.0f);
       }
-      if (signal >= black_lvl)
-        dst.set<luma_t>(beam.x, beam.y + vfront, decode_pix(signal));
+      if (signal >= black_lvl) {
+        auto pos_y {beam.y + vfront};
+        if (interlacing)
+          pos_y = (pos_y * 2) + int(is_odd_str);
+        dst.set<luma_t>(beam.x, pos_y, decode_pix(signal));
+      }
       beam.x = std::min(beam.x + beam_spd_x, 3'000.0f);
     } // else pix
   }
+  display_simul(dst);
 } // decode_stream
 
 void Tvsim2bw::resize_stream(CN(seze::Image) src) {
   str_sz = src.X + hfront + hback + hsync_sz;
-  const size_t frame_sz = (src.Y * str_sz) + vfront + vback + vsync_sz;
+  const size_t str_count = interlacing ? src.Y / 2 : src.Y;
+  const size_t frame_sz = (str_count * str_sz) + vfront + vback + vsync_sz;
   stream.resize(frame_sz);
 }
 
 real Tvsim2bw::encode_pix(luma_t src) const
-  { return black_lvl + src * pix_lvl_diff; }
+  { return std::lerp(black_lvl, white_lvl, src); }
 
 luma_t Tvsim2bw::decode_pix(real src) const
-  { return src * pix_lvl_diff_mul + (-1.0f * black_lvl); }
+ { return to_range(src, black_lvl, white_lvl, 0.0f, 1.0f); }
 
 void Tvsim2bw::update() {
-  pix_lvl_diff = white_lvl - black_lvl;
-  if (pix_lvl_diff != 0)
-    pix_lvl_diff_mul = 1.0f / (pix_lvl_diff);
-  else
-    pix_lvl_diff_mul = 0;
+  if (fix_opts) {
+    hsync_sz = std::clamp(hsync_sz, 1, vsync_sz-1);
+    vsync_sz = std::clamp(vsync_sz, 3, 7'000);
+    vsync_needed_cnt = std::clamp(vsync_needed_cnt, hsync_sz+1, vsync_sz-1);
+    black_lvl = std::clamp(black_lvl, -2.0f, white_lvl);
+    beam_off_signal = std::clamp(beam_off_signal, -2.0f, black_lvl);
+    sync_lvl = std::clamp(sync_lvl, -2.0f, beam_off_signal);
+    sync_signal = std::clamp(sync_signal, -2.0f, sync_lvl);
+  } // if fix_opts
+} // update
+
+void Tvsim2bw::display_simul(seze::Image &dst) {
+  return_if (!use_fading);
+  display->init(dst.X, dst.Y, seze_f_gray);
+  FOR (i, display->size) {
+    auto &pix = display->fast_get<luma_t>(i);
+    pix = std::max<luma_t>(0, pix - fading);
+    pix = std::max<luma_t>(pix, dst.fast_get<luma_t>(i));
+  }
+  display->fast_copy_to(dst);
 }

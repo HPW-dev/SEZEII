@@ -11,3 +11,8 @@ void desaturate(CN(seze::Image) src, seze::Image &dst,
   desaturation_e type);
 void scale_gray(CN(seze::Image) src, seze::Image &dst,
   scale_e type = scale_e::bilinear);
+
+//! алгоритм преобразования диапазона (map arduino)
+inline real to_range(real x, real in_min, real in_max,
+real out_min, real out_max)
+  { return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; }

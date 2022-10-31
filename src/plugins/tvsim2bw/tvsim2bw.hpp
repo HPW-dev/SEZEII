@@ -12,14 +12,13 @@ class Tvsim2bw final {
 
   shared_p<seze::Image> bw_img {};
   shared_p<seze::Image> bw_img_scaled {};
+  shared_p<seze::Image> display {}; ///< для симуляции затухания кинескопа
   Point<real> beam {0, 0}; ///< расположение луча кинескопа
   uint sync_cnt {0}; ///< отсчёт времени при синхроимпульсе
   bool is_pix {false}; ///< сейчас рисуется пиксель
   bool is_odd_str {false}; ///< для черезстрочки
   vector_t<real> stream {}; ///< содержит tv сигнал
   size_t str_sz {0};
-  real pix_lvl_diff {};
-  real pix_lvl_diff_mul {}; ///< для оптимизации деления умножением
 
   void downscale();
   void upscale();
@@ -32,6 +31,7 @@ class Tvsim2bw final {
   real encode_pix(luma_t src) const;
   luma_t decode_pix(real src) const;
   void update();
+  void display_simul(seze::Image &dst);
 
 public:
   desaturation_e desat_type {desaturation_e::average};
@@ -54,7 +54,11 @@ public:
   real beam_off_signal {-0.1}; ///< сигнал гашения
   real sync_lvl {-0.43f}; ///< уровень синхроимпульсов
   real sync_signal {-0.5f}; ///< уровень синхроимпульсов
-  bool fix_opts {false}; ///< корректирование настроек
+  bool fix_opts {true}; ///< корректирование настроек
+  bool interlacing {true};
+  bool use_fading {true};
+  real fading {0.1};
+  real amp {1.0}; ///< усиление сигнала
 
   Tvsim2bw();
   ~Tvsim2bw() = default;
