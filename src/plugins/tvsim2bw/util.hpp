@@ -13,6 +13,7 @@ void scale_gray(CN(seze::Image) src, seze::Image &dst,
   scale_e type = scale_e::bilinear);
 void filtering(vector_t<luma_t> &stream, int power = 3,
   filter_e type = filter_e::average_fast);
+void apply_noise(vector_t<luma_t> &stream, real noise_level);
 
 //! алгоритм преобразования диапазона (map arduino)
 inline real to_range(real x, real in_min, real in_max,

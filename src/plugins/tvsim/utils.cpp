@@ -172,7 +172,7 @@ component power) {
     auto mul = std::cos(ratio * j) * alpha;
     ret += dst.data[idx] * mul * power;
   }
-  return ret;;
+  return ret;
 }
 
 component ringing_bidirect(CN(Stream) dst, int i, component ratio,

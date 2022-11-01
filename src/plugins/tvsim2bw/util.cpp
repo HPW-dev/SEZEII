@@ -3,6 +3,7 @@
 #include "util.hpp"
 #include "image/image.hpp"
 #include "image/rgb24.hpp"
+#include "utils/random.hpp"
 
 void desaturate(CN(seze::Image) src, seze::Image &dst,
 desaturation_e type) {
@@ -283,7 +284,7 @@ static void filter_average(vector_t<luma_t> &stream, int power = 3) {
     buf[i] = total * power_mul;
   }
   stream = buf;
-}
+} // filter_average
 
 static void filter_average_fast(vector_t<luma_t> &stream, int power = 3) {
   return_if (power < 1);
@@ -311,8 +312,7 @@ static void filter_median(vector_t<luma_t> &stream, int power = 3) {
     buf[i] = arr[power_mid];
   }
   stream = buf;
-}
-
+} // filter_median
 
 void filtering(vector_t<luma_t> &stream, int power, filter_e type) {
   switch (type) {
@@ -322,4 +322,10 @@ void filtering(vector_t<luma_t> &stream, int power, filter_e type) {
     case filter_e::average_fast: filter_average_fast(stream, power); break;
     case filter_e::median: filter_median(stream, power); break;
   }
+}
+
+void apply_noise(vector_t<luma_t> &stream, real noise_level) {
+  return_if(noise_level <= 0);
+  for (auto &x: stream)
+    x += noise_level * seze::frand_fast();
 }

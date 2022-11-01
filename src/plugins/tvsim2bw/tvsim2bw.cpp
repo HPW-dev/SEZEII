@@ -16,6 +16,8 @@ void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
   desaturate_(src);
   downscale();
   encode_stream(*bw_img_scaled);
+  apply_noise(stream, conf.noise_level);
+  ringing(stream, conf.ringing_ratio, conf.ringing_len, conf.ringing_power);
   filtering(stream, conf.filter_power, conf.filter_type);
   decode_stream(*bw_img_scaled);
   upscale();
@@ -174,3 +176,24 @@ void Tvsim2bw::display_simul(seze::Image &dst) {
   }
   display->fast_copy_to(dst);
 }
+
+void Tvsim2bw::ringing(std::vector<luma_t> &stream, real ratio, int len,
+real power) {
+  return_if ( !conf.use_ringing);
+  return_if (ratio <= 0);
+  return_if (len <= 0);
+  return_if (power <= 0);
+  for (uint i {0}; auto& signal: stream) {
+    luma_t ret {0};
+    FOR (j, len) {
+      auto idx = i + j;
+      if (idx >= stream.size())
+        break;
+      auto alpha = std::lerp(1.0f, 0.0f, j / real(len));
+      auto mul = std::cos(ratio * j) * alpha;
+      ret += stream[idx] * mul * power;
+    }
+    signal = ret;
+    ++i;
+  }
+} // ringing
