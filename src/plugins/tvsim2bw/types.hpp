@@ -2,6 +2,7 @@
 #include "utils/types.hpp"
 
 using luma_t = real; //! юзать для чтения с картинки формата seze_f_gray
+using v_luma_t = vector_t<luma_t>;
 
 enum class desaturation_e {
   average = 0,

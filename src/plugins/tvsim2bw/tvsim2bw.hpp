@@ -10,8 +10,8 @@ namespace seze {
 struct tvsim_conf {
   Point<int> scale_wh {320, 240};
   desaturation_e desat_type {desaturation_e::average};
-  scale_e scale_type_in {scale_e::bilinear};
-  scale_e scale_type_out {scale_e::bilinear};
+  scale_e scale_type_in {scale_e::bilinear_fast};
+  scale_e scale_type_out {scale_e::bilinear_fast};
   int hfront {35}; ///< отступ перед строкой
   int hback {21}; ///< отступ после строки
   int hsync_sz {300}; ///< длинна строчного импульса
@@ -59,10 +59,10 @@ class Tvsim2bw final {
   uint sync_cnt {0}; ///< отсчёт времени при синхроимпульсе
   bool is_pix {false}; ///< сейчас рисуется пиксель
   bool is_odd_str {false}; ///< для черезстрочки
-  vector_t<real> stream {}; ///< содержит tv сигнал
+  v_luma_t stream {}; ///< содержит tv сигнал
   size_t str_sz {0};
-  vector_t<luma_t> buf_a {}; ///< буффер для AM модуляции
-  vector_t<luma_t> buf_b {}; ///< буффер для AM модуляции
+  v_luma_t buf_a {}; ///< буффер для AM модуляции
+  v_luma_t buf_b {}; ///< буффер для AM модуляции
 
   void downscale();
   void upscale();

@@ -11,14 +11,16 @@ desaturation_e type) {
   switch (type) {
     default:
     case desaturation_e::average: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
-        auto frgb {(col.R + col.G + col.B) / 3.0f};
+        auto frgb {(col.R + col.G + col.B) * (1.0f / 3.0f)};
         dst.fast_get<luma_t>(i) = frgb * mul;
       }
       break;
     }
     case desaturation_e::bt2001: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         float f =
@@ -30,6 +32,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::bt709: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         float f =
@@ -41,6 +44,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::bt601: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         float f =
@@ -52,6 +56,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::hsl: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         auto a = std::max(col.R, col.G);
@@ -63,6 +68,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::euclidian_distance: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = std::sqrt(
@@ -74,6 +80,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::red: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = col.R * mul;
@@ -81,6 +88,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::green: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = col.G * mul;
@@ -88,6 +96,7 @@ desaturation_e type) {
       break;
     }
     case desaturation_e::blue: {
+      #pragma omp parallel for simd
       FOR (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = col.B * mul;
@@ -98,6 +107,7 @@ desaturation_e type) {
 } // desaturate
 
 void gray_to_rgb24(CN(seze::Image) src, seze::Image &dst) {
+  #pragma omp parallel for simd
   FOR (i, src.size) {
     auto l {src.fast_get<luma_t>(i)};
     l = std::clamp(l, 0.0f, 1.0f);
@@ -106,11 +116,11 @@ void gray_to_rgb24(CN(seze::Image) src, seze::Image &dst) {
   }
 }
 
-static real blerp(real c00, real c10, real c01,
+constexpr real blerp(real c00, real c10, real c01,
 real c11, real tx, real ty)
   { return std::lerp(std::lerp(c00, c10, tx), std::lerp(c01, c11, tx), ty); }
 
-static real bcerp (real A, real B, real C, real D, real t) {
+constexpr real bcerp (real A, real B, real C, real D, real t) {
 	return B + 0.5f * t * (C - A + t * (2.0f * A - 5.0f * B + 4.0f * C
     - D + t * (3.0f * (B - C) + D - A)));
 }
@@ -195,22 +205,22 @@ static void scale_gray_bicubic(CN(seze::Image) src, seze::Image &dst) {
 } // scale_gray_bicubic
 
 static void scale_gray_bilinear_fast(CN(seze::Image) src, seze::Image &dst) {
-  real scale_x {1.0f / (real(dst.X) / src.X)};
-  real scale_y {1.0f / (real(dst.Y) / src.Y)};
+  const real scale_x {1.0f / (real(dst.X) / src.X)};
+  const real scale_y {1.0f / (real(dst.Y) / src.Y)};
   #pragma omp parallel for simd
   FOR (y, dst.Y - 1)
   FOR (x, dst.X - 1) {
-    real dx {x * scale_x};
-    real dy {y * scale_y};
-    int gxi = dx;
-    int gyi = dy;
-    auto c00 = src.fast_get<luma_t>(gxi,     gyi);
-    auto c10 = src.fast_get<luma_t>(gxi + 1, gyi);
-    auto c01 = src.fast_get<luma_t>(gxi,     gyi + 1);
-    auto c11 = src.fast_get<luma_t>(gxi + 1, gyi + 1);
-    auto tx = dx - gxi;
-    auto ty = dy - gyi;
-    auto l = blerp(c00, c10, c01, c11, tx, ty);
+    const real dx {x * scale_x};
+    const int gxi = dx;
+    const real tx = dx - gxi;
+    const real dy {y * scale_y};
+    const int gyi = dy;
+    const real ty = dy - gyi;
+    const auto c00 = src.fast_get<luma_t>(gxi,     gyi);
+    const auto c10 = src.fast_get<luma_t>(gxi + 1, gyi);
+    const auto c01 = src.fast_get<luma_t>(gxi,     gyi + 1);
+    const auto c11 = src.fast_get<luma_t>(gxi + 1, gyi + 1);
+    const auto l = blerp(c00, c10, c01, c11, tx, ty);
     dst.fast_set<luma_t>(x, y, l);
   }
 } // scale_gray_bilinear_fast
@@ -269,11 +279,11 @@ void scale_gray(CN(seze::Image) src, seze::Image &dst, scale_e type) {
   }
 } // scale_gray
 
-static void filter_average(vector_t<luma_t> &stream, int power = 3) {
+static void filter_average(v_luma_t &stream, int power = 3) {
   return_if (power < 1);
   const real power_mul {1.0f / power};
   const int power_mid {power / 2};
-  vector_t<luma_t> buf(stream.size());
+  v_luma_t buf(stream.size());
   FOR (i, stream.size()) {
     luma_t total {0};
     FOR (wnd, power) {
@@ -286,22 +296,22 @@ static void filter_average(vector_t<luma_t> &stream, int power = 3) {
   stream = buf;
 } // filter_average
 
-static void filter_average_fast(vector_t<luma_t> &stream, int power = 3) {
+static void filter_average_fast(v_luma_t &stream, int power = 3) {
   return_if (power < 1);
   const real power_mul {1.0f / power};
   FOR (i, stream.size() - power) {
     luma_t total {0};
-    FOR (_, power)
-      total += stream[i + _];
+    FOR (wnd, power)
+      total += stream[i + wnd];
     stream[i] = total * power_mul;
   }
 }
 
-static void filter_median(vector_t<luma_t> &stream, int power = 3) {
+static void filter_median(v_luma_t&stream, int power = 3) {
   return_if (power < 1);
   const int power_mid {power / 2};
-  vector_t<luma_t> arr(power);
-  vector_t<luma_t> buf(stream.size());
+  v_luma_t arr(power);
+  v_luma_t buf(stream.size());
   FOR (i, stream.size()) {
     FOR (wnd, power) {
       try {
@@ -314,7 +324,7 @@ static void filter_median(vector_t<luma_t> &stream, int power = 3) {
   stream = buf;
 } // filter_median
 
-void filtering(vector_t<luma_t> &stream, int power, filter_e type) {
+void filtering(v_luma_t &stream, int power, filter_e type) {
   switch (type) {
     default:
     case filter_e::none: break;
@@ -324,8 +334,9 @@ void filtering(vector_t<luma_t> &stream, int power, filter_e type) {
   }
 }
 
-void apply_noise(vector_t<luma_t> &stream, real noise_level) {
+void apply_noise(v_luma_t &stream, real noise_level) {
   return_if(noise_level <= 0);
-  for (auto &x: stream)
-    x += noise_level * seze::frand_fast();
+  #pragma omp for simd
+  FOR (i, stream.size())
+    stream[i] += noise_level * seze::frand_fast();
 }

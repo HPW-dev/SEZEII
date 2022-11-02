@@ -189,31 +189,39 @@ void Tvsim2bw::display_simul(seze::Image &dst) {
 }
 
 void Tvsim2bw::am_modulate() {
+  const auto freg {conf.am_freg};
+  const auto depth {conf.am_depth};
   // modulate
-  for (int i {0}; auto &x: stream) {
-    auto at = 1.0f + conf.am_depth * x;
-    auto st = at * std::cos(conf.am_freg * i);
+  #pragma omp parallel for simd
+  FOR (i, stream.size()) {
+    auto &x {stream[i]};
+    const auto at {1.0f + depth * x};
+    const auto st {at * std::cos(freg * i)};
     x = st;
-    ++i;
   }
   // noise
   apply_noise(stream, conf.noise_level);
   // demodulate
   buf_a.resize(stream.size());
   buf_b.resize(stream.size());
-  for (int i {0}; const auto &x: stream) {
-    auto g = std::cos(conf.am_freg * i);
-    buf_a[i] = x * g;
-    buf_b[i] = x * g * std::numbers::pi * 0.5f;
-    ++i;
+  const auto pre_mul {std::numbers::pi * 0.5f};
+  #pragma omp parallel for simd
+  FOR (i, stream.size()) {
+    const auto g {std::cos(freg * i)};
+    const auto xg {stream[i] * g};
+    buf_a[i] = xg;
+    buf_b[i] = xg * pre_mul;
   }
   filtering(buf_a, conf.filter_power, conf.filter_type);
   filtering(buf_b, conf.filter_power, conf.filter_type);
-  for (int i {0}; auto &x: stream) {
+  const auto tune {conf.am_tune};
+  #pragma omp parallel for simd
+  FOR (i, stream.size()) {
     auto a = buf_a[i];
+    a *= a;
     auto b = buf_b[i];
-    x = std::sqrt(a*a + b*b) - conf.am_tune;
-    ++i;
+    b *= b;
+    stream[i] = std::sqrt(a + b) - tune;
   }
 } // modulate
 
@@ -235,6 +243,8 @@ void Tvsim2bw::draw_debug(seze::Image &dst) const {
 } // draw_debug
 
 void Tvsim2bw::amplify(real amp) {
-  for (auto &x: stream)
-    x *= amp;
+  return_if(amp == 1);
+  #pragma omp for simd
+  FOR (i, stream.size())
+    stream[i] *= amp;
 }

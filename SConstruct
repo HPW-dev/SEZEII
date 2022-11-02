@@ -30,7 +30,9 @@ if (is_debug):
   defines.extend(["-DDEBUG"])
   cpp_flags.extend(["-O0", "-g"])
 else: # release
-  ld_flags.extend(["-shared-libstdc++", "-shared-libgcc", "-flto"])
+  if (not is_linux):
+      ld_flags.extend(["-shared-libstdc++"])
+  ld_flags.extend(["-shared-libgcc", "-flto"])
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])
   cxx_opts = ["-Ofast", "-march=x86-64"] if is_x64 else ["-m32", "-Ofast", "-march=pentium2"]

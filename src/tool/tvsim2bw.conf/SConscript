@@ -29,6 +29,7 @@ bin_path = "../../../bin/"
 
 if (is_linux):
   used_libs.extend(["pthread", "m", "SDL2", "dl"])
+  inc_path.extend(["/usr/include/SDL2"])
 else:
   used_libs.extend(["mingw32", "SDL2main", "SDL2"])
   inc_path.extend([
