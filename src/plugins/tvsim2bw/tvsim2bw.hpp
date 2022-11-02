@@ -28,6 +28,7 @@ struct tvsim_conf {
   real sync_lvl {-0.43f}; ///< уровень синхроимпульсов
   real sync_signal {-0.5f}; ///< уровень синхроимпульсов
   real fading {0.1};
+  real pre_amp {1.0}; ///< предусиление сигнала
   real amp {1.0}; ///< усиление сигнала
   real ringing_ratio {0.27f};
   int ringing_len {13};
@@ -35,11 +36,17 @@ struct tvsim_conf {
   filter_e filter_type {filter_e::average_fast};
   int filter_power {3};
   real noise_level {0.066f};
+  real am_freg {1};
+  real am_depth {1};
+  real am_tune {1};
   bool fix_opts {true}; ///< корректирование настроек
   bool interlacing {true};
   bool use_fading {true};
   bool use_scale {true}; ///< при 0 юзает RAW разрешение
   bool use_ringing {false};
+  bool use_am {false}; ///< использовать AM модуляцию
+  bool debug {false}; ///< включает отображение осцилографа
+  bool debug_black_bg {false}; ///< чёрный фон осцила
 }; // tvsim_conf
 
 class Tvsim2bw final {
@@ -54,6 +61,8 @@ class Tvsim2bw final {
   bool is_odd_str {false}; ///< для черезстрочки
   vector_t<real> stream {}; ///< содержит tv сигнал
   size_t str_sz {0};
+  vector_t<luma_t> buf_a {}; ///< буффер для AM модуляции
+  vector_t<luma_t> buf_b {}; ///< буффер для AM модуляции
 
   void downscale();
   void upscale();
@@ -69,6 +78,9 @@ class Tvsim2bw final {
   void display_simul(seze::Image &dst);
   void ringing(std::vector<luma_t> &stream,
     real ratio, int len, real power);
+  void am_modulate();
+  void draw_debug(seze::Image &dst) const;
+  void amplify(real amp=1.0);
 
 public:
   tvsim_conf conf {};

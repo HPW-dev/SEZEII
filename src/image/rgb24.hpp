@@ -44,6 +44,13 @@ public:
   }
   
   template <typename T2>
+  void operator ^= (CN(RGB_base<T2>) other) {
+    R = int(R) ^ int(other.R);
+    G = int(G) ^ int(other.G);
+    B = int(B) ^ int(other.B);
+  }
+
+  template <typename T2>
   void operator += (CN(RGB_base<T2>) other) {
     R = std::clamp(int(R + other.R), 0, 255);
     G = std::clamp(int(G + other.G), 0, 255);

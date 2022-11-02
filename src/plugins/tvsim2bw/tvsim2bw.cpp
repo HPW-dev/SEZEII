@@ -1,3 +1,4 @@
+#include <numbers>
 #include <algorithm>
 #include <cmath>
 #include "tvsim2bw.hpp"
@@ -16,13 +17,18 @@ void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
   desaturate_(src);
   downscale();
   encode_stream(*bw_img_scaled);
-  apply_noise(stream, conf.noise_level);
-  ringing(stream, conf.ringing_ratio, conf.ringing_len, conf.ringing_power);
-  filtering(stream, conf.filter_power, conf.filter_type);
+  amplify(conf.pre_amp);
+  if (conf.use_am)
+    am_modulate();
+  else {
+    apply_noise(stream, conf.noise_level);
+    filtering(stream, conf.filter_power, conf.filter_type);
+  }
+  amplify(conf.amp);
   decode_stream(*bw_img_scaled);
   upscale();
   convert_to_dst(dst);
-}
+} // op ()
 
 void Tvsim2bw::downscale() {
   bw_img_scaled->init(conf.scale_wh.x, conf.scale_wh.y, seze_f_gray);
@@ -45,7 +51,12 @@ void Tvsim2bw::desaturate_(CN(seze::Image) src) {
 }
 
 void Tvsim2bw::convert_to_dst(seze::Image &dst) {
-  gray_to_rgb24(*bw_img, dst);
+  if ( !conf.debug_black_bg)
+    gray_to_rgb24(*bw_img, dst);
+  else
+    std::fill(dst.get_data(), dst.get_data() + dst.bytes, 0);
+  if (conf.debug)
+    draw_debug(dst);
 }
 
 void Tvsim2bw::encode_stream(CN(seze::Image) src) {
@@ -129,7 +140,7 @@ void Tvsim2bw::decode_stream(seze::Image &dst) {
         auto pos_y {beam.y + conf.vfront};
         if (conf.interlacing)
           pos_y = (pos_y * 2) + int(is_odd_str);
-        dst.set<luma_t>(beam.x, pos_y, decode_pix(signal) * conf.amp);
+        dst.set<luma_t>(beam.x, pos_y, decode_pix(signal));
       }
       beam.x = std::min(beam.x + conf.beam_spd_x, 3'000.0f);
     } // else pix
@@ -177,23 +188,53 @@ void Tvsim2bw::display_simul(seze::Image &dst) {
   display->fast_copy_to(dst);
 }
 
-void Tvsim2bw::ringing(std::vector<luma_t> &stream, real ratio, int len,
-real power) {
-  return_if ( !conf.use_ringing);
-  return_if (ratio <= 0);
-  return_if (len <= 0);
-  return_if (power <= 0);
-  for (uint i {0}; auto& signal: stream) {
-    luma_t ret {0};
-    FOR (j, len) {
-      auto idx = i + j;
-      if (idx >= stream.size())
-        break;
-      auto alpha = std::lerp(1.0f, 0.0f, j / real(len));
-      auto mul = std::cos(ratio * j) * alpha;
-      ret += stream[idx] * mul * power;
-    }
-    signal = ret;
+void Tvsim2bw::am_modulate() {
+  // modulate
+  for (int i {0}; auto &x: stream) {
+    auto at = 1.0f + conf.am_depth * x;
+    auto st = at * std::cos(conf.am_freg * i);
+    x = st;
     ++i;
   }
-} // ringing
+  // noise
+  apply_noise(stream, conf.noise_level);
+  // demodulate
+  buf_a.resize(stream.size());
+  buf_b.resize(stream.size());
+  for (int i {0}; const auto &x: stream) {
+    auto g = std::cos(conf.am_freg * i);
+    buf_a[i] = x * g;
+    buf_b[i] = x * g * std::numbers::pi * 0.5f;
+    ++i;
+  }
+  filtering(buf_a, conf.filter_power, conf.filter_type);
+  filtering(buf_b, conf.filter_power, conf.filter_type);
+  for (int i {0}; auto &x: stream) {
+    auto a = buf_a[i];
+    auto b = buf_b[i];
+    x = std::sqrt(a*a + b*b) - conf.am_tune;
+    ++i;
+  }
+} // modulate
+
+void Tvsim2bw::draw_debug(seze::Image &dst) const {
+  real y_old {0};
+  FOR (x, dst.X) {
+    auto y = stream[x];
+    y = 2.0f - y;
+    y *= dst.Y / 4.0f;
+    y = std::clamp<real>(y, 0, dst.Y);
+    auto st = std::min(y, y_old);
+    auto ed = std::max(y, y_old);
+    for (int i = std::floor(st); i < std::floor(ed+1); ++i) {
+      auto &col = dst.fast_get<seze::RGB24>(x, i);
+      col ^= seze::RGB24(255,255,255);
+    }
+    y_old = y;
+  }
+} // draw_debug
+
+void Tvsim2bw::amplify(real amp) {
+  for (auto &x: stream)
+    x *= amp;
+}

@@ -67,7 +67,9 @@ void imgui_tvsim_opts(auto &conf) {
   ImGui::Checkbox("interlacing", &conf.interlacing);
   ImGui::Checkbox("use fading", &conf.use_fading);
   ImGui::DragFloat("fading", &conf.fading, 0.0001f, 0, 1, "%.4f");
-  ImGui::DragFloat("amplify", &conf.amp, 0.01f, 0, 4.0f);
+  ImGui::DragFloat("pre-amplify", &conf.pre_amp, 0.001f, 0, 4.0f);
+  ImGui::DragFloat("amplify", &conf.amp, 0.001f, 0, 4.0f);
+  ImGui::DragFloat("noise level", &conf.noise_level, 0.001f, 0, 3.0f);
   ImGui::DragInt("H front", &conf.hfront,   1.0f, 0, 1'000);
   ImGui::DragInt("H back",  &conf.hback,    1.0f, 0, 1'000);
   ImGui::DragInt("H sync",  &conf.hsync_sz, 1.0f, 0, 1'000);
@@ -84,7 +86,6 @@ void imgui_tvsim_opts(auto &conf) {
     &conf.beam_off_signal, 0.01f, -2.0f, 2.0f);
   ImGui::DragFloat("sync level", &conf.sync_lvl, 0.01f, -2.0f, 2.0f);
   ImGui::DragFloat("sync signal value", &conf.sync_signal, 0.01f, -2.0f, 2.0f);
-  ImGui::DragFloat("noise level", &conf.noise_level, 0.001f, 0, 3.0f);
   ImGui::Checkbox("autofix options", &conf.fix_opts);
   ImGui::End();
 } // imgui_tvsim_opts
@@ -102,18 +103,24 @@ void imgui_filters(auto &conf) {
   ImGui::DragInt("filter power", &conf.filter_power, 1, 0, 256);
 } // imgui_filters
 
-void imgui_ringing(auto &conf) {
-  ImGui::Begin("Ringing");
-  ImGui::Checkbox("use it", &conf.use_ringing);
-  ImGui::DragFloat("ratio", &conf.ringing_ratio, 0.01f, 0, 10);
-  ImGui::DragInt("len", &conf.ringing_len, 0.01f, 0, 64);
-  ImGui::DragFloat("power", &conf.ringing_power, 0.01f, 0, 10);
+void imgui_am_modulation(auto &conf) {
+  ImGui::Begin("AM modulation");
+  ImGui::Checkbox("use it", &conf.use_am);
+  ImGui::DragFloat("freg.", &conf.am_freg, 0.00001f, 0, 100, "%.5f");
+  ImGui::DragFloat("depth", &conf.am_depth, 0.0005f, 0, 10, "%.4f");
+  ImGui::DragFloat("tune", &conf.am_tune, 0.0005f,  0, 2, "%.4f");
   ImGui::End();
+}
+
+void imgui_debug(auto &conf) {
+  ImGui::Checkbox("use debug", &conf.debug);
+  ImGui::Checkbox("black bg for debug", &conf.debug_black_bg);
 }
 
 void imgui_proc(auto &conf) {
   ImGui::Begin("config");
   imgui_draw_fps();
+  imgui_debug(conf);
   imgui_desat(conf);
   imgui_scale_wh(conf);
   imgui_scale_in_out(conf);
@@ -121,8 +128,8 @@ void imgui_proc(auto &conf) {
   imgui_filters(conf);
   ImGui::End();
 
-  imgui_ringing(conf);
   imgui_tvsim_opts(conf);
+  imgui_am_modulation(conf);
 } // imgui_proc
 
 SDL_MAIN {
