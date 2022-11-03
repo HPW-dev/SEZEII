@@ -32,10 +32,10 @@ struct tvsim_conf {
   real am_freg {1};
   real am_depth {1};
   real am_tune {1};
-  bool fix_opts {true}; ///< корректирование настроек
-  bool interlacing {true};
-  bool use_fading {true};
-  bool use_scale {true}; ///< при 0 юзает RAW разрешение
+  bool fix_opts {false}; ///< корректирование настроек
+  bool interlacing {false};
+  bool use_fading {false};
+  bool use_scale {false}; ///< при 0 юзает RAW разрешение
   bool use_am {false}; ///< использовать AM модуляцию
   bool debug {false}; ///< включает отображение осцилографа
   bool debug_black_bg {false}; ///< чёрный фон осцила

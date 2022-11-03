@@ -1,5 +1,6 @@
 #include <sstream>
 #include "conf.hpp"
+#include "utils/pparser.hpp"
 
 Str conf_to_opts(CN(tvsim_conf) conf) {
   std::stringstream ss;
@@ -43,5 +44,42 @@ Str conf_to_opts(CN(tvsim_conf) conf) {
 } // conf_to_opts
 
 void opts_to_conf(CN(Str) str, tvsim_conf &conf) {
-
-}
+  seze::pparser parser({
+    {{"-w"}, "simulated frame width", [&conf](CN(Str) opt) { conf.scale_wh.x = std::stoi(opt); } },
+    {{"-h"}, "simulated frame height", [&conf](CN(Str) opt) { conf.scale_wh.y = std::stoi(opt); } },
+    {{"--desat_type"}, "desaturation type", [&conf](CN(Str) opt) { conf.desat_type = desaturation_e(std::stoi(opt)); } },
+    {{"--scale_type_in"}, "scale filter for input", [&conf](CN(Str) opt) { conf.scale_type_in = scale_e(std::stoi(opt)); } },
+    {{"--scale_type_out"}, "scale filter for output", [&conf](CN(Str) opt) { conf.scale_type_out = scale_e(std::stoi(opt)); } },
+    {{"--hfront"}, "horizontal front porch lenght", [&conf](CN(Str) opt) { conf.hfront = std::stoi(opt); } },
+    {{"--hback"}, "horizontal back porch lenght", [&conf](CN(Str) opt) { conf.hback = std::stoi(opt); } },
+    {{"--hsync_sz"}, "horizontal sync lengh", [&conf](CN(Str) opt) { conf.hsync_sz = std::stoi(opt); } },
+    {{"--vfront"}, "vertical front porch lenght", [&conf](CN(Str) opt) { conf.vfront = std::stoi(opt); } },
+    {{"--vback"}, "vertical back porch lenght", [&conf](CN(Str) opt) { conf.vback = std::stoi(opt); } },
+    {{"--vsync_sz"}, "vertical sync lengh", [&conf](CN(Str) opt) { conf.vsync_sz = std::stoi(opt); } },
+    {{"--vsync_needed_cnt"}, "Vsync detection count", [&conf](CN(Str) opt) { conf.vsync_needed_cnt = std::stoi(opt); } },
+    {{"--beam_spd_x"}, "beam speed by x", [&conf](CN(Str) opt) { conf.beam_spd_x = std::stof(opt); } },
+    {{"--beam_spd_y"}, "beam speed by y", [&conf](CN(Str) opt) { conf.beam_spd_y = std::stof(opt); } },
+    {{"--beam_spd_back"}, "beam reverse speed", [&conf](CN(Str) opt) { conf.beam_spd_back = std::stof(opt); } },
+    {{"--white_lvl"}, "white signal level", [&conf](CN(Str) opt) { conf.white_lvl = std::stof(opt); } },
+    {{"--black_lvl"}, "black signal level", [&conf](CN(Str) opt) { conf.black_lvl = std::stof(opt); } },
+    {{"--beam_off_signal"}, "signal value for empty pixel (beam off)", [&conf](CN(Str) opt) { conf.beam_off_signal = std::stof(opt); } },
+    {{"--sync_lvl"}, "sync signal level", [&conf](CN(Str) opt) { conf.sync_lvl = std::stof(opt); } },
+    {{"--sync_signal"}, "sync signal value", [&conf](CN(Str) opt) { conf.sync_signal = std::stof(opt); } },
+    {{"--fading"}, "speed of beam fade", [&conf](CN(Str) opt) { conf.fading = std::stof(opt); } },
+    {{"--pre_amp"}, "signal pre-amplify", [&conf](CN(Str) opt) { conf.pre_amp = std::stof(opt); } },
+    {{"--amp"}, "signal amplify", [&conf](CN(Str) opt) { conf.amp = std::stof(opt); } },
+    {{"--filter_type"}, "filtration algo.", [&conf](CN(Str) opt) { conf.filter_type = filter_e(std::stoi(opt)); } },
+    {{"--filter_power"}, "filtration power", [&conf](CN(Str) opt) { conf.filter_power = std::stoi(opt); } },
+    {{"--noise_level"}, "noise level", [&conf](CN(Str) opt) { conf.noise_level = std::stof(opt); } },
+    {{"--am_freg"}, "AM frequency", [&conf](CN(Str) opt) { conf.am_freg = std::stof(opt); } },
+    {{"--am_depth"}, "AM depth", [&conf](CN(Str) opt) { conf.am_depth = std::stof(opt); } },
+    {{"--am_tune"}, "AM tune value", [&conf](CN(Str) opt) { conf.am_tune = std::stof(opt); } },
+    {{"--fix_opts"}, "autofix options", [&conf](CN(Str) opt) { conf.fix_opts = true; } },
+    {{"--interlacing"}, "use interlacin", [&conf](CN(Str) opt) { conf.interlacing = true; } },
+    {{"--use_fading"}, "use beam fading", [&conf](CN(Str) opt) { conf.use_fading = true; } },
+    {{"--use_scale"}, "use scaling", [&conf](CN(Str) opt) { conf.use_scale = true; } },
+    {{"--use_am"}, "use AM-modulation", [&conf](CN(Str) opt) { conf.use_am = true; } },
+    {{"--debug"}, "use debug osc.", [&conf](CN(Str) opt) { conf.debug = true; } },
+    {{"--debug_black_bg"}, "use black background", [&conf](CN(Str) opt) { conf.debug_black_bg = true; } },
+  });
+} // opts_to_conf
