@@ -117,6 +117,18 @@ void imgui_debug(auto &conf) {
   ImGui::Checkbox("black bg for debug", &conf.debug_black_bg);
 }
 
+void imgui_safe_config(auto &conf) {
+  ImGui::Begin("TVsim2 config info");
+  static bool show_it {false};
+  ImGui::Checkbox("show it", &show_it);
+  if (show_it) {
+    static std::array<char, 2048> str; // TODO
+    ImGui::InputText("##TVsim2 options", str.data(), str.size(),
+      ImGuiInputTextFlags_ReadOnly);
+  }
+  ImGui::End();
+}
+
 void imgui_proc(auto &conf) {
   ImGui::Begin("config");
   imgui_draw_fps();
@@ -130,6 +142,7 @@ void imgui_proc(auto &conf) {
 
   imgui_tvsim_opts(conf);
   imgui_am_modulation(conf);
+  imgui_safe_config(conf);
 } // imgui_proc
 
 SDL_MAIN {
