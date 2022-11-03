@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include "util.hpp"
 #include "tvsim2bw/tvsim2bw.hpp"
+#include "tvsim2bw/conf.hpp"
 #include "utils/pparser.hpp"
 #include "utils/str.hpp"
 #include "utils/time.hpp"
@@ -122,8 +123,8 @@ void imgui_safe_config(auto &conf) {
   static bool show_it {false};
   ImGui::Checkbox("show it", &show_it);
   if (show_it) {
-    static std::array<char, 2048> str; // TODO
-    ImGui::InputText("##TVsim2 options", str.data(), str.size(),
+    auto opts {conf_to_opts(conf)};
+    ImGui::InputText("##TVsim2 options", opts.data(), opts.size(),
       ImGuiInputTextFlags_ReadOnly);
   }
   ImGui::End();

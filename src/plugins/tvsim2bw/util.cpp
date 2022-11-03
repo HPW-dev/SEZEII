@@ -1,5 +1,5 @@
-#include <omp.h>
 #include <cmath>
+#include <omp.h>
 #include "util.hpp"
 #include "image/image.hpp"
 #include "image/rgb24.hpp"
