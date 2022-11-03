@@ -26,7 +26,27 @@ void pparser::operator ()(int argc, char** argv) const {
       param.action(*opt);
     }
   } // for v_param
-} // op ()
+} // op (argv)
+
+void pparser::operator ()(CN(Str) opts) const {
+  if (opts.empty()) {
+    print_info();
+    std::exit(EXIT_FAILURE);
+  }
+  auto tokens {get_tokens(opts)};
+  for (auto param: v_param) {
+    auto opt {get_options(tokens, param.keys)};
+    if (opt) {
+      if (opt->empty() && param.needed) {
+        Str msg {"need param for "};
+        for (auto key: param.keys)
+          msg += key + ' ';
+        throw std::invalid_argument(msg);
+      }
+      param.action(*opt);
+    }
+  } // for v_param
+} // op (str)
 
 std::optional<Str> pparser::get_option(vector_t<Str> tokens, CN(Str) option) const {
   auto itr {std::find(tokens.begin(), tokens.end(), option)};
@@ -52,6 +72,15 @@ vector_t<Str> pparser::get_tokens(int argc, char** argv) const {
   vector_t<Str> tokens;
   for (int i {1}; i < argc; ++i)
     tokens.push_back(argv[i]);
+  return tokens;
+}
+
+vector_t<Str> pparser::get_tokens(CN(Str) opts) const {
+  std::stringstream ss(opts);
+  std::string str;
+  vector_t<Str> tokens;
+  while (getline(ss, str, ' '))
+    tokens.push_back(str);
   return tokens;
 }
 

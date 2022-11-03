@@ -82,4 +82,5 @@ void opts_to_conf(CN(Str) str, tvsim_conf &conf) {
     {{"--debug"}, "use debug osc.", [&conf](CN(Str) opt) { conf.debug = true; } },
     {{"--debug_black_bg"}, "use black background", [&conf](CN(Str) opt) { conf.debug_black_bg = true; } },
   });
+  parser(str);
 } // opts_to_conf

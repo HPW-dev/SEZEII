@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-/** commad parser
+/** commad parser (old ver)
  * @author iain 2009, HPW-dev 2021 */
 class CmdParser {
   std::vector<std::string> tokens = {};

@@ -22,6 +22,7 @@ public:
   //! @param in vector of: {{"-i", "--input", ...}, "description", lambda, is_needed}
   explicit pparser(v_param_t&& in) noexcept;
   void operator ()(int argc, char** argv) const;
+  void operator ()(CN(Str) opts) const;
   ~pparser() = default;
   void print_info() const;
 
@@ -32,6 +33,7 @@ private:
   std::optional<Str> get_option(vector_t<Str> tokens, CN(Str) option) const;
   std::optional<Str> get_options(vector_t<Str> tokens, CN(vector_t<Str>) options) const;
   vector_t<Str> get_tokens(int argc, char** argv) const;
+  vector_t<Str> get_tokens(CN(Str) opts) const;
 };
 
 } // seze ns
