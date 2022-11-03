@@ -16,14 +16,13 @@ void pparser::operator ()(int argc, char** argv) const {
   auto tokens {get_tokens(argc, argv)};
   for (auto param: v_param) {
     auto opt {get_options(tokens, param.keys)};
-    if (opt) {
-      if (opt->empty() && param.needed) {
-        Str msg {"need param for "};
-        for (auto key: param.keys)
-          msg += key + ' ';
-        throw std::invalid_argument(msg);
-      }
+    if (opt)
       param.action(*opt);
+    if (!opt && param.needed) {
+      Str msg {"need param for "};
+      for (auto key: param.keys)
+        msg += key + ' ';
+      throw std::invalid_argument(msg);
     }
   } // for v_param
 } // op (argv)
@@ -36,14 +35,13 @@ void pparser::operator ()(CN(Str) opts) const {
   auto tokens {get_tokens(opts)};
   for (auto param: v_param) {
     auto opt {get_options(tokens, param.keys)};
-    if (opt) {
-      if (opt->empty() && param.needed) {
-        Str msg {"need param for "};
-        for (auto key: param.keys)
-          msg += key + ' ';
-        throw std::invalid_argument(msg);
-      }
+    if (opt)
       param.action(*opt);
+    if (!opt && param.needed) {
+      Str msg {"need param for "};
+      for (auto key: param.keys)
+        msg += key + ' ';
+      throw std::invalid_argument(msg);
     }
   } // for v_param
 } // op (str)
