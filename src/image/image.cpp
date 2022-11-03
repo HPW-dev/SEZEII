@@ -33,6 +33,24 @@ void Image::init(int x, int y, color_t color_type) {
   bytes_ = stride_ * y;
 }
 
+void Image::init(byte* _data_, int x, int y, color_t color_type) {
+  // если размер новой пикчи равен существующей, то ничего не делать
+  if (x * y == this->size_ && color_type == this->type_) {
+    X_ = x;
+    Y_ = y;
+    return;
+  }
+  destroy_pixels(data_);
+  X_ = x;
+  Y_ = y;
+  size_ = x * y;
+  type_ = color_type;
+  data_ = _data_;
+  stride_ = data_ ? get_size(color_type) * x : 0;
+  bytes_ = stride_ * y;
+  no_destroy = true;
+} // init
+
 Image::Image(byte* _data_, int x, int y, color_t color_type)
 : X_(x)
 , Y_(y)

@@ -147,3 +147,13 @@ make_shared_lib("warpscan", [
   src_dir + "utils/random.cpp",
   src_dir + "utils/aalloc.cpp",
 ])
+
+make_shared_lib("tvsim2bw", [
+  Glob("tvsim2bw/*.cpp"),
+  Glob("tvsim2bw/plugin/*.cpp"),
+  src_dir + "utils/pparser.cpp",
+  src_dir + "utils/random.cpp",
+  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+])
