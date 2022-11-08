@@ -27,7 +27,6 @@ public:
   Tvsim2yuv();
   ~Tvsim2yuv() = default;
 
-
   //! main processing func
   void operator ()(CN(seze::Image) src, seze::Image &dst) override;
 }; // Tvsim2bw
