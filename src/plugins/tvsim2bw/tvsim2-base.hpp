@@ -10,6 +10,8 @@ class Tvsim2_base {
 
 public:
   tvsim_conf conf {};
+  tvsim_conf_yuv conf_yuv {};
+  Str title {};
 
   Tvsim2_base() = default;
   virtual ~Tvsim2_base() = default;

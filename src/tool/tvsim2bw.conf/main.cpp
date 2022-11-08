@@ -8,8 +8,6 @@
 #include "utils/str.hpp"
 #include "utils/time.hpp"
 
-bool yuv_mode {false}; ///< включает режим цветного тв
-
 void imgui_desat(auto &conf) {
   int sel {int(conf.desat_type)};
   Cstr iteams {
@@ -133,26 +131,24 @@ void imgui_safe_config(auto &conf) {
   ImGui::End();
 }
 
-void imgui_proc(auto &conf) {
+void imgui_proc(auto &conf_bw, auto &conf_yuv) {
   ImGui::Begin("config");
   imgui_draw_fps();
-  imgui_debug(conf);
-  imgui_desat(conf);
-  imgui_scale_wh(conf);
-  imgui_scale_in_out(conf);
-  imgui_scale_using(conf);
-  imgui_filters(conf);
+  imgui_debug(conf_bw);
+  imgui_desat(conf_bw);
+  imgui_scale_wh(conf_bw);
+  imgui_scale_in_out(conf_bw);
+  imgui_scale_using(conf_bw);
+  imgui_filters(conf_bw);
   ImGui::End();
 
-  imgui_tvsim_opts(conf);
-  imgui_am_modulation(conf);
-  imgui_safe_config(conf);
+  imgui_tvsim_opts(conf_bw);
+  imgui_am_modulation(conf_bw);
+  imgui_safe_config(conf_bw);
 } // imgui_proc
 
 SDL_MAIN {
-  auto [window, renderer] = init_sdl();
-  init_imgui(window, renderer);
-  shared_p<Tvsim2_base> tvsim;
+  bool yuv_mode {false}; // включает режим цветного тв
   seze::Image src, dst;
   auto parser = seze::pparser({
     {
@@ -164,15 +160,19 @@ SDL_MAIN {
     {
       {"--yuv"},
       "YUV color mode",
-      [&src](CN(Str) name) { yuv_mode = true; }
+      [&yuv_mode](CN(Str) name) { yuv_mode = true; }
     }
   }); // pparser
   parser(argc, argv);
 
+  shared_p<Tvsim2_base> tvsim;
   if (yuv_mode)
     tvsim = make_shared_p<Tvsim2yuv>();
   else
     tvsim = make_shared_p<Tvsim2bw>();
+
+  auto [window, renderer] = init_sdl(tvsim->title);
+  init_imgui(window, renderer);
 
   SDL_Texture *tex =
     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
@@ -180,13 +180,18 @@ SDL_MAIN {
   dst.init(src.X, src.Y, src.type);
 
   tvsim_conf conf; // локальная копия конфига для настроек в imgui
+  tvsim_conf_yuv conf_yuv;
   while ( !tvsim2bw::is_end) {
     proc_sdl_event(window);
     start_frame(renderer);
-    memcpy(&conf, &tvsim->conf, sizeof(conf));
-    imgui_proc(conf);
-    memcpy(&tvsim->conf, &conf, sizeof(conf));
+
+    conf = tvsim->conf;
+    conf_yuv = tvsim->conf_yuv;
+    imgui_proc(conf, conf_yuv);
+    tvsim->conf = conf;
+    tvsim->conf_yuv = conf_yuv;
     (*tvsim)(src, dst);
+
     draw_image(dst, tex, renderer);
     draw_sdl_imgui(renderer);
   }

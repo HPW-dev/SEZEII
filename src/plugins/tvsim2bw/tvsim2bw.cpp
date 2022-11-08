@@ -10,7 +10,9 @@ Tvsim2bw::Tvsim2bw()
 : bw_img {make_shared_p<seze::Image>()}
 , bw_img_scaled {make_shared_p<seze::Image>()}
 , display {make_shared_p<seze::Image>()}
-{}
+{
+  title = "TV sim. 2 (BW)";
+}
 
 void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
   update();

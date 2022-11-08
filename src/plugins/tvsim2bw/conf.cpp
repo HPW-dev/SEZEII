@@ -33,13 +33,13 @@ Str conf_to_opts(CN(tvsim_conf) conf) {
   ss << " --am_freg " << conf.am_freg;
   ss << " --am_depth " << conf.am_depth;
   ss << " --am_tune " << conf.am_tune;
-  if (conf.fix_opts) ss << " --fix_opts";
-  if (conf.interlacing) ss << " --interlacing";
-  if (conf.use_fading) ss << " --use_fading";
-  if (conf.use_scale) ss << " --use_scale";
-  if (conf.use_am) ss << " --use_am";
-  if (conf.debug) ss << " --debug";
-  if (conf.debug_black_bg) ss << " --debug_black_bg";
+  ss << " --fix_opts" << int(conf.fix_opts);
+  ss << " --interlacing" << int(conf.interlacing);
+  ss << " --use_fading" << int(conf.use_fading);
+  ss << " --use_scale" << int(conf.use_scale);
+  ss << " --use_am" << int(conf.use_am);
+  ss << " --debug" << int(conf.debug);
+  ss << " --debug_black_bg" << int(conf.debug_black_bg);
   return ss.str();
 } // conf_to_opts
 
@@ -74,13 +74,21 @@ void opts_to_conf(CN(Str) str, tvsim_conf &conf) {
     {{"--am_freg"}, "AM frequency", [&conf](CN(Str) opt) { conf.am_freg = std::stof(opt); } },
     {{"--am_depth"}, "AM depth", [&conf](CN(Str) opt) { conf.am_depth = std::stof(opt); } },
     {{"--am_tune"}, "AM tune value", [&conf](CN(Str) opt) { conf.am_tune = std::stof(opt); } },
-    {{"--fix_opts"}, "autofix options", [&conf](CN(Str) opt) { conf.fix_opts = true; } },
-    {{"--interlacing"}, "use interlacin", [&conf](CN(Str) opt) { conf.interlacing = true; } },
-    {{"--use_fading"}, "use beam fading", [&conf](CN(Str) opt) { conf.use_fading = true; } },
-    {{"--use_scale"}, "use scaling", [&conf](CN(Str) opt) { conf.use_scale = true; } },
-    {{"--use_am"}, "use AM-modulation", [&conf](CN(Str) opt) { conf.use_am = true; } },
-    {{"--debug"}, "use debug osc.", [&conf](CN(Str) opt) { conf.debug = true; } },
-    {{"--debug_black_bg"}, "use black background", [&conf](CN(Str) opt) { conf.debug_black_bg = true; } },
+    {{"--fix_opts"}, "autofix options", [&conf](CN(Str) opt) { conf.fix_opts = bool(stoi(opt)); } },
+    {{"--interlacing"}, "use interlacin", [&conf](CN(Str) opt) { conf.interlacing = bool(stoi(opt)); } },
+    {{"--use_fading"}, "use beam fading", [&conf](CN(Str) opt) { conf.use_fading = bool(stoi(opt)); } },
+    {{"--use_scale"}, "use scaling", [&conf](CN(Str) opt) { conf.use_scale = bool(stoi(opt)); } },
+    {{"--use_am"}, "use AM-modulation", [&conf](CN(Str) opt) { conf.use_am = bool(stoi(opt)); } },
+    {{"--debug"}, "use debug osc.", [&conf](CN(Str) opt) { conf.debug = bool(stoi(opt)); } },
+    {{"--debug_black_bg"}, "use black background", [&conf](CN(Str) opt) { conf.debug_black_bg = bool(stoi(opt)); } },
   });
   parser(str);
 } // opts_to_conf
+
+Str conf_to_opts(CN(tvsim_conf_yuv) conf_yuv) {
+  return {}; // TODO
+}
+
+void opts_to_conf(CN(Str) str, tvsim_conf_yuv &conf_yuv) {
+  // TODO
+}

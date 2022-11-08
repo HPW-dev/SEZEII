@@ -21,13 +21,13 @@ void load(seze::Image &dst, CN(Str) fname);
 #define SDL_MAIN int main(int argc, char* argv[])
 #endif
 
-inline auto init_sdl() {
+inline auto init_sdl(CN(Str) title) {
 #if !SDL_VERSION_ATLEAST(2,0,17)
   #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
   assert(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER
     | SDL_INIT_GAMECONTROLLER) == 0);
-  auto window = SDL_CreateWindow("TVsim 2 configuration util",
+  auto window = SDL_CreateWindow(title.c_str(),
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     tvsim2bw::wnd_w, tvsim2bw::wnd_h,
     SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
