@@ -5,11 +5,12 @@
 
 execute these commands in project root:
 + For building SEZE II: ```scons .```
-+ For building free plugins (output in ./bin/plugins/): ```scons . -Q build_plugins=1```
++ For building free plugins (output in ./bin/plugins/): ```scons -Q script=src/plugins/SConscript```
++ For building TVsim2conf: ```scons -Q script=src/tool/tvsim2bw.conf/SConscript```
 + For debug & watch ffmpeg debug log:
 ```
-scons -Q debug=0 -Q build_plugins=0 -Q fflog=0
-scons -Q debug=0 -Q build_plugins=1
+scons -Q debug=1 -Q fflog=1
+scons -Q debug=1 -Q script=src/plugins/SConscript
 ```
 ### How to build seze-gui
 Install [pyinstaller](https://www.pyinstaller.org/) and execute:
