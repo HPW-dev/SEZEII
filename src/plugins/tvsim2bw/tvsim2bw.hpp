@@ -4,6 +4,7 @@
 class Tvsim2bw: public Tvsim2_base {
   nocopy(Tvsim2bw);
 
+protected:
   shared_p<seze::Image> bw_img {};
   shared_p<seze::Image> bw_img_scaled {};
   shared_p<seze::Image> display {}; ///< для симуляции затухания кинескопа

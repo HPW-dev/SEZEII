@@ -3,6 +3,7 @@
 #include "util.hpp"
 #include "image/image.hpp"
 #include "image/rgb24.hpp"
+#include "image/YUV.hpp"
 #include "utils/random.hpp"
 
 void desaturate(CN(seze::Image) src, seze::Image &dst,
@@ -339,4 +340,26 @@ void apply_noise(v_luma_t &stream, real noise_level) {
   #pragma omp for simd
   FOR (i, stream.size())
     stream[i] += noise_level * seze::frand_fast();
+}
+
+seze::YUVf RGB24_to_yuv(CN(seze::RGB24) c) {
+  constexpr auto mul {1.0f / 255.0f};
+  auto fr {c.R * mul};
+	auto fg {c.G * mul};
+	auto fb {c.B * mul};
+	auto Y = 0.2989f * fr + 0.5866f * fg + 0.1145f * fb;
+	auto Cb = -0.1687f * fr - 0.3313f * fg + 0.5000f * fb;
+	auto Cr = 0.5000f * fr - 0.4184f * fg - 0.0816f * fb;
+  return seze::YUVf(Y, Cb, Cr);
+}
+
+ seze::RGB24 yuv_to_RGB24(CN(seze::YUVf) c) {
+  constexpr auto mul {255.0f};
+  auto r = std::clamp(c.Y + 0.0000f * c.U + 1.4022f * c.V, 0.0f, 1.0f);
+  r *= mul;
+	auto g = std::clamp(c.Y - 0.3456f * c.U - 0.7145f * c.V, 0.0f, 1.0f);
+  g *= mul;
+	auto b = std::clamp(c.Y + 1.7710f * c.U + 0.0000f * c.V, 0.0f, 1.0f);
+  b *= mul;
+	return seze::RGB24(r, g, b);
 }

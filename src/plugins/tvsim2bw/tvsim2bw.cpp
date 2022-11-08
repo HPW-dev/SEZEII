@@ -4,7 +4,6 @@
 #include "tvsim2bw.hpp"
 #include "util.hpp"
 #include "image/image.hpp"
-#include "image/rgb24.hpp"
 
 Tvsim2bw::Tvsim2bw()
 : bw_img {make_shared_p<seze::Image>()}

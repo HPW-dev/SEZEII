@@ -1,6 +1,8 @@
 #pragma once
 #include "utils/macro.hpp"
 #include "types.hpp"
+#include "image/rgb24.hpp"
+#include "image/YUV.hpp"
 
 namespace seze {
   class Image;
@@ -19,3 +21,6 @@ void apply_noise(v_luma_t &stream, real noise_level);
 inline real to_range(real x, real in_min, real in_max,
 real out_min, real out_max)
   { return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; }
+
+seze::YUVf RGB24_to_yuv(CN(seze::RGB24) c);
+seze::RGB24 yuv_to_RGB24(CN(seze::YUVf) c);
