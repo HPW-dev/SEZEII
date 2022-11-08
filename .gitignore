@@ -8,6 +8,8 @@
 *.svg
 *.exe
 *.code-workspace
+*bin/tvsim2bw-conf
+callgrind.out*
 perf*
 run.*
 clean.bat

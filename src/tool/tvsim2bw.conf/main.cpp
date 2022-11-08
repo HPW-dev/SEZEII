@@ -2,10 +2,13 @@
 #include <cstdlib>
 #include "util.hpp"
 #include "tvsim2bw/tvsim2bw.hpp"
+#include "tvsim2bw/Tvsim2yuv.hpp"
 #include "tvsim2bw/conf.hpp"
 #include "utils/pparser.hpp"
 #include "utils/str.hpp"
 #include "utils/time.hpp"
+
+bool yuv_mode {false}; ///< включает режим цветного тв
 
 void imgui_desat(auto &conf) {
   int sel {int(conf.desat_type)};
@@ -149,7 +152,7 @@ void imgui_proc(auto &conf) {
 SDL_MAIN {
   auto [window, renderer] = init_sdl();
   init_imgui(window, renderer);
-  Tvsim2bw tvsim;
+  shared_p<Tvsim2_base> tvsim;
   seze::Image src, dst;
   auto parser = seze::pparser({
     {
@@ -157,23 +160,33 @@ SDL_MAIN {
       "input image",
       [&src](CN(Str) name) { load(src, name); },
       true
+    },
+    {
+      {"--yuv"},
+      "YUV color mode",
+      [&src](CN(Str) name) { yuv_mode = true; }
     }
-  });
+  }); // pparser
   parser(argc, argv);
+
+  if (yuv_mode)
+    tvsim = make_shared_p<Tvsim2yuv>();
+  else
+    tvsim = make_shared_p<Tvsim2bw>();
 
   SDL_Texture *tex =
     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
       SDL_TEXTUREACCESS_TARGET, src.X, src.Y);
   dst.init(src.X, src.Y, src.type);
 
-  tvsim_conf conf;
+  tvsim_conf conf; // локальная копия конфига для настроек в imgui
   while ( !tvsim2bw::is_end) {
     proc_sdl_event(window);
     start_frame(renderer);
-    memcpy(&conf, &tvsim.conf, sizeof(conf));
+    memcpy(&conf, &tvsim->conf, sizeof(conf));
     imgui_proc(conf);
-    memcpy(&tvsim.conf, &conf, sizeof(conf));
-    tvsim(src, dst);
+    memcpy(&tvsim->conf, &conf, sizeof(conf));
+    (*tvsim)(src, dst);
     draw_image(dst, tex, renderer);
     draw_sdl_imgui(renderer);
   }

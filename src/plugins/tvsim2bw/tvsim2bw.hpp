@@ -1,11 +1,7 @@
 #pragma once
-#include "conf.hpp"
+#include "tvsim2-base.hpp"
 
-namespace seze {
-  class Image;
-}
-
-class Tvsim2bw final {
+class Tvsim2bw: public Tvsim2_base {
   nocopy(Tvsim2bw);
 
   shared_p<seze::Image> bw_img {};
@@ -39,10 +35,8 @@ class Tvsim2bw final {
   void amplify(real amp=1.0);
 
 public:
-  tvsim_conf conf {};
-
   Tvsim2bw();
   ~Tvsim2bw() = default;
   //! main processing func
-  void operator ()(CN(seze::Image) src, seze::Image &dst);
+  void operator ()(CN(seze::Image) src, seze::Image &dst) override;
 }; // Tvsim2bw
