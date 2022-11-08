@@ -8,6 +8,8 @@
 #include "utils/str.hpp"
 #include "utils/time.hpp"
 
+bool yuv_mode {false}; ///< включает режим цветного тв
+
 void imgui_desat(auto &conf) {
   int sel {int(conf.desat_type)};
   Cstr iteams {
@@ -119,15 +121,28 @@ void imgui_debug(auto &conf) {
   ImGui::Checkbox("black bg for debug", &conf.debug_black_bg);
 }
 
-void imgui_safe_config(auto &conf) {
+void imgui_safe_config(auto &conf, auto &conf_yuv) {
   ImGui::Begin("TVsim2 config info");
   static bool show_it {false};
   ImGui::Checkbox("show it", &show_it);
   if (show_it) {
     auto opts {conf_to_opts(conf)};
+    if (yuv_mode)
+      opts += " " + conf_to_opts(conf_yuv);
     ImGui::InputText("##TVsim2 options", opts.data(), opts.size(),
       ImGuiInputTextFlags_ReadOnly);
   }
+  ImGui::End();
+}
+
+void imgui_yuv_conf(auto &conf) {
+  ImGui::Begin("color config");
+  ImGui::DragInt("shift U", &conf.shift_u, 1, -2'000, 2'000);
+  ImGui::DragInt("shift V", &conf.shift_v, 1, -2'000, 2'000);
+  ImGui::DragInt("filter UV", &conf.filter_power_uv, 1, 0, 256);
+  ImGui::DragFloat("noise UV", &conf.noise_uv, 0.001f, 0, 3.0f);
+  ImGui::DragFloat("amplify U", &conf.amp_u, 0.001f, 0, 4.0f);
+  ImGui::DragFloat("amplify V", &conf.amp_v, 0.001f, 0, 4.0f);
   ImGui::End();
 }
 
@@ -144,11 +159,12 @@ void imgui_proc(auto &conf_bw, auto &conf_yuv) {
 
   imgui_tvsim_opts(conf_bw);
   imgui_am_modulation(conf_bw);
-  imgui_safe_config(conf_bw);
+  imgui_safe_config(conf_bw, conf_yuv);
+  if (yuv_mode)
+    imgui_yuv_conf(conf_yuv);
 } // imgui_proc
 
 SDL_MAIN {
-  bool yuv_mode {false}; // включает режим цветного тв
   seze::Image src, dst;
   auto parser = seze::pparser({
     {
@@ -160,7 +176,7 @@ SDL_MAIN {
     {
       {"--yuv"},
       "YUV color mode",
-      [&yuv_mode](CN(Str) name) { yuv_mode = true; }
+      [](CN(Str) name) { yuv_mode = true; }
     }
   }); // pparser
   parser(argc, argv);

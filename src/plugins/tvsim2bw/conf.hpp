@@ -42,6 +42,12 @@ struct tvsim_conf {
 }; // tvsim_conf
 
 struct tvsim_conf_yuv {
+  int shift_u {0};
+  int shift_v {0};
+  int filter_power_uv {3}; ///< filter power for uv channel
+  real noise_uv {0.066f}; ///< noise level for uv
+  real amp_u {1.0};
+  real amp_v {1.0};
 }; // conf_yuv
 
 Str conf_to_opts(CN(tvsim_conf) conf);

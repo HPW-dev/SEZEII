@@ -33,13 +33,13 @@ Str conf_to_opts(CN(tvsim_conf) conf) {
   ss << " --am_freg " << conf.am_freg;
   ss << " --am_depth " << conf.am_depth;
   ss << " --am_tune " << conf.am_tune;
-  ss << " --fix_opts" << int(conf.fix_opts);
-  ss << " --interlacing" << int(conf.interlacing);
-  ss << " --use_fading" << int(conf.use_fading);
-  ss << " --use_scale" << int(conf.use_scale);
-  ss << " --use_am" << int(conf.use_am);
-  ss << " --debug" << int(conf.debug);
-  ss << " --debug_black_bg" << int(conf.debug_black_bg);
+  ss << " --fix_opts " << int(conf.fix_opts);
+  ss << " --interlacing " << int(conf.interlacing);
+  ss << " --use_fading " << int(conf.use_fading);
+  ss << " --use_scale " << int(conf.use_scale);
+  ss << " --use_am " << int(conf.use_am);
+  ss << " --debug " << int(conf.debug);
+  ss << " --debug_black_bg " << int(conf.debug_black_bg);
   return ss.str();
 } // conf_to_opts
 
@@ -86,9 +86,24 @@ void opts_to_conf(CN(Str) str, tvsim_conf &conf) {
 } // opts_to_conf
 
 Str conf_to_opts(CN(tvsim_conf_yuv) conf_yuv) {
-  return {}; // TODO
+  std::stringstream ss;
+  ss << " --shift_u " << conf_yuv.shift_u;
+  ss << " --shift_v " << conf_yuv.shift_v;
+  ss << " --filter_power_uv " << conf_yuv.filter_power_uv;
+  ss << " --noise_uv " << conf_yuv.noise_uv;
+  ss << " --amp_u " << conf_yuv.amp_u;
+  ss << " --amp_v " << conf_yuv.amp_v;
+  return ss.str();
 }
 
 void opts_to_conf(CN(Str) str, tvsim_conf_yuv &conf_yuv) {
-  // TODO
+  seze::pparser parser({
+    {{"--shift_u"}, "shift U channel", [&conf_yuv](CN(Str) opt) { conf_yuv.shift_u = std::stoi(opt); } },
+    {{"--shift_v"}, "shift V channel", [&conf_yuv](CN(Str) opt) { conf_yuv.shift_v = std::stoi(opt); } },
+    {{"--filter_power_uv"}, "color filter power", [&conf_yuv](CN(Str) opt) { conf_yuv.filter_power_uv = std::stoi(opt); } },
+    {{"--noise_uv"}, "color noise", [&conf_yuv](CN(Str) opt) { conf_yuv.noise_uv = std::stof(opt); } },
+    {{"--amp_u"}, "amplify U channel", [&conf_yuv](CN(Str) opt) { conf_yuv.amp_u = std::stof(opt); } },
+    {{"--amp_v"}, "amplify V channel", [&conf_yuv](CN(Str) opt) { conf_yuv.amp_v = std::stof(opt); } },
+  });
+  parser(str);
 }
