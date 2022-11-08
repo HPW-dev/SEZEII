@@ -17,20 +17,18 @@ protected:
   v_luma_t buf_a {}; ///< буффер для AM модуляции
   v_luma_t buf_b {}; ///< буффер для AM модуляции
 
-  void downscale();
-  void upscale();
+  virtual void downscale();
+  virtual void upscale();
   void desaturate_(CN(seze::Image) src);
   void convert_to_dst(seze::Image &dst);
   void encode_stream(CN(seze::Image) src);
   void decode_stream(seze::Image &dst);
   //! определяет сколько нужно памяти под tv stream
-  void resize_stream(CN(seze::Image) src);
+  size_t resize_stream(CN(seze::Image) src);
   real encode_pix(luma_t src) const;
   luma_t decode_pix(real src) const;
   void update();
   void display_simul(seze::Image &dst);
-  void ringing(std::vector<luma_t> &stream,
-    real ratio, int len, real power);
   void am_modulate();
   void draw_debug(seze::Image &dst) const;
   void amplify(real amp=1.0);

@@ -149,12 +149,13 @@ void Tvsim2bw::decode_stream(seze::Image &dst) {
   display_simul(dst);
 } // decode_stream
 
-void Tvsim2bw::resize_stream(CN(seze::Image) src) {
+size_t Tvsim2bw::resize_stream(CN(seze::Image) src) {
   str_sz = src.X + conf.hfront + conf.hback + conf.hsync_sz;
   const size_t str_count = conf.interlacing ? src.Y / 2 : src.Y;
   const size_t frame_sz = (str_count * str_sz) + conf.vfront
     + conf.vback + conf.vsync_sz;
   stream.resize(frame_sz);
+  return frame_sz;
 }
 
 real Tvsim2bw::encode_pix(luma_t src) const
