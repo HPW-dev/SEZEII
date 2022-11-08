@@ -35,8 +35,10 @@ else: # release
   ld_flags.extend(["-shared-libgcc", "-flto"])
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])
+  # "-msse4.1"
   cxx_opts = ["-Ofast", "-march=x86-64"] if is_x64 else ["-m32", "-Ofast", "-march=pentium2"]
   cpp_flags.extend(cxx_opts)
+  cpp_flags.extend(["-flto"])
 cxx_arch = ["-m64"] if is_x64 else ["-m32"]
 cpp_flags.extend(cxx_arch)
 if (use_fflog):

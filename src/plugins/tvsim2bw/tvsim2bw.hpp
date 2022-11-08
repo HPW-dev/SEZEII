@@ -29,9 +29,9 @@ protected:
   luma_t decode_pix(real src) const;
   void update();
   void display_simul(seze::Image &dst);
-  void am_modulate();
+  void am_modulate(v_luma_t &dst, real noise_level, int filter_power);
   void draw_debug(seze::Image &dst) const;
-  void amplify(real amp=1.0);
+  virtual void amplify(real amp=1.0);
 
 public:
   Tvsim2bw();

@@ -20,7 +20,7 @@ void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
   encode_stream(*bw_img_scaled);
   amplify(conf.pre_amp);
   if (conf.use_am)
-    am_modulate();
+    am_modulate(stream, conf.noise_level, conf.filter_power);
   else {
     apply_noise(stream, conf.noise_level);
     filtering(stream, conf.filter_power, conf.filter_type);
@@ -190,40 +190,40 @@ void Tvsim2bw::display_simul(seze::Image &dst) {
   display->fast_copy_to(dst);
 }
 
-void Tvsim2bw::am_modulate() {
+void Tvsim2bw::am_modulate(v_luma_t &dst, real noise_level, int filter_power) {
   const auto freg {conf.am_freg};
   const auto depth {conf.am_depth};
   // modulate
   #pragma omp parallel for simd
-  FOR (i, stream.size()) {
-    auto &x {stream[i]};
+  FOR (i, dst.size()) {
+    auto &x {dst[i]};
     const auto at {1.0f + depth * x};
     const auto st {at * std::cos(freg * i)};
     x = st;
   }
   // noise
-  apply_noise(stream, conf.noise_level);
+  apply_noise(dst, noise_level);
   // demodulate
-  buf_a.resize(stream.size());
-  buf_b.resize(stream.size());
+  buf_a.resize(dst.size());
+  buf_b.resize(dst.size());
   const auto pre_mul {std::numbers::pi * 0.5f};
   #pragma omp parallel for simd
-  FOR (i, stream.size()) {
+  FOR (i, dst.size()) {
     const auto g {std::cos(freg * i)};
-    const auto xg {stream[i] * g};
+    const auto xg {dst[i] * g};
     buf_a[i] = xg;
     buf_b[i] = xg * pre_mul;
   }
-  filtering(buf_a, conf.filter_power, conf.filter_type);
-  filtering(buf_b, conf.filter_power, conf.filter_type);
+  filtering(buf_a, filter_power, conf.filter_type);
+  filtering(buf_b, filter_power, conf.filter_type);
   const auto tune {conf.am_tune};
   #pragma omp parallel for simd
-  FOR (i, stream.size()) {
+  FOR (i, dst.size()) {
     auto a = buf_a[i];
     a *= a;
     auto b = buf_b[i];
     b *= b;
-    stream[i] = std::sqrt(a + b) - tune;
+    dst[i] = std::sqrt(a + b) - tune;
   }
 } // modulate
 

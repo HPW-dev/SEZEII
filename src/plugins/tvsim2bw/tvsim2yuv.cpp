@@ -22,26 +22,37 @@ void Tvsim2yuv::operator ()(CN(seze::Image) src, seze::Image &dst) {
   downscale();
   encode_stream(*bw_img_scaled);
   encode_stream_uv(*u_img_scaled, *v_img_scaled);
-
   amplify(conf.pre_amp);
-  if (conf.use_am)
-    am_modulate();
-  else {
+  if (conf.use_am) {
+    am_modulate(stream, conf.noise_level, conf.filter_power);
+    am_modulate(u_stream, conf_yuv.noise_uv, conf_yuv.filter_power_uv);
+    am_modulate(v_stream, conf_yuv.noise_uv, conf_yuv.filter_power_uv);
+  } else {
     apply_noise(stream, conf.noise_level);
+    apply_noise(u_stream, conf_yuv.noise_uv);
+    apply_noise(v_stream, conf_yuv.noise_uv);
     filtering(stream, conf.filter_power, conf.filter_type);
+    filtering(u_stream, conf_yuv.filter_power_uv, conf.filter_type);
+    filtering(v_stream, conf_yuv.filter_power_uv, conf.filter_type);
   }
   amplify(conf.amp);
-
-  decode_stream_yuv(*bw_img_scaled, *u_img_scaled, *v_img_scaled);
-  upscale();
-  combine_channels(dst);
-  display_simul_rgb(dst);
-}
+  if (conf.debug_black_bg) {
+    std::fill(dst.get_data(), dst.get_data() + dst.bytes, 0);
+  } else {
+    decode_stream_yuv(*bw_img_scaled, *u_img_scaled, *v_img_scaled);
+    upscale();
+    combine_channels(dst);
+    display_simul_rgb(dst);
+  }
+  if (conf.debug)
+    draw_debug(dst);
+} // op ()
 
 void Tvsim2yuv::split_channels(CN(seze::Image) src) {
   bw_img->init(src.X, src.Y, seze_f_gray);
   u_img->init(src.X, src.Y, seze_f_gray);
   v_img->init(src.X, src.Y, seze_f_gray);
+  #pragma omp parallel for simd
   FOR (i, src.size) {
     auto src_pix {src.fast_get<seze::RGB24>(i)};
     auto yuv {RGB24_to_yuv(src_pix)};
@@ -52,6 +63,7 @@ void Tvsim2yuv::split_channels(CN(seze::Image) src) {
 }
 
 void Tvsim2yuv::combine_channels(seze::Image &dst) {
+  #pragma omp parallel for simd
   FOR (i, bw_img->size) {
     auto y {bw_img->fast_get<luma_t>(i)};
     auto u {u_img->fast_get<luma_t>(i)};
@@ -188,30 +200,7 @@ void Tvsim2yuv::decode_stream_yuv(seze::Image &dst_y, seze::Image &dst_u, seze::
     } // else pix
     ++idx;
   }
-  //display_simul_yuv(dst_y, dst_u, dst_v);
 } // decode_stream_yuv
-
-void Tvsim2yuv::display_simul_yuv(seze::Image &dst_y, seze::Image &dst_u, seze::Image &dst_v) {
-  return_if (!conf.use_fading);
-  display->init(dst_y.X, dst_y.Y, seze_f_gray);
-  u_display->init(dst_y.X, dst_y.Y, seze_f_gray);
-  v_display->init(dst_y.X, dst_y.Y, seze_f_gray);
-  #pragma omp parallel for simd
-  FOR (i, display->size) {
-    auto &y_pix {display->fast_get<luma_t>(i)};
-    y_pix = std::max<luma_t>(0, y_pix - conf.fading);
-    y_pix = std::max<luma_t>(y_pix, dst_y.fast_get<luma_t>(i));
-    auto &u_pix {u_display->fast_get<luma_t>(i)};
-    u_pix = std::max<luma_t>(0, u_pix - conf.fading);
-    u_pix = std::max<luma_t>(u_pix, dst_u.fast_get<luma_t>(i));
-    auto &v_pix {v_display->fast_get<luma_t>(i)};
-    v_pix = std::max<luma_t>(0, v_pix - conf.fading);
-    v_pix = std::max<luma_t>(v_pix, dst_v.fast_get<luma_t>(i));
-  }
-  display->fast_copy_to(dst_y);
-  u_display->fast_copy_to(dst_u);
-  v_display->fast_copy_to(dst_v);
-} // display_simul_yuv
 
 void Tvsim2yuv::display_simul_rgb(seze::Image &dst) {
   return_if (!conf.use_fading);
@@ -229,3 +218,21 @@ void Tvsim2yuv::display_simul_rgb(seze::Image &dst) {
   }
   rgb_display->fast_copy_to(dst);
 }
+
+void Tvsim2yuv::amplify(real amp) {
+  if (amp != 1) {
+    #pragma omp for simd
+    FOR (i, stream.size())
+      stream[i] *= amp;
+  }
+  if (conf_yuv.amp_u != 1) {
+    #pragma omp for simd
+    FOR (i, u_stream.size())
+      u_stream[i] *= conf_yuv.amp_u;
+  }
+  if (conf_yuv.amp_v != 1) {
+    #pragma omp for simd
+    FOR (i, v_stream.size())
+      v_stream[i] *= conf_yuv.amp_v;
+  }
+} // amplify

@@ -20,8 +20,8 @@ class Tvsim2yuv: public Tvsim2bw {
   void upscale() override;
   void encode_stream_uv(CN(seze::Image) src_u, CN(seze::Image) src_v);
   void decode_stream_yuv(seze::Image &dst_y, seze::Image &dst_u, seze::Image &dst_v);
-  void display_simul_yuv(seze::Image &dst_y, seze::Image &dst_u, seze::Image &dst_v);
   void display_simul_rgb(seze::Image &dst);
+  void amplify(real amp=1.0) override;
 
 public:
   Tvsim2yuv();
