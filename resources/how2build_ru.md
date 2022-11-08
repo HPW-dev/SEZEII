@@ -5,11 +5,11 @@
 
 Выполните следующие команды в корневом каталоге SEZE II:
 + Для сборки SEZE II: ```scons .```
-+ Для сборки свободных плагинов (output in ./bin/plugins/): ```scons . -Q build_plugins=1```
++ Для сборки плагинов (искать в папке ./bin/plugins/): ```scons -Q script=src/plugins/SConscript```
 + Для отладки и просмотра ffmpeg логов:
 ```
-scons -Q debug=0 -Q build_plugins=0 -Q fflog=0
-scons -Q debug=0 -Q build_plugins=1
+scons -Q debug=1 -Q fflog=1
+scons -Q debug=1 -Q script=src/plugins/SConscript
 ```
 ### Как скомпилировать seze-gui
 Установите [pyinstaller](https://www.pyinstaller.org/) и выполните команды:
