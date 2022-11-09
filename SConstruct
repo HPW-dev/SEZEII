@@ -31,7 +31,7 @@ if (is_debug):
   cpp_flags.extend(["-O0", "-g"])
 else: # release
   if (not is_linux):
-      ld_flags.extend(["-shared-libstdc++"])
+    ld_flags.extend(["-shared-libstdc++"])
   ld_flags.extend(["-shared-libgcc", "-flto"])
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])

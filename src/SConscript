@@ -22,12 +22,13 @@ used_libs = [
 thirdparty_path = "../thirdparty/"
 bin_path = "../bin/"
 
+inc_path.extend([thirdparty_path + "DyLib"])
+
 if (is_linux):
   used_libs.extend(["pthread", "m", "SDL2", "dl"])
 else:
   used_libs.extend(["mingw32", "SDL2main", "SDL2"])
   inc_path.extend([
-    thirdparty_path + "DyLib",
     thirdparty_path + "ffmpeg/include",
     thirdparty_path + "SDL2/include",
   ])
