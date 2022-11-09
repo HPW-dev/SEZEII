@@ -9,7 +9,7 @@ pparser::pparser(pparser::v_param_t&& in) noexcept
 : v_param{in} {}
 
 void pparser::operator ()(int argc, char** argv) const {
-  if (argc < 2) {
+  if (argc < 2 && !skip_empty) {
     print_info();
     std::exit(EXIT_FAILURE);
   }
@@ -28,7 +28,7 @@ void pparser::operator ()(int argc, char** argv) const {
 } // op (argv)
 
 void pparser::operator ()(CN(Str) opts) const {
-  if (opts.empty()) {
+  if (opts.empty() && !skip_empty) {
     print_info();
     std::exit(EXIT_FAILURE);
   }

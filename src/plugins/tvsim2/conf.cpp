@@ -82,6 +82,7 @@ void opts_to_conf(CN(Str) str, tvsim_conf &conf) {
     {{"--debug"}, "use debug osc.", [&conf](CN(Str) opt) { conf.debug = bool(stoi(opt)); } },
     {{"--debug_black_bg"}, "use black background", [&conf](CN(Str) opt) { conf.debug_black_bg = bool(stoi(opt)); } },
   });
+  parser.skip_empty = true;
   parser(str);
 } // opts_to_conf
 
@@ -105,5 +106,6 @@ void opts_to_conf(CN(Str) str, tvsim_conf_yuv &conf_yuv) {
     {{"--amp_u"}, "amplify U channel", [&conf_yuv](CN(Str) opt) { conf_yuv.amp_u = std::stof(opt); } },
     {{"--amp_v"}, "amplify V channel", [&conf_yuv](CN(Str) opt) { conf_yuv.amp_v = std::stof(opt); } },
   });
+  parser.skip_empty = true;
   parser(str);
 }

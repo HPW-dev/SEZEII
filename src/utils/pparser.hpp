@@ -18,6 +18,7 @@ public:
     bool needed {false};
   };
   using v_param_t = vector_t<Param>;
+  bool skip_empty {false}; ///< игнор пустого ввода
 
   //! @param in vector of: {{"-i", "--input", ...}, "description", lambda, is_needed}
   explicit pparser(v_param_t&& in) noexcept;

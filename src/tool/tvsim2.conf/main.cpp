@@ -1,9 +1,9 @@
 #include <array>
 #include <cstdlib>
 #include "util.hpp"
-#include "tvsim2bw/tvsim2bw.hpp"
-#include "tvsim2bw/Tvsim2yuv.hpp"
-#include "tvsim2bw/conf.hpp"
+#include "tvsim2/tvsim2bw.hpp"
+#include "tvsim2/Tvsim2yuv.hpp"
+#include "tvsim2/conf.hpp"
 #include "utils/pparser.hpp"
 #include "utils/str.hpp"
 #include "utils/time.hpp"
