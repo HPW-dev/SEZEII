@@ -7,6 +7,7 @@
 *.out
 *.svg
 *.exe
+*.upx
 *.code-workspace
 *bin/tvsim2bw-conf
 callgrind.out*

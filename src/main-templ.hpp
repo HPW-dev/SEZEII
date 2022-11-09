@@ -127,7 +127,7 @@ auto get_total_frames(CN(auto) reader_ctx) {
 }
 
 void proc_sdl(auto event) {
-  if (SDL_PollEvent(&event))
+  if (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_QUIT: {
         seze::is_end = true;
@@ -136,11 +136,14 @@ void proc_sdl(auto event) {
       case SDL_KEYDOWN: {
         if (event.key.keysym.sym == SDLK_SPACE)
           seze::is_pause = !seze::is_pause;
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+          seze::is_end = true;
         break;
       }
       default: {}
     } // switch event.type
-}
+  }
+} // proc_sdl
 
 void free_sdl(auto surface, auto window) {
   if ( !seze::nrend) {
