@@ -9,7 +9,7 @@
 *.exe
 *.upx
 *.code-workspace
-*bin/tvsim2bw-conf
+*bin/tvsim2-conf
 callgrind.out*
 perf*
 run.*
