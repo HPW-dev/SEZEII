@@ -28,8 +28,8 @@ Gif demo:\
 + [SCons](https://scons.org/) - © SCons Foundation, MIT
 ### Donate
 * Visa/MCard: 5469 1300 1242 7256
-* [ЮMoney](yoomoney.ru/to/410017516566873)
-* [PayPal](paypal.me/AtariSMN81)
+* [ЮMoney](https://yoomoney.ru/to/410017516566873)
+* [PayPal](https://paypal.me/AtariSMN81)
 ### SEZEII License
 * [MIT license](LICENSE)
 ***
