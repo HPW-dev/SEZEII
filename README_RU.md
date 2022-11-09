@@ -29,8 +29,8 @@ SEZE это плагин-ориентированный видео кодиро�
 + [SCons](https://scons.org/) - © SCons Foundation, MIT
 ### Донат
 * Visa/MCard: 5469 1300 1242 7256
-* [ЮMoney](yoomoney.ru/to/410017516566873)
-* [PayPal](paypal.me/AtariSMN81)
+* [ЮMoney](https://yoomoney.ru/to/410017516566873)
+* [PayPal](https://paypal.me/AtariSMN81)
 ### SEZEII лицензия
 * [MIT license](LICENSE)
 ***
