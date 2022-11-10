@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include "utils/macro.hpp"
 #include "types.hpp"
 #include "image/rgb24.hpp"
@@ -24,3 +25,8 @@ real out_min, real out_max)
 
 seze::YUVf RGB24_to_yuv(CN(seze::RGB24) c);
 seze::RGB24 yuv_to_RGB24(CN(seze::YUVf) c);
+
+constexpr int align_by(int x, int aligment) {
+  assert(aligment > 0);
+  return (x / aligment + 1) * aligment;
+}

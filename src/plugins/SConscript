@@ -30,14 +30,13 @@ make_shared_lib("colorop", [
   "colorop/colorop.cpp",
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "utils/random.cpp",
-  src_dir + "utils/aalloc.cpp",
 ])
 
 make_shared_lib("pixelsort", [
   "pixelsort/pixelsort.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/cmd-parser.cpp",
 ])
 
@@ -52,7 +51,7 @@ make_shared_lib("average", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
 ])
 
 make_shared_lib("tvsim", [
@@ -60,7 +59,7 @@ make_shared_lib("tvsim", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/random.cpp",
 ])
 
@@ -69,7 +68,7 @@ make_shared_lib("stars", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/random.cpp",
 ])
 
@@ -78,7 +77,7 @@ make_shared_lib("rdither", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/random.cpp",
 ])
 
@@ -87,17 +86,8 @@ make_shared_lib("shatter", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/random.cpp",
-])
-
-make_shared_lib("3d-denoise", [
-  Glob("3d-denoise/*.cpp"),
-  src_dir + "utils/cmd-parser.cpp",
-  src_dir + "image/image.cpp",
-  src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
-  src_dir + "utils/log.cpp",
 ])
 
 '''
@@ -107,7 +97,7 @@ make_shared_lib("stabilyzer", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/log.cpp",
 ])
 '''
@@ -117,7 +107,7 @@ make_shared_lib("gigascreen", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
   src_dir + "utils/log.cpp",
 ])
 
@@ -126,7 +116,7 @@ make_shared_lib("quantizer", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
 ])
 
 make_shared_lib("old pc", [
@@ -138,14 +128,13 @@ make_shared_lib("old pc", [
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
-  src_dir + "utils/aalloc.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
 ])
 
 make_shared_lib("warpscan", [
   Glob("warpscan/*.cpp"),
   src_dir + "utils/cmd-parser.cpp",
   src_dir + "utils/random.cpp",
-  src_dir + "utils/aalloc.cpp",
 ])
 
 make_shared_lib("tvsim2bw", [
@@ -153,9 +142,9 @@ make_shared_lib("tvsim2bw", [
   "tvsim2/plugin/main.cpp",
   src_dir + "utils/pparser.cpp",
   src_dir + "utils/random.cpp",
-  src_dir + "utils/aalloc.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
 ])
 
 make_shared_lib("tvsim2yuv", [
@@ -163,7 +152,7 @@ make_shared_lib("tvsim2yuv", [
   "tvsim2/plugin/main-yuv.cpp",
   src_dir + "utils/pparser.cpp",
   src_dir + "utils/random.cpp",
-  src_dir + "utils/aalloc.cpp",
   src_dir + "image/image.cpp",
   src_dir + "image/color.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
 ])

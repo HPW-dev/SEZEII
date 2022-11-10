@@ -151,7 +151,8 @@ void Tvsim2bw::decode_stream(seze::Image &dst) {
 
 size_t Tvsim2bw::resize_stream(CN(seze::Image) src) {
   str_sz = src.X + conf.hfront + conf.hback + conf.hsync_sz;
-  const size_t str_count = conf.interlacing ? src.Y / 2 : src.Y;
+  size_t str_count = conf.interlacing ? src.Y / 2 : src.Y;
+  str_count = align_by(str_count, 2); // если не выровнять, то взорвётся
   const size_t frame_sz = (str_count * str_sz) + conf.vfront
     + conf.vback + conf.vsync_sz;
   stream.resize(frame_sz);

@@ -1,8 +1,5 @@
 #include "color.hpp"
 #include "utils/error.hpp"
-#ifndef NOAALLOC
-#include "utils/aalloc.hpp"
-#endif
 #include "RGB555-RGB565.hpp"
 #include "rgb24.hpp"
 #include "YUV.hpp"
@@ -11,13 +8,7 @@
 namespace seze {
 
 template <class T>
-byte* _make_pixels(size_t size) {
-#ifdef NOAALLOC
-  return rcast(byte*, new T[size]);
-#else
-  return rcast(byte*, aalloc(ALIGN, size * sizeof(T)));
-#endif
-}
+byte* _make_pixels(size_t size) { return rcast(byte*, new T[size]); }
 
 byte* make_pixels(color_t type, int pixel_count) {
   auto size = pixel_count * get_size(type);
@@ -44,13 +35,7 @@ byte* make_pixels(color_t type, int pixel_count) {
   return nullptr;
 } // make_pixels
 
-void destroy_pixels(byte* data) {
-#ifdef NOAALLOC
-  delete[] data;
-#else
-  afree(data);
-#endif
-}
+void destroy_pixels(byte* data) { delete[] data; }
 
 size_t get_size(color_t type) {
   std::map<color_t, size_t> table = {
