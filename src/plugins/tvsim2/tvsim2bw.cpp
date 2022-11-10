@@ -151,10 +151,11 @@ void Tvsim2bw::decode_stream(seze::Image &dst) {
 
 size_t Tvsim2bw::resize_stream(CN(seze::Image) src) {
   str_sz = src.X + conf.hfront + conf.hback + conf.hsync_sz;
+  str_sz = align_by(str_sz, 2); // если не выровнять, то взорвётся 
   size_t str_count = conf.interlacing ? src.Y / 2 : src.Y;
-  str_count = align_by(str_count, 2); // если не выровнять, то взорвётся
-  const size_t frame_sz = (str_count * str_sz) + conf.vfront
+  size_t frame_sz = (str_count * str_sz) + conf.vfront
     + conf.vback + conf.vsync_sz;
+  frame_sz = align_by(frame_sz, 2);
   stream.resize(frame_sz);
   return frame_sz;
 }
@@ -166,6 +167,8 @@ luma_t Tvsim2bw::decode_pix(real src) const
  { return to_range(src, conf.black_lvl, conf.white_lvl, 0.0f, 1.0f); }
 
 void Tvsim2bw::update() {
+  conf.scale_wh.x = align_by(conf.scale_wh.x, 2);
+  conf.scale_wh.y = align_by(conf.scale_wh.y, 2);
   if (conf.fix_opts) {
     conf.hsync_sz = std::clamp(conf.hsync_sz, 1, conf.vsync_sz-1);
     conf.vsync_sz = std::clamp(conf.vsync_sz, 3, 7'000);
