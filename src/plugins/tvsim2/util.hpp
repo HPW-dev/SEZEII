@@ -28,5 +28,5 @@ seze::RGB24 yuv_to_RGB24(CN(seze::YUVf) c);
 
 constexpr int align_by(int x, int aligment) {
   assert(aligment > 0);
-  return (x / aligment + 1) * aligment;
+  return int(double(x) / aligment + 0.5) * aligment;
 }
