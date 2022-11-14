@@ -1,3 +1,4 @@
+#include <span>
 #include "tvsim2yuv.hpp"
 #include "util.hpp"
 #include "image/image.hpp"
@@ -29,12 +30,15 @@ void Tvsim2yuv::operator ()(CN(seze::Image) src, seze::Image &dst) {
     am_modulate(v_stream, conf_yuv.noise_uv, conf_yuv.filter_power_uv);
   } else {
     apply_noise(stream, conf.noise_level);
-    apply_noise(u_stream, conf_yuv.noise_uv);
-    apply_noise(v_stream, conf_yuv.noise_uv);
     filtering(stream, conf.filter_power, conf.filter_type);
+    apply_noise(u_stream, conf_yuv.noise_uv);
     filtering(u_stream, conf_yuv.filter_power_uv, conf.filter_type);
+    apply_noise(v_stream, conf_yuv.noise_uv);
     filtering(v_stream, conf_yuv.filter_power_uv, conf.filter_type);
   }
+  filter_sharp(v_stream, conf.sharp_power);
+  filter_sharp(u_stream, conf.sharp_power);
+  filter_sharp(stream, conf.sharp_power);
   amplify(conf.amp);
   if (conf.debug_black_bg) {
     std::fill(dst.get_data(), dst.get_data() + dst.bytes, 0);
@@ -42,6 +46,7 @@ void Tvsim2yuv::operator ()(CN(seze::Image) src, seze::Image &dst) {
     decode_stream_yuv(*bw_img_scaled, *u_img_scaled, *v_img_scaled);
     upscale();
     combine_channels(dst);
+    //sharpen(dst);
     display_simul_rgb(dst);
   }
   if (conf.debug)

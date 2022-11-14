@@ -25,6 +25,7 @@ void Tvsim2bw::operator ()(CN(seze::Image) src, seze::Image &dst) {
     apply_noise(stream, conf.noise_level);
     filtering(stream, conf.filter_power, conf.filter_type);
   }
+  filter_sharp(stream, conf.sharp_power);
   amplify(conf.amp);
   decode_stream(*bw_img_scaled);
   upscale();

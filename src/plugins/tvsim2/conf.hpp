@@ -32,6 +32,7 @@ struct tvsim_conf {
   real am_freg {1};
   real am_depth {1};
   real am_tune {1};
+  real sharp_power {0};
   bool fix_opts {true}; ///< корректирование настроек
   bool interlacing {true};
   bool use_fading {true};

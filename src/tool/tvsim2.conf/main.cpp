@@ -105,6 +105,7 @@ void imgui_filters(auto &conf) {
   if (ImGui::Combo("filter", &sel, iteams))
     conf.filter_type = filter_e(sel);
   ImGui::DragInt("filter power", &conf.filter_power, 1, 0, 256);
+  ImGui::DragFloat("filter sharp", &conf.sharp_power, 0.1, 0, 10);
 } // imgui_filters
 
 void imgui_am_modulation(auto &conf) {
