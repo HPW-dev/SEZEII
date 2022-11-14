@@ -33,6 +33,7 @@ Str conf_to_opts(CN(tvsim_conf) conf) {
   ss << " --am_freg " << conf.am_freg;
   ss << " --am_depth " << conf.am_depth;
   ss << " --am_tune " << conf.am_tune;
+  ss << " --sharp_power " << conf.sharp_power;
   ss << " --fix_opts " << int(conf.fix_opts);
   ss << " --interlacing " << int(conf.interlacing);
   ss << " --use_fading " << int(conf.use_fading);
@@ -74,6 +75,7 @@ void opts_to_conf(CN(Str) str, tvsim_conf &conf) {
     {{"--am_freg"}, "AM frequency", [&conf](CN(Str) opt) { conf.am_freg = std::stof(opt); } },
     {{"--am_depth"}, "AM depth", [&conf](CN(Str) opt) { conf.am_depth = std::stof(opt); } },
     {{"--am_tune"}, "AM tune value", [&conf](CN(Str) opt) { conf.am_tune = std::stof(opt); } },
+    {{"--sharp_power"}, "sharp filter power", [&conf](CN(Str) opt) { conf.sharp_power = std::stof(opt); } },
     {{"--fix_opts"}, "autofix options", [&conf](CN(Str) opt) { conf.fix_opts = bool(stoi(opt)); } },
     {{"--interlacing"}, "use interlacin", [&conf](CN(Str) opt) { conf.interlacing = bool(stoi(opt)); } },
     {{"--use_fading"}, "use beam fading", [&conf](CN(Str) opt) { conf.use_fading = bool(stoi(opt)); } },
