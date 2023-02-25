@@ -12,8 +12,8 @@ void Old_pc::operator()(seze::Image &dst) {
   iferror (ix_max == 0, "Old_pc(): ix_max == 0");
   uint iy_max {dst.Y / block_size.y};
   iferror (iy_max == 0, "Old_pc(): iy_max == 0");
-  FOR (iy, iy_max)
-  FOR (ix, ix_max) {
+  cfor (iy, iy_max)
+  cfor (ix, ix_max) {
     urect area {
       {ix * block_size.x, iy * block_size.y},
       {block_size.x, block_size.y}

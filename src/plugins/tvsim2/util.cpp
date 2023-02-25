@@ -13,7 +13,7 @@ desaturation_e type) {
     default:
     case desaturation_e::average: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         auto frgb {(col.R + col.G + col.B) * (1.0f / 3.0f)};
         dst.fast_get<luma_t>(i) = frgb * mul;
@@ -22,7 +22,7 @@ desaturation_e type) {
     }
     case desaturation_e::bt2001: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         float f =
           col.R * 0.2627f +
@@ -34,7 +34,7 @@ desaturation_e type) {
     }
     case desaturation_e::bt709: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         float f =
           col.R * 0.2126f +
@@ -46,7 +46,7 @@ desaturation_e type) {
     }
     case desaturation_e::bt601: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         float f =
           col.R * 0.299f +
@@ -58,7 +58,7 @@ desaturation_e type) {
     }
     case desaturation_e::hsl: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         auto a = std::max(col.R, col.G);
         a = std::max(a, col.B);
@@ -70,7 +70,7 @@ desaturation_e type) {
     }
     case desaturation_e::euclidian_distance: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = std::sqrt(
           std::pow(col.R, 2.0f) +
@@ -82,7 +82,7 @@ desaturation_e type) {
     }
     case desaturation_e::red: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = col.R * mul;
       }
@@ -90,7 +90,7 @@ desaturation_e type) {
     }
     case desaturation_e::green: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = col.G * mul;
       }
@@ -98,7 +98,7 @@ desaturation_e type) {
     }
     case desaturation_e::blue: {
       #pragma omp parallel for simd
-      FOR (i, src.size) {
+      cfor (i, src.size) {
         auto col {src.fast_get<seze::RGB24>(i)};
         dst.fast_get<luma_t>(i) = col.B * mul;
       }
@@ -109,7 +109,7 @@ desaturation_e type) {
 
 void gray_to_rgb24(CN(seze::Image) src, seze::Image &dst) {
   #pragma omp parallel for simd
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto l {src.fast_get<luma_t>(i)};
     l = std::clamp(l, 0.0f, 1.0f);
     l *= 255.0f;
@@ -130,8 +130,8 @@ static void scale_gray_bilinear(CN(seze::Image) src, seze::Image &dst) {
   real scale_x {1.0f / (real(dst.X) / src.X)};
   real scale_y {1.0f / (real(dst.Y) / src.Y)};
   #pragma omp parallel for simd
-  FOR (y, dst.Y)
-  FOR (x, dst.X) {
+  cfor (y, dst.Y)
+  cfor (x, dst.X) {
     real dx {x * scale_x};
     real dy {y * scale_y};
     int gxi (std::floor<int>(dx));
@@ -151,8 +151,8 @@ static void scale_gray_nearest(CN(seze::Image) src, seze::Image &dst) {
   real scale_x {1.0f / (real(dst.X) / src.X)};
   real scale_y {1.0f / (real(dst.Y) / src.Y)};
   #pragma omp parallel for simd
-  FOR (y, dst.Y)
-  FOR (x, dst.X) {
+  cfor (y, dst.Y)
+  cfor (x, dst.X) {
     real fx {x * scale_x};
     real fy {y * scale_y};
     auto src_col {src.fast_get<luma_t>(
@@ -166,8 +166,8 @@ static void scale_gray_bicubic(CN(seze::Image) src, seze::Image &dst) {
   real scale_x {1.0f / (real(dst.X) / src.X)};
   real scale_y {1.0f / (real(dst.Y) / src.Y)};
   #pragma omp parallel for simd
-  FOR (y, dst.Y)
-  FOR (x, dst.X) {
+  cfor (y, dst.Y)
+  cfor (x, dst.X) {
     real dx {x * scale_x};
     real dy {y * scale_y};
     int gxi (std::floor<int>(dx));
@@ -209,8 +209,8 @@ static void scale_gray_bilinear_fast(CN(seze::Image) src, seze::Image &dst) {
   const real scale_x {1.0f / (real(dst.X) / src.X)};
   const real scale_y {1.0f / (real(dst.Y) / src.Y)};
   #pragma omp parallel for simd
-  FOR (y, dst.Y - 1)
-  FOR (x, dst.X - 1) {
+  cfor (y, dst.Y - 1)
+  cfor (x, dst.X - 1) {
     const real dx {x * scale_x};
     const int gxi = dx;
     const real tx = dx - gxi;
@@ -285,9 +285,9 @@ static void filter_average(v_luma_t &stream, int power = 3) {
   const real power_mul {1.0f / power};
   const int power_mid {power / 2};
   v_luma_t buf(stream.size());
-  FOR (i, stream.size()) {
+  cfor (i, stream.size()) {
     luma_t total {0};
-    FOR (wnd, power) {
+    cfor (wnd, power) {
       try {
         total += stream.at(i + wnd - power_mid);
       } catch (...) {}
@@ -300,9 +300,9 @@ static void filter_average(v_luma_t &stream, int power = 3) {
 static void filter_average_fast(v_luma_t &stream, int power = 3) {
   return_if (power < 1);
   const real power_mul {1.0f / power};
-  FOR (i, stream.size() - power) {
+  cfor (i, stream.size() - power) {
     luma_t total {0};
-    FOR (wnd, power)
+    cfor (wnd, power)
       total += stream[i + wnd];
     stream[i] = total * power_mul;
   }
@@ -313,8 +313,8 @@ static void filter_median(v_luma_t&stream, int power = 3) {
   const int power_mid {power / 2};
   v_luma_t arr(power);
   v_luma_t buf(stream.size());
-  FOR (i, stream.size()) {
-    FOR (wnd, power) {
+  cfor (i, stream.size()) {
+    cfor (wnd, power) {
       try {
         arr[wnd] = stream.at(i + wnd - power_mid);
       } catch (...) {}
@@ -338,7 +338,7 @@ void filtering(v_luma_t &stream, int power, filter_e type) {
 void apply_noise(v_luma_t &stream, real noise_level) {
   return_if(noise_level <= 0);
   #pragma omp for simd
-  FOR (i, stream.size())
+  cfor (i, stream.size())
     stream[i] += noise_level * seze::frand_fast();
 }
 

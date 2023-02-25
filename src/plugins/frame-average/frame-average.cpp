@@ -87,7 +87,7 @@ PluginInfo init(const char* options) {
 
 static void init_frames(CN(seze::Image) src) {
   std::lock_guard<decltype(mu)> lock(mu);
-  FOR (i, config::count) {
+  cfor (i, config::count) {
     auto pic = make_shared_p<seze::Image>(src);
     frames.push_back(pic);
   }
@@ -100,7 +100,7 @@ static void frame_push(CN(seze::Image) src) {
 
 void average_process(seze::Image &dst) {
   #pragma omp parallel for
-  FOR (i, dst.size) {
+  cfor (i, dst.size) {
     uint R = 0, G = 0, B = 0;
     for (CN(auto) frame: frames) {
       auto c = frame->fast_get<RGB24>(i);
@@ -119,7 +119,7 @@ static void average_to_frame(seze::Image &dst) {
   if (config::mode == mode_e::average) {
     average_process(dst);
   } else { // other bitop's
-    FOR (i, dst.size) {
+    cfor (i, dst.size) {
       auto& dc = dst.fast_get<RGB24>(i);
       byte &R = dc.R, &G = dc.G, &B = dc.B;
       for (CN(auto) frame: frames) {

@@ -7,7 +7,7 @@
 void interpolate(Stream& dst, CN(Stream) src) {
   if (src.size == dst.size)
     return;
-  FOR (x, dst.size-1) {
+  cfor (x, dst.size-1) {
     float gx = x / component(dst.size) * src.size;
     int gxi = std::floor(gx);
     auto a = src.data[gxi];
@@ -17,7 +17,7 @@ void interpolate(Stream& dst, CN(Stream) src) {
 }
 
 void modulate(Stream& dst, component freg) {
-  FOR (i, dst.size) {
+  cfor (i, dst.size) {
     component& x = dst.data[i];
     x *= std::sin(freg * i);
   }
@@ -25,7 +25,7 @@ void modulate(Stream& dst, component freg) {
 
 void demodulate(Stream& dst, component freg,
 component shift) {
-  FOR (i, dst.size) {
+  cfor (i, dst.size) {
     component& x = dst.data[i];
     auto wave = std::sin(freg * i + shift);
     x = wave == 0 ? 0 : x / wave;
@@ -66,14 +66,14 @@ byte component_to_byte(component src) {
 }
 
 void gray_to_RGB24(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto c = component_to_RGB24(src.fast_get<component>(i));
     dst.fast_set<seze::RGB24>(i, c);
   }
 }
 
 void RGB24_to_gray(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto luma = RGB24_to_component(src.fast_get<seze::RGB24>(i));
     dst.fast_set<component>(i, luma);
   }
@@ -81,14 +81,14 @@ void RGB24_to_gray(seze::Image& dst, CN(seze::Image) src) {
 
 
 void gray_to_fgray(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto luma = byte_to_component(src.fast_get<byte>(i));
     dst.fast_set<component>(i, luma);
   }
 }
 
 void fgray_to_gray(seze::Image& dst, CN(seze::Image) src) {
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto luma = component_to_byte(src.fast_get<component>(i));
     dst.fast_set<byte>(i, luma);
   }
@@ -113,9 +113,9 @@ void filter_fast(Stream& dst, int window) {
   if (window < 1)
     return;
   component fwindow = component(1) / window;
-  FOR(i, dst.size - window) {
+  cfor(i, dst.size - window) {
     component total = 0;
-    FOR (j, window)
+    cfor (j, window)
       total += dst.data[i + j];
     dst.data[i] = total * fwindow;
   }
@@ -164,7 +164,7 @@ component power) {
     return ret;
   if (power <= 0)
     return ret;
-  FOR (j, len) {
+  cfor (j, len) {
     auto idx = i + j;
     if (idx >= dst.size)
       break;

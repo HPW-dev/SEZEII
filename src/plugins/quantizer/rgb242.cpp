@@ -3,7 +3,7 @@
 #include "image/rgb24.hpp"
 
 void RGB242_qnt::operator()(seze::Image &dst) {
-  FOR (i, dst.size) {
+  cfor (i, dst.size) {
     auto &color {dst.fast_get<seze::RGB24>(i)};
     constexpr int fmul_r {255 / 3};
     constexpr int fmul_g {255 / 15};

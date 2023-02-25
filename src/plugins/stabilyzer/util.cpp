@@ -19,8 +19,8 @@ bool check_color(CN(seze::RGB24) a, CN(seze::RGB24) b) {
 
 void find_point(CN(seze::Image) src, Point& dst,
 CN(seze::RGB24) color) {
-  FOR (y, src.Y)
-  FOR (x, src.X)
+  cfor (y, src.Y)
+  cfor (x, src.X)
     if (check_color(src.fast_get<seze::RGB24>(x, y), color)) {
       dst.x = x;
       dst.y = y;
@@ -52,7 +52,7 @@ void stretch(seze::Image& dst) {
   auto arr_x_bytes = seze::get_size(color_t::seze_BGR24) * dst.X;
   auto arr_y_bytes = seze::get_size(color_t::seze_BGR24) * dst.Y;
   // горизонтальное растягивание
-  FOR (y, dst.Y) {
+  cfor (y, dst.Y) {
     memcpy(arr_x_src.data(), &dst.fast_get<seze::RGB24>(0, y), arr_x_bytes);
     memcpy(arr_x_dst.data(), arr_x_src.data(), arr_x_bytes);
     auto shift_x = (Real(-pos_c.x) / dst.Y) * y;
@@ -62,14 +62,14 @@ void stretch(seze::Image& dst) {
     memcpy(&dst.fast_get<seze::RGB24>(0, y), arr_x_dst.data(), arr_x_bytes);
   }
   // вертикальное растягивание
-  FOR (x, dst.X) {
-    FOR (y, dst.Y)
+  cfor (x, dst.X) {
+    cfor (y, dst.Y)
       arr_y_src[y] = dst.fast_get<seze::RGB24>(x, y);
     memcpy(arr_y_dst.data(), arr_y_src.data(), arr_y_bytes);
     auto shift_y_ed = (Real(dst.Y - pos_d.y) / dst.X) * x;
     auto size_y = dst.Y + shift_y_ed;
     stretch_f(arr_y_src, arr_y_dst, 0, size_y);
-    FOR (y, dst.Y)
+    cfor (y, dst.Y)
       dst.fast_set<seze::RGB24>(x, y, arr_y_dst[y]);
   }
 } // stretch

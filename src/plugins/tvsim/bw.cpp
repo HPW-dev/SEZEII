@@ -61,43 +61,43 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
         break;
       }
       case State::first_str: {
-        FOR (str, tv::first_strings) {
+        cfor (str, tv::first_strings) {
           // blank data
-          FOR (x, src.X + tv::first_bound + tv::second_bound)
+          cfor (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
-          FOR (x, tv::hsync_size)
+          cfor (x, tv::hsync_size)
             ret.data.push_back(tv::sync_level);
         }
         state = State::first_bound;
         break;
       }
       case State::second_str: {
-        FOR (str, tv::second_strings) {
+        cfor (str, tv::second_strings) {
           // blank data
-          FOR (x, src.X + tv::first_bound + tv::second_bound)
+          cfor (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
-          FOR (x, tv::hsync_size)
+          cfor (x, tv::hsync_size)
             ret.data.push_back(tv::sync_level);
         }
         state = State::vsync;
         break;
       }
       case State::first_bound: {
-        FOR (x, tv::first_bound)
+        cfor (x, tv::first_bound)
           ret.data.push_back(tv::empty_level);
         state = State::data;
         break;
       }
       case State::second_bound: {
-        FOR (x, tv::second_bound)
+        cfor (x, tv::second_bound)
           ret.data.push_back(tv::empty_level);
         state = State::hsync;
         break;
       }
       case State::data: {
-        FOR (x, src.X) {
+        cfor (x, src.X) {
           component luma;
           if (tv::interlace) {
             if (is_odd_string)
@@ -115,7 +115,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
         break;
       }
       case State::hsync: {
-        FOR (x, tv::hsync_size)
+        cfor (x, tv::hsync_size)
           ret.data.push_back(tv::sync_level);
         src_y += tv::interlace ? 2 : 1;
         if (src_y >= src.Y)
@@ -125,7 +125,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
         break;
       }
       case State::vsync: {
-        FOR (x, tv::vsync_size)
+        cfor (x, tv::vsync_size)
           ret.data.push_back(tv::sync_level);
         state = State::end;
         break;
@@ -141,7 +141,7 @@ Stream TVsim_BW::encode(CN(seze::Image) src) const {
 
 void TVsim_BW::decode_to(CN(Stream) src, seze::Image& dst) {
   // color fading
-  FOR (i, display->size) {
+  cfor (i, display->size) {
     auto& c = display->fast_get<component>(i);
     c -= tv::fading;
   }
@@ -152,7 +152,7 @@ void TVsim_BW::decode_to(CN(Stream) src, seze::Image& dst) {
   else
     odd_y = 0;
   // signal decode
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto val = src.data[i];
     // beam bounds:
     beam_x = std::clamp<component>(beam_x, -tv::hbound,

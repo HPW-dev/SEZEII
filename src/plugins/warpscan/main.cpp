@@ -47,7 +47,7 @@ void warpscan(byte* dst, int stride, int my) {
   std::call_once(buffer_init, [stride, my]()
     { buffer.resize(stride * my); });
   auto speed_local {irand(1, speed)};
-  FOR (i, speed_local) {
+  cfor (i, speed_local) {
     auto dst_p {dst + stride * line};
     const auto buf_p {buffer.data() + stride * line};
     memcpy(buf_p, dst_p, stride);

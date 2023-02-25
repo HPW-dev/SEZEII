@@ -94,7 +94,7 @@ PluginInfo init(const char* options) {
 } // init
 
 static void fast_sort(byte* dst, int my, int stride) {
-  FOR (y, my) {
+  cfor (y, my) {
     int count = 0;
     std::sort(dst + stride * y, dst + stride * (y + 1));
   } // for y
@@ -113,7 +113,7 @@ static void pixelsort_h(byte* dst, int mx, int my, color_t color_type) {
   auto sort_dir2 = [](CN(RGB24) a, CN(RGB24) b)->bool
     { return color_op(a) > color_op(b); };
   auto f_sort = config::bidirect ? sort_dir2 : sort_dir1;
-  FOR (y, my) {
+  cfor (y, my) {
     auto line = &pic.fast_get<RGB24>(0, y);
     bool find_dark = is_light(line[0]);
     int x_start = 0;
@@ -167,7 +167,7 @@ void pixelsort_v(byte* dst, int mx, int my, color_t color_type) {
   auto sort_dir2 = [](CN(RGB24) a, CN(RGB24) b)->bool
     { return color_op(a) > color_op(b); };
   auto f_sort = config::bidirect ? sort_dir2 : sort_dir1;
-  FOR (x, mx) {
+  cfor (x, mx) {
     std::vector<RGB24> vertical_buffer;
     vertical_buffer.reserve(my);
     bool find_dark = is_light(pic.fast_get<RGB24>(x, 0));

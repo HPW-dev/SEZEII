@@ -114,8 +114,8 @@ void rotate_templ(CN(seze::Image) src, seze::Image& dst,
 CN(Point) pos, Real radian) {
   Real mul_x = std::cos(radian);
   Real mul_y = std::sin(radian);
-  FOR (y, dst.Y)
-  FOR (x, dst.X) {
+  cfor (y, dst.Y)
+  cfor (x, dst.X) {
     auto rot_x = mul_x * (x - pos.x) - mul_y * (y - pos.y) + pos.x;
     auto rot_y = mul_y * (x - pos.x) + mul_x * (y - pos.y) + pos.y;
     auto pix = core(src, rot_x, rot_y);
@@ -128,8 +128,8 @@ void resize_templ(CN(seze::Image) src, seze::Image& dst,
 CN(Point) offset, int new_x, int new_y) {
   auto scale_x = Real(src.X) / new_x;
 	auto scale_y = Real(src.Y) / new_y;
-  FOR (y, dst.Y)
-  FOR (x, dst.X) {
+  cfor (y, dst.Y)
+  cfor (x, dst.X) {
     auto src_x = x * scale_x - offset.x;
     auto src_y = y * scale_y - offset.y;
     dst.fast_set<seze::RGB24>(x, y, core(src, src_x, src_y));
@@ -141,7 +141,7 @@ template <auto core>
 void stretch_templ(CN(v_pixel_t) src, v_pixel_t& dst, int offset,
 int new_size) {
   auto scale = Real(src.size()) / new_size;
-  FOR (i, dst.size()) {
+  cfor (i, dst.size()) {
     auto src_i = i * scale - offset;
     dst[i] = core(src, src_i);
   }

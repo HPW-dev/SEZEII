@@ -14,7 +14,7 @@ Reader::Reader(CN(Str) iname, int width, int height, color_t col_type) {
   ret < 0)
     error("Reader: Failed to retrieve input stream information");
   const auto streams = format_context->nb_streams;
-  FOR(i, format_context->nb_streams) {
+  cfor(i, format_context->nb_streams) {
     in_stream = format_context->streams[i];
     AVCodecParameters* in_codecpar = in_stream->codecpar;
     if (in_codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {

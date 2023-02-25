@@ -50,9 +50,9 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   if (config::copy_mode) {
     auto buffer_bytes = stride * my;
     auto buffer = new byte[buffer_bytes];
-    FOR (_, config::count) {
+    cfor (_, config::count) {
       memcpy(buffer, dst, my * stride);
-      FOR (y, my) {
+      cfor (y, my) {
         int rnd_y = std::clamp(seze::irand(-config::shift_len, config::shift_len) + y, 0, my - 1);
         if (rnd_y == y)
           continue;
@@ -61,12 +61,12 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
     } // for count
     delete[] buffer;
   } else { // swap mode
-    FOR (_, config::count) {
-      FOR (y, my) {
+    cfor (_, config::count) {
+      cfor (y, my) {
         int rnd_y = std::clamp(seze::irand(-config::shift_len, config::shift_len) + y, 0, my - 1);
         if (rnd_y == y)
           continue;
-        FOR (i, stride)
+        cfor (i, stride)
           std::swap(dst[y * stride + i], dst[rnd_y * stride + i]);
       } // for y
     } // for count

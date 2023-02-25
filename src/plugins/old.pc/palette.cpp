@@ -5,9 +5,9 @@
 #include "utils/error.hpp"
 
 void init_rgb1b(Palette &pal) {
-  FOR (ir, 2)
-    FOR (ig, 2)
-      FOR (ib, 2)
+  cfor (ir, 2)
+    cfor (ig, 2)
+      cfor (ib, 2)
         pal.push_back(seze::RGB24(ir*255, ig*255, ib*255));
 }
 

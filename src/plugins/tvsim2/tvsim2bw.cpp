@@ -74,43 +74,43 @@ void Tvsim2bw::encode_stream(CN(seze::Image) src) {
     vback:off, vsync:sync */
 
   // vfront:off
-  FOR (_, conf.vfront) {
+  cfor (_, conf.vfront) {
     stream[i] = conf.beam_off_signal;
     ++i;
   }
 
-  FOR (y, src.Y) {
+  cfor (y, src.Y) {
     if (conf.interlacing && ((y + int(is_odd_str)) & 1))
       continue;
     // hfront: off
-    FOR (_, conf.hfront) {
+    cfor (_, conf.hfront) {
       stream[i] = conf.beam_off_signal;
       ++i;
     }
     // src.X:pix
-    FOR (x, src.X) {
+    cfor (x, src.X) {
       stream[i] = encode_pix(src.fast_get<luma_t>(x, y));
       ++i;
     }
     // hback:off
-    FOR (_, conf.hback) {
+    cfor (_, conf.hback) {
       stream[i] = conf.beam_off_signal;
       ++i;
     }
     // hsync:sync
-    FOR (_, conf.hsync_sz) {
+    cfor (_, conf.hsync_sz) {
       stream[i] = conf.sync_signal;
       ++i;
     }
   } // for src.Y
 
   // vback:off
-  FOR (_, conf.vback) {
+  cfor (_, conf.vback) {
     stream[i] = conf.beam_off_signal;
     ++i;
   }
   // vsync:sync
-  FOR (_, conf.vsync_sz) {
+  cfor (_, conf.vsync_sz) {
     stream[i] = conf.sync_signal;
     ++i;
   }
@@ -187,7 +187,7 @@ void Tvsim2bw::display_simul(seze::Image &dst) {
   return_if (!conf.use_fading);
   display->init(dst.X, dst.Y, seze_f_gray);
   #pragma omp parallel for simd
-  FOR (i, display->size) {
+  cfor (i, display->size) {
     auto &pix {display->fast_get<luma_t>(i)};
     pix = std::max<luma_t>(0, pix - conf.fading);
     pix = std::max<luma_t>(pix, dst.fast_get<luma_t>(i));
@@ -200,7 +200,7 @@ void Tvsim2bw::am_modulate(v_luma_t &dst, real noise_level, int filter_power) {
   const auto depth {conf.am_depth};
   // modulate
   #pragma omp parallel for simd
-  FOR (i, dst.size()) {
+  cfor (i, dst.size()) {
     auto &x {dst[i]};
     const auto at {1.0f + depth * x};
     const auto st {at * std::cos(freg * i)};
@@ -213,7 +213,7 @@ void Tvsim2bw::am_modulate(v_luma_t &dst, real noise_level, int filter_power) {
   buf_b.resize(dst.size());
   const auto pre_mul {std::numbers::pi * 0.5f};
   #pragma omp parallel for simd
-  FOR (i, dst.size()) {
+  cfor (i, dst.size()) {
     const auto g {std::cos(freg * i)};
     const auto xg {dst[i] * g};
     buf_a[i] = xg;
@@ -223,7 +223,7 @@ void Tvsim2bw::am_modulate(v_luma_t &dst, real noise_level, int filter_power) {
   filtering(buf_b, filter_power, conf.filter_type);
   const auto tune {conf.am_tune};
   #pragma omp parallel for simd
-  FOR (i, dst.size()) {
+  cfor (i, dst.size()) {
     auto a = buf_a[i];
     a *= a;
     auto b = buf_b[i];
@@ -234,7 +234,7 @@ void Tvsim2bw::am_modulate(v_luma_t &dst, real noise_level, int filter_power) {
 
 void Tvsim2bw::draw_debug(seze::Image &dst) const {
   real y_old {0};
-  FOR (x, dst.X) {
+  cfor (x, dst.X) {
     auto y = stream[x];
     y = 2.0f - y;
     y *= dst.Y / 4.0f;
@@ -252,6 +252,6 @@ void Tvsim2bw::draw_debug(seze::Image &dst) const {
 void Tvsim2bw::amplify(real amp) {
   return_if(amp == 1);
   #pragma omp for simd
-  FOR (i, stream.size())
+  cfor (i, stream.size())
     stream[i] *= amp;
 }

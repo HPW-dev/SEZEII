@@ -50,7 +50,7 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   seze::Image dst_pic(dst, mx, my, color_type);
   seze::Image rgbi_pic(mx, my, seze_RGBi);
 // copy dst to RGBi
-  FOR (i, dst_pic.size) {
+  cfor (i, dst_pic.size) {
     auto c = dst_pic.fast_get<seze::RGB24>(i);
     rgbi_pic.fast_set<seze::RGBi>(i, seze::RGBi(c.R, c.G, c.B));
   }
@@ -63,7 +63,7 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
     ++ptr;
   }
 // copy dst to RGBi
-  FOR (i, rgbi_pic.size) {
+  cfor (i, rgbi_pic.size) {
     auto c = rgbi_pic.fast_get<seze::RGBi>(i);
     auto r = std::clamp(c.R, 0, 255);
     auto g = std::clamp(c.G, 0, 255);

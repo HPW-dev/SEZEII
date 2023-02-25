@@ -90,8 +90,8 @@ float dir_x, float dir_y) {
     len = seze::irand(0, config.len);
   if (len < 1)
     return;
-  FOR (y, src.Y)
-  FOR (x, src.X) {
+  cfor (y, src.Y)
+  cfor (x, src.X) {
     auto past_y = y + dir_y * len;
     auto past_x = x + dir_x * len;
     auto col = src.fast_get<seze::RGB24>(x, y);
@@ -136,8 +136,8 @@ float dir_x, float dir_y) {
     len = seze::irand(0, config.len);
   if (len < 1)
     return;
-  FOR (y, src.Y)
-  FOR (x, src.X) {
+  cfor (y, src.Y)
+  cfor (x, src.X) {
     auto c1 = src.fast_get<seze::RGB24>(x, y);
     seze::RGBf fc1 = convert(c1);
     seze::RGBf accum;

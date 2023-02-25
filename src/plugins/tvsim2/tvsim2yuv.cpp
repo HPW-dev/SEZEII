@@ -58,7 +58,7 @@ void Tvsim2yuv::split_channels(CN(seze::Image) src) {
   u_img->init(src.X, src.Y, seze_f_gray);
   v_img->init(src.X, src.Y, seze_f_gray);
   #pragma omp parallel for simd
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto src_pix {src.fast_get<seze::RGB24>(i)};
     auto yuv {RGB24_to_yuv(src_pix)};
     bw_img->fast_set<luma_t>(i, yuv.Y);
@@ -69,7 +69,7 @@ void Tvsim2yuv::split_channels(CN(seze::Image) src) {
 
 void Tvsim2yuv::combine_channels(seze::Image &dst) {
   #pragma omp parallel for simd
-  FOR (i, bw_img->size) {
+  cfor (i, bw_img->size) {
     auto y {bw_img->fast_get<luma_t>(i)};
     auto u {u_img->fast_get<luma_t>(i)};
     auto v {v_img->fast_get<luma_t>(i)};
@@ -120,35 +120,35 @@ void Tvsim2yuv::encode_stream_uv(CN(seze::Image) src_u, CN(seze::Image) src_v) {
     vback:off, vsync:off */
 
   // vfront:off
-  FOR (_, conf.vfront) {
+  cfor (_, conf.vfront) {
     u_stream[i] = conf.beam_off_signal;
     v_stream[i] = conf.beam_off_signal;
     ++i;
   }
 
-  FOR (y, src_u.Y) {
+  cfor (y, src_u.Y) {
     if (conf.interlacing && ((y + int(is_odd_str)) & 1))
       continue;
     // hfront: off
-    FOR (_, conf.hfront) {
+    cfor (_, conf.hfront) {
       u_stream[i] = conf.beam_off_signal;
       v_stream[i] = conf.beam_off_signal;
       ++i;
     }
     // src.X:pix
-    FOR (x, src_u.X) {
+    cfor (x, src_u.X) {
       u_stream[i] = encode_pix(src_u.fast_get<luma_t>(x, y));
       v_stream[i] = encode_pix(src_v.fast_get<luma_t>(x, y));
       ++i;
     }
     // hback:off
-    FOR (_, conf.hback) {
+    cfor (_, conf.hback) {
       u_stream[i] = conf.beam_off_signal;
       v_stream[i] = conf.beam_off_signal;
       ++i;
     }
     // hsync:off
-    FOR (_, conf.hsync_sz) {
+    cfor (_, conf.hsync_sz) {
       u_stream[i] = conf.beam_off_signal;
       v_stream[i] = conf.beam_off_signal;
       ++i;
@@ -156,13 +156,13 @@ void Tvsim2yuv::encode_stream_uv(CN(seze::Image) src_u, CN(seze::Image) src_v) {
   } // for src.Y
 
   // vback:off
-  FOR (_, conf.vback) {
+  cfor (_, conf.vback) {
     u_stream[i] = conf.beam_off_signal;
     v_stream[i] = conf.beam_off_signal;
     ++i;
   }
   // vsync:off
-  FOR (_, conf.vsync_sz) {
+  cfor (_, conf.vsync_sz) {
     u_stream[i] = conf.beam_off_signal;
     v_stream[i] = conf.beam_off_signal;
     ++i;
@@ -211,7 +211,7 @@ void Tvsim2yuv::display_simul_rgb(seze::Image &dst) {
   return_if (!conf.use_fading);
   rgb_display->init(dst.X, dst.Y, seze_RGB24);
   #pragma omp parallel for simd
-  FOR (i, rgb_display->size) {
+  cfor (i, rgb_display->size) {
     auto &pix {rgb_display->fast_get<seze::RGB24>(i)};
     CN(auto) dst_pix {dst.fast_get<seze::RGB24>(i)};
     pix.R = std::max<int>(0, pix.R - conf.fading * 255.0f);
@@ -227,17 +227,17 @@ void Tvsim2yuv::display_simul_rgb(seze::Image &dst) {
 void Tvsim2yuv::amplify(real amp) {
   if (amp != 1) {
     #pragma omp for simd
-    FOR (i, stream.size())
+    cfor (i, stream.size())
       stream[i] *= amp;
   }
   if (conf_yuv.amp_u != 1) {
     #pragma omp for simd
-    FOR (i, u_stream.size())
+    cfor (i, u_stream.size())
       u_stream[i] *= conf_yuv.amp_u;
   }
   if (conf_yuv.amp_v != 1) {
     #pragma omp for simd
-    FOR (i, v_stream.size())
+    cfor (i, v_stream.size())
       v_stream[i] *= conf_yuv.amp_v;
   }
 } // amplify

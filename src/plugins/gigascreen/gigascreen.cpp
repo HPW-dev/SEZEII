@@ -85,9 +85,9 @@ void select_palette(palette_name name) {
     }
     case palette_name::x216: {
       uint32_t u32_col = 0;
-      FOR (r, 6)
-      FOR (g, 6)
-      FOR (b, 6)
+      cfor (r, 6)
+      cfor (g, 6)
+      cfor (b, 6)
         palette.v_color.push_back(Color(
           r * (255.0/5.0),
           g * (255.0/5.0),
@@ -99,9 +99,9 @@ void select_palette(palette_name name) {
     }
     case palette_name::x36: {
       uint32_t u32_col = 0;
-      FOR (r, 3)
-      FOR (g, 4)
-      FOR (b, 3)
+      cfor (r, 3)
+      cfor (g, 4)
+      cfor (b, 3)
         palette.v_color.push_back(Color(
           r * (255.0/2.0),
           g * (255.0/3.0),
@@ -120,7 +120,7 @@ T pow2(T x) { return x*x; }
 void palettize(Color &col, int offset) {
   int best_color = 0; // index for best color
   int i_min = 255 * 255 * 3;
-  FOR (i, palette.v_color.size()) {
+  cfor (i, palette.v_color.size()) {
     auto pal_col = palette.v_color[i];
     int i_cur =
       pow2(pal_col.R - col.R + offset) +
@@ -137,7 +137,7 @@ void palettize(Color &col, int offset) {
 void palettize_BWRGB(Color &col, int state) {
   int best_color = 0; // index for best color
   int i_min = 255 * 255 * 3;
-  FOR (i, palette.v_color.size()) {
+  cfor (i, palette.v_color.size()) {
     auto pal_col = palette.v_color[i];
     int i_cur =
       pow2(pal_col.R - col.R) +
@@ -177,13 +177,13 @@ void gigascreen(Image& dst) {
     palette.gigascreen_offset :
     -palette.gigascreen_offset;
   if (palette.name == palette_name::BWRGB) {
-    FOR (i, dst.size) {
+    cfor (i, dst.size) {
       auto &col = dst.fast_get<Color>(i);
       palettize_BWRGB(col, state);
     }
     return;
   }
-  FOR (i, dst.size) {
+  cfor (i, dst.size) {
     auto &col = dst.fast_get<Color>(i);
     palettize(col, offset);
   }
@@ -193,9 +193,9 @@ void gigascreen(Image& dst) {
 void tricolor_2(Image& dst) {
   auto state = ++blink_state % 3;
   switch (state) {
-    case 0: FOR (i, dst.size) dst.fast_get<Color>(i).R = 0; break;
-    case 1: FOR (i, dst.size) dst.fast_get<Color>(i).G = 0; break;
-    default: FOR (i, dst.size) dst.fast_get<Color>(i).B = 0; break;
+    case 0: cfor (i, dst.size) dst.fast_get<Color>(i).R = 0; break;
+    case 1: cfor (i, dst.size) dst.fast_get<Color>(i).G = 0; break;
+    default: cfor (i, dst.size) dst.fast_get<Color>(i).B = 0; break;
   }
 } // tricolor_2
 
@@ -203,9 +203,9 @@ void tricolor_2(Image& dst) {
 void tricolor(Image& dst) {
   auto state = ++blink_state % 3;
   switch (state) {
-    case 0: FOR (i, dst.size) { auto &col = dst.fast_get<Color>(i); col.G = 0; col.B = 0; } break;
-    case 1: FOR (i, dst.size) { auto &col = dst.fast_get<Color>(i); col.R = 0; col.B = 0; } break;
-    default: FOR (i, dst.size) { auto &col = dst.fast_get<Color>(i); col.R = 0; col.G = 0; } break;
+    case 0: cfor (i, dst.size) { auto &col = dst.fast_get<Color>(i); col.G = 0; col.B = 0; } break;
+    case 1: cfor (i, dst.size) { auto &col = dst.fast_get<Color>(i); col.R = 0; col.B = 0; } break;
+    default: cfor (i, dst.size) { auto &col = dst.fast_get<Color>(i); col.R = 0; col.G = 0; } break;
   }
 } // tricolor
 

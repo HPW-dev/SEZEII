@@ -17,7 +17,7 @@ TVsim_YUV::~TVsim_YUV() {
 }
 
 void TVsim_YUV::RGB24_to_buffers(CN(seze::Image) src) {
-  FOR (i, src.size) {
+  cfor (i, src.size) {
     auto rgb = src.fast_get<seze::RGB24>(i);
     auto yuv = RGB24_to_yuv(rgb);
     buffer_y->fast_set<component>(i, yuv.Y);
@@ -84,12 +84,12 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
         break;
       }
       case State::first_str: {
-        FOR (str, tv::first_strings) {
+        cfor (str, tv::first_strings) {
           // blank data
-          FOR (x, src.X + tv::first_bound + tv::second_bound)
+          cfor (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
-          FOR (x, tv::hsync_size) {
+          cfor (x, tv::hsync_size) {
             auto level = is_color ? tv::empty_level : tv::sync_level;
             ret.data.push_back(level);
           }
@@ -98,12 +98,12 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
         break;
       }
       case State::second_str: {
-        FOR (str, tv::second_strings) {
+        cfor (str, tv::second_strings) {
           // blank data
-          FOR (x, src.X + tv::first_bound + tv::second_bound)
+          cfor (x, src.X + tv::first_bound + tv::second_bound)
             ret.data.push_back(tv::empty_level);
           // hsync
-          FOR (x, tv::hsync_size) {
+          cfor (x, tv::hsync_size) {
             auto level = is_color ? tv::empty_level : tv::sync_level;
             ret.data.push_back(level);
           }
@@ -112,19 +112,19 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
         break;
       }
       case State::first_bound: {
-        FOR (x, tv::first_bound)
+        cfor (x, tv::first_bound)
           ret.data.push_back(tv::empty_level);
         state = State::data;
         break;
       }
       case State::second_bound: {
-        FOR (x, tv::second_bound)
+        cfor (x, tv::second_bound)
           ret.data.push_back(tv::empty_level);
         state = State::hsync;
         break;
       }
       case State::data: {
-        FOR (x, src.X) {
+        cfor (x, src.X) {
           component luma;
           if (tv::interlace) {
             if (is_odd_string)
@@ -142,7 +142,7 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
         break;
       }
       case State::hsync: {
-        FOR (x, tv::hsync_size) {
+        cfor (x, tv::hsync_size) {
           auto level = is_color ? tv::empty_level : tv::sync_level;
           ret.data.push_back(level);
         }
@@ -154,7 +154,7 @@ Stream TVsim_YUV::encode(CN(seze::Image) src) const {
         break;
       }
       case State::vsync: {
-        FOR (x, tv::vsync_size) {
+        cfor (x, tv::vsync_size) {
           auto level = is_color ? tv::empty_level : tv::sync_level;
           ret.data.push_back(level);
         }
@@ -174,7 +174,7 @@ void TVsim_YUV::decode_to_display(CN(Stream) src_y, CN(Stream) src_u,
 CN(Stream) src_v) {
   // color fading
   auto display_data_ptr = display->get_data();
-  FOR (i, display->bytes) {
+  cfor (i, display->bytes) {
     auto& c = display_data_ptr[i];
     c = std::clamp<int>(c - tv::fading * 255, 0, 255);
   }
@@ -185,7 +185,7 @@ CN(Stream) src_v) {
   else
     odd_y = 0;
   // signal decode Y
-  FOR (i, src_y.size) {
+  cfor (i, src_y.size) {
     // beam bounds:
     beam_x = std::clamp<component>(beam_x, -tv::hbound,
       display->X + tv::hbound);

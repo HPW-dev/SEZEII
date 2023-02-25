@@ -7,7 +7,7 @@
 #define CN(T) const T&
 #define CP(T) const T*
 
-#define FOR(name, mx) \
+#define cfor(name, mx) \
 for (auto name = decltype(mx){0}; name < mx; ++name)
 
 template <typename T> void zero_delete(T& p) {
