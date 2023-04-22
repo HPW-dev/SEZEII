@@ -25,3 +25,4 @@ bin/plugins/
 output/
 buid_gui/
 **/imgui.ini
+SConstruct.bak
