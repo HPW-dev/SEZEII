@@ -6,7 +6,7 @@
 Выполните следующие команды в корневом каталоге SEZE II:
 + Для сборки SEZE II: ```scons .```
 + Для сборки плагинов (искать в папке ./bin/plugins/): ```scons -Q script=src/plugins/SConscript```
-+ Для сборки TVsim2conf: ```scons -Q script=src/tool/tvsim2bw.conf/SConscript```
++ Для сборки TVsim2conf: ```scons -Q script=src/tool/tvsim2.conf/SConscript```
 + Для отладки и просмотра ffmpeg логов:
 ```
 scons -Q debug=1 -Q fflog=1

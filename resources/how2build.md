@@ -6,7 +6,7 @@
 execute these commands in project root:
 + For building SEZE II: ```scons .```
 + For building free plugins (output in ./bin/plugins/): ```scons -Q script=src/plugins/SConscript```
-+ For building TVsim2conf: ```scons -Q script=src/tool/tvsim2bw.conf/SConscript```
++ For building TVsim2conf: ```scons -Q script=src/tool/tvsim2.conf/SConscript```
 + For debug & watch ffmpeg debug log:
 ```
 scons -Q debug=1 -Q fflog=1
