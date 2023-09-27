@@ -38,6 +38,8 @@ void pparser::operator ()(CN(Str) opts) const {
     if (opt)
       param.action(*opt);
     if (!opt && param.needed) {
+      print_info();
+      
       Str msg {"need param for "};
       for (auto key: param.keys)
         msg += key + ' ';
@@ -83,7 +85,7 @@ vector_t<Str> pparser::get_tokens(CN(Str) opts) const {
 }
 
 void pparser::print_info() const {
-  std::cout << "usage:\n";
+  std::cout << "Usage:\n";
   for (auto param: v_param) {
     for (auto key: param.keys)
       std::cout << key << ' ';

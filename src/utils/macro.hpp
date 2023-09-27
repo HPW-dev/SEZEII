@@ -1,6 +1,10 @@
 #pragma once
 #include <memory>
 
+#define cauto const auto
+#define cnauto const auto&
+#define nauto auto&
+
 #define scast(T, X) static_cast<T>(X)
 #define rcast(T, X) reinterpret_cast<T>(X)
 #define dcast(T, X) dinamyc_cast<T>(X)

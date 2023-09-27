@@ -20,9 +20,9 @@ print(f"system executable format: {arch_exe_fmt}")
 print(f"debug mode: {is_debug}")
 print(f"compiler: {cxx}")
 
-cpp_flags = ["-std=c++20", "-pipe", "-fopenmp"]
+cpp_flags = ["-std=c++23", "-pipe", "-fopenmp"]
 defines = []
-ld_flags = ["-fopenmp"]
+ld_flags = ["-fopenmp", "-shared-libgcc"]
 
 sysdef = ["-DLINUX"] if is_linux else ["-DWINDOWS"]
 defines.extend(sysdef)
@@ -30,14 +30,11 @@ if (is_debug):
   defines.extend(["-DDEBUG"])
   cpp_flags.extend(["-O0", "-g"])
 else: # release
-  if (not is_linux):
-    ld_flags.extend(["-shared-libstdc++"])
-  ld_flags.extend(["-shared-libgcc", "-flto"])
+  ld_flags.extend(["-flto"])
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])
-  cxx_opts = ["-Ofast", "-march=x86-64"] if is_x64 else ["-m32", "-Ofast", "-march=pentium2"]
+  cxx_opts = ["-Ofast", "-march=x86-64", "-mtune=generic"] if is_x64 else ["-Ofast"]
   cpp_flags.extend(cxx_opts)
-  cpp_flags.extend(["-flto"])
 cxx_arch = ["-m64"] if is_x64 else ["-m32"]
 cpp_flags.extend(cxx_arch)
 if (use_fflog):

@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <cassert>
 #include "utils/macro.hpp"
 #include "types.hpp"

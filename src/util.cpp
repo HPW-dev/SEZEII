@@ -13,6 +13,7 @@
 #include "utils/pparser.hpp"
 #include "utils/log.hpp"
 #include "global.hpp"
+#include "version.hpp"
 #include "video/reader.hpp"
 
 void convert_rgb24(CN(seze::Image) src, SDL_Surface *dst) {
@@ -98,9 +99,11 @@ void opts_check() {
 } // opts_check
 
 void parse_args(int argc, char** argv) {
-  std::cout << "SEZE II. Plugin based video converter.\n"
-    << "Copyright (c) HPW-dev (hpwdev0@gmail.com), 2021-2022\n"
-    << "Github page: github.com/HPW-dev\n" << std::endl;
+  std::cout << "SEZE II. Plugin based video converter." << std::endl
+    << "Version: " << sezeii::ver << std::endl
+    << "Compiler: " << sezeii::gcc_ver << std::endl
+    << "Copyright (c): " << sezeii::copyright << std::endl
+    << "Github page: " << sezeii::github_page << std::endl;
   seze::pparser parser({
     {
       {"-i", "--input"},
@@ -129,13 +132,13 @@ void parse_args(int argc, char** argv) {
       [](CN(Str) arg) { seze::num_threads = std::stoi(arg); }
     },
     {
-      {"-p", "--plug", "--plugin"},
+      {"-p", "--plug"},
       "path to plugin file",
       [](CN(Str) arg) { seze::pname = arg; },
       true
     },
     {
-      {"--opts"},
+      {"-op", "--opts"},
       "options for plugin (--opts '-a -b')",
       [](CN(Str) arg) { seze::popts = arg; }
     },
@@ -165,6 +168,7 @@ void parse_args(int argc, char** argv) {
       }
     }
   }); // parser init
+
   parser(argc, argv);
   opts_check();
 } // parse args

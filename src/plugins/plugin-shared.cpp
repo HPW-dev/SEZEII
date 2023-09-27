@@ -11,9 +11,6 @@ PluginShared::PluginShared(CN(std::string) fname)
   f_init = lib->getFunction<parm_init>("init");
   f_core = lib->getFunction<parm_core>("core");
   f_finalize = lib->getFunction<parm_finalize>("finalize");
-  iferror( !f_init, "PluginShared: _init addr is null");
-  iferror( !f_core, "PluginShared: _core addr is null");
-  iferror( !f_finalize, "PluginShared: _finalize addr is null");
 }
 
 PluginShared::~PluginShared() { delete lib; }
