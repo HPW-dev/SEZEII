@@ -1,0 +1,30 @@
+# default
+* text eol=crlf
+
+*.bat text eol=crlf
+*.txt text eol=auto
+*.yml text eol=auto
+*.py text
+*.c text
+*.cpp text
+*.tpp text
+*.tcc text
+*.cc text
+*.cxx text
+*.h text
+*.hxx text
+*.hpp text
+
+# Denote all files that are truly binary and should not be modified.
+*.a binary
+*.o binary
+*.so binary
+*.png binary
+*.webp binary
+*.zip binary
+*.exe binary
+*.dll binary
+*.xz binary
+*.zst binary
+*.lib binary
+*.jpg binary
