@@ -4,6 +4,10 @@
   * @version 2.0
   * @date 2022-10-30
   * @copyright Copyright (c) 2021-2022, HPW-dev */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 typedef unsigned uint;
@@ -70,3 +74,7 @@ inline static void bit_set_if(uint* flag, uint bit, int cond) {
 struct PluginInfo init(const char* options);
 void core(byte* dst, int mx, int my, int stride, enum color_t color_type);
 void finalize();
+
+#ifdef __cplusplus
+}
+#endif
