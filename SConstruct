@@ -33,7 +33,10 @@ else: # release
   ld_flags.extend(["-flto"])
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])
-  cxx_opts = ["-Ofast", "-march=x86-64", "-mtune=generic"] if is_x64 else ["-Ofast"]
+  if is_x64:
+    cxx_opts = ["-Ofast", "-march=x86-64", "-mtune=generic"]
+  else:
+    cxx_opts = ["-Ofast", "-march=nocona", "-mtune=generic"]
   cpp_flags.extend(cxx_opts)
 cxx_arch = ["-m64"] if is_x64 else ["-m32"]
 cpp_flags.extend(cxx_arch)
