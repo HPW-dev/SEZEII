@@ -9,6 +9,7 @@ plug_rel_dir = "../../bin/plugins/" + platform_dir + "/free/"
 src_dir = "../"
 cpp_path = [
   "../../thirdparty/itlib/include",
+  "../../thirdparty",
   ".", # plugin dir
   src_dir,
 ]
@@ -164,4 +165,11 @@ make_shared_lib("blkdthr", [
   src_dir + "image/RGB555-RGB565.cpp",
 ])
 
-
+make_shared_lib("gradient_map", [
+  Glob("gradient-map/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "utils/log.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
+])
