@@ -1,4 +1,6 @@
 #include <cassert>
+#include <memory>
+#include <mutex>
 #include "plugin-api.h"
 #include "utils/error.hpp"
 #include "utils/cmd-parser.hpp"
@@ -8,8 +10,12 @@
 #include "utils/random.hpp"
 
 namespace config {
-  //inline 
+  inline float fade_speed {0.01}; /// скорость затухания предыдущего кадра
 }
+
+static std::unique_ptr<seze::Image> dst_frame {};
+static std::unique_ptr<seze::Image> prev_frame {};
+static std::once_flag once_init_frames {};
 
 PluginInfo init(CP(char) options) {
   PluginInfo info;
@@ -33,11 +39,20 @@ PluginInfo init(CP(char) options) {
     error("need -p parameter (see usage)\n");
   }*/
 
-  bit_enable(&info.flags, PLGNINF_MULTITHREAD);
+  bit_disable(&info.flags, PLGNINF_MULTITHREAD);
   return info;
 } // init
 
+inline void accept_fade(seze::Image& dst) {
+  cfor (i, dst.bytes)
+    dst.get_data()[i] = std::max(dst.get_cdata()[i], prev_frame->get_cdata()[i]);
+  // предыдущий кадр становится текущим с затуханием
+  cfor (i, dst.bytes)
+    prev_frame->get_data()[i] = std::max<int>(0, int(dst.get_cdata()[i]) - (255 * config::fade_speed));
+}
+
 void process(seze::Image& dst) {
+  accept_fade(dst);
   /*assert( !config::table.empty());
 
   cfor (i, dst.size) {
@@ -55,8 +70,14 @@ void process(seze::Image& dst) {
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   assert(dst);
   assert(color_type == color_t::seze_RGB24);
-  seze::Image dst_pic(dst, mx, my, color_type);
-  process(dst_pic);
+
+  auto init_frames = [dst, mx, my, color_type]{
+    dst_frame = std::make_unique<seze::Image>(dst, mx, my, color_type);
+    prev_frame = std::make_unique<seze::Image>(mx, my, color_type);
+  };
+  std::call_once(once_init_frames, init_frames);
+
+  process(*dst_frame);
 }
 
 void finalize() {}
