@@ -1,5 +1,6 @@
 #include <omp.h>
 #include <cassert>
+#include <array>
 #include <memory>
 #include <mutex>
 #include "plugin-api.h"
@@ -11,15 +12,20 @@
 #include "utils/random.hpp"
 
 namespace config {
-  inline float fade_speed {0.05}; /// скорость затухания предыдущего кадра
-  inline float jitter_percent {0.02}; /// степень съёживания по высоте
-  inline uint blur_x {12}; /// блюр по ширине
-  inline uint blur_y {2}; /// блюр по высоте
-  inline float sharpen_power {1}; /// сила фильтра резкости
+  //inline float fade_speed {0.05}; /// скорость затухания предыдущего кадра
+  //inline float jitter_percent {0.02}; /// степень съёживания по высоте
+  //inline uint blur_x {12}; /// блюр по ширине
+  //inline uint blur_y {2}; /// блюр по высоте
+  inline float fade_speed {1}; /// скорость затухания предыдущего кадра
+  inline float jitter_percent {0}; /// степень съёживания по высоте
+  inline uint blur_x {0}; /// блюр по ширине
+  inline uint blur_y {0}; /// блюр по высоте
+  inline double sharpen_power {12}; /// сила фильтра резкости
 }
 
 static std::unique_ptr<seze::Image> dst_frame {};
 static std::unique_ptr<seze::Image> prev_frame {};
+static std::unique_ptr<seze::Image> sharpen_frame {};
 static std::once_flag once_init_frames {};
 
 PluginInfo init(CP(char) options) {
@@ -57,6 +63,7 @@ inline void accept_fade(seze::Image& dst) {
 }
 
 inline void accept_jitter(seze::Image& dst) {
+  return_if(config::jitter_percent == 0);
   uint y_idx = 0;
   cfor (y, dst.Y) {
     if (config::jitter_percent < seze::frand())
@@ -115,9 +122,54 @@ inline void accept_blur(seze::Image& dst) {
   }
 } // accept_blur
 
+seze::RGBf convert(CN(seze::RGB24) src) {
+  return seze::RGBf(
+    src.R / 255.0,
+    src.G / 255.0,
+    src.B / 255.0);
+}
+
+inline void accept_sharpen(seze::Image& dst) {
+  double p = config::sharpen_power;
+  std::array<double, 9> filter {
+    -p/8, -p/8, -p/8,
+    -p/8,  p+1, -p/8,
+    -p/8, -p/8, -p/8
+  };
+
+  cfor (i, dst.bytes)
+    sharpen_frame->get_data()[i] = dst.get_cdata()[i];
+  auto get_r = [](int x, int y)->int { return sharpen_frame->get<seze::RGB24>(x, y).R; };
+  auto get_g = [](int x, int y)->int { return sharpen_frame->get<seze::RGB24>(x, y).G; };
+  auto get_b = [](int x, int y)->int { return sharpen_frame->get<seze::RGB24>(x, y).B; };
+
+  #pragma omp parallel for simd collapse(2)
+  cfor (y, dst.Y)
+  cfor (x, dst.X) {
+    auto pix_r =
+      get_r(x-1, y+0) * filter[0] + get_r(x+0, y+0) * filter[1] + get_r(x+1, y+0) * filter[2] +
+      get_r(x-1, y+1) * filter[3] + get_r(x+0, y+1) * filter[4] + get_r(x+1, y+1) * filter[5] +
+      get_r(x-1, y+2) * filter[6] + get_r(x+0, y+2) * filter[7] + get_r(x+1, y+2) * filter[8];
+    auto pix_g =
+      get_g(x-1, y+0) * filter[0] + get_g(x+0, y+0) * filter[1] + get_g(x+1, y+0) * filter[2] +
+      get_g(x-1, y+1) * filter[3] + get_g(x+0, y+1) * filter[4] + get_g(x+1, y+1) * filter[5] +
+      get_g(x-1, y+2) * filter[6] + get_g(x+0, y+2) * filter[7] + get_g(x+1, y+2) * filter[8];
+    auto pix_b =
+      get_b(x-1, y+0) * filter[0] + get_b(x+0, y+0) * filter[1] + get_b(x+1, y+0) * filter[2] +
+      get_b(x-1, y+1) * filter[3] + get_b(x+0, y+1) * filter[4] + get_b(x+1, y+1) * filter[5] +
+      get_b(x-1, y+2) * filter[6] + get_b(x+0, y+2) * filter[7] + get_b(x+1, y+2) * filter[8];
+    dst.fast_set<seze::RGB24>(x, y, seze::RGB24(
+      std::clamp<float>(pix_r, 0, 255),
+      std::clamp<float>(pix_g, 0, 255),
+      std::clamp<float>(pix_b, 0, 255)
+    ));
+  }
+} // accept_sharpen
+
 void process(seze::Image& dst) {
-  accept_blur(dst);
   accept_jitter(dst);
+  accept_blur(dst);
+  accept_sharpen(dst);
   accept_fade(dst);
 } // process
 
@@ -128,6 +180,7 @@ void core(byte* dst, int mx, int my, int stride, color_t color_type) {
   auto init_frames = [dst, mx, my, color_type]{
     dst_frame = std::make_unique<seze::Image>(dst, mx, my, color_type);
     prev_frame = std::make_unique<seze::Image>(mx, my, color_type);
+    sharpen_frame = std::make_unique<seze::Image>(mx, my, color_type);
   };
   std::call_once(once_init_frames, init_frames);
 
