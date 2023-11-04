@@ -1,3 +1,4 @@
+#include <omp.h>
 #include <cassert>
 #include <memory>
 #include <mutex>
@@ -10,7 +11,11 @@
 #include "utils/random.hpp"
 
 namespace config {
-  inline float fade_speed {0.01}; /// скорость затухания предыдущего кадра
+  inline float fade_speed {0.05}; /// скорость затухания предыдущего кадра
+  inline float jitter_percent {0.02}; /// степень съёживания по высоте
+  inline uint blur_x {12}; /// блюр по ширине
+  inline uint blur_y {2}; /// блюр по высоте
+  inline float sharpen_power {1}; /// сила фильтра резкости
 }
 
 static std::unique_ptr<seze::Image> dst_frame {};
@@ -51,20 +56,69 @@ inline void accept_fade(seze::Image& dst) {
     prev_frame->get_data()[i] = std::max<int>(0, int(dst.get_cdata()[i]) - (255 * config::fade_speed));
 }
 
-void process(seze::Image& dst) {
-  accept_fade(dst);
-  /*assert( !config::table.empty());
+inline void accept_jitter(seze::Image& dst) {
+  uint y_idx = 0;
+  cfor (y, dst.Y) {
+    if (config::jitter_percent < seze::frand())
+      ++y_idx;
+    cfor (x, dst.X) {
+      auto src = dst.fast_get<seze::RGB24>(x, y);
+      dst.fast_set<seze::RGB24>(x, y_idx, src);
+    }
+  }
+  for (auto y = y_idx; y < dst.Y; ++y)
+    cfor (x, dst.X)
+      dst.fast_set<seze::RGB24>(x, y, {});
+} // accept_jitter
 
-  cfor (i, dst.size) {
-    nauto pixel = dst.fast_get<seze::RGB24>(i);
-    // TODO выбор режима обесцвечивания
-    double luma =
-      (pixel.R * config::contrast + config::brightness * 255.0) * 0.2627 +
-      (pixel.B * config::contrast + config::brightness * 255.0) * 0.6780 +
-      (pixel.G * config::contrast + config::brightness * 255.0) * 0.0593;
-    luma = std::clamp<double>(luma, 0, 255);
-    pixel = config::table.at( scast(uint, luma) );
-  }*/
+inline void accept_blur(seze::Image& dst) {
+  // блюр по ширине
+  if (config::blur_x != 0) {
+    #pragma omp parallel for simd collapse(2)
+    cfor (y, dst.Y)
+    cfor (x, dst.X) {
+      int total_r = 0;
+      int total_g = 0;
+      int total_b = 0;
+      cfor (wnd_x, config::blur_x) {
+        auto sample = dst.get<seze::RGB24>(x + wnd_x, y, seze::boundig_e::mirror);
+        total_r += sample.R;
+        total_g += sample.G;
+        total_b += sample.B;
+      }
+      total_r /= config::blur_x;
+      total_g /= config::blur_x;
+      total_b /= config::blur_x;
+      dst.fast_set<seze::RGB24>(x, y, seze::RGB24(total_r, total_g, total_b));
+    } // for x y
+  }
+
+  // блюр по высоте
+  if (config::blur_y != 0) {
+    #pragma omp parallel for simd collapse(2)
+    cfor (y, dst.Y)
+    cfor (x, dst.X) {
+      int total_r = 0;
+      int total_g = 0;
+      int total_b = 0;
+      cfor (wnd_y, config::blur_y) {
+        auto sample = dst.get<seze::RGB24>(x, y + wnd_y, seze::boundig_e::mirror);
+        total_r += sample.R;
+        total_g += sample.G;
+        total_b += sample.B;
+      }
+      total_r /= config::blur_y;
+      total_g /= config::blur_y;
+      total_b /= config::blur_y;
+      dst.fast_set<seze::RGB24>(x, y, seze::RGB24(total_r, total_g, total_b));
+    } // for x y
+  }
+} // accept_blur
+
+void process(seze::Image& dst) {
+  accept_blur(dst);
+  accept_jitter(dst);
+  accept_fade(dst);
 } // process
 
 void core(byte* dst, int mx, int my, int stride, color_t color_type) {

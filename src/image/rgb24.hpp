@@ -125,6 +125,19 @@ public:
       B = std::clamp<double>(double(B) + other, 0, max_val);
     }
   }
+
+  template <typename T2>
+  void operator /= (CN(RGB_base<T2>) other) {
+    if constexpr (std::is_integral_v<T>) {
+      R = std::clamp<int>(int(R) / other.R, 0, max_val);
+      G = std::clamp<int>(int(G) / other.G, 0, max_val);
+      B = std::clamp<int>(int(B) / other.B, 0, max_val);
+    } else if (std::is_floating_point_v<T>) {
+      R = std::clamp<double>(double(R) / other.R, 0, max_val);
+      G = std::clamp<double>(double(G) / other.G, 0, max_val);
+      B = std::clamp<double>(double(B) / other.B, 0, max_val);
+    }
+  }
 }; // RGB24
 
 using RGB24 = RGB_base<byte>;
