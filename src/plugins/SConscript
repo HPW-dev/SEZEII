@@ -173,3 +173,13 @@ make_shared_lib("gradient_map", [
   src_dir + "image/color.cpp",
   src_dir + "image/RGB555-RGB565.cpp",
 ])
+
+make_shared_lib("simple_vhs", [
+  Glob("simple-vhs/*.cpp"),
+  src_dir + "utils/cmd-parser.cpp",
+  src_dir + "utils/log.cpp",
+  src_dir + "utils/random.cpp",
+  src_dir + "image/image.cpp",
+  src_dir + "image/color.cpp",
+  src_dir + "image/RGB555-RGB565.cpp",
+])
