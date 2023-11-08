@@ -12,15 +12,11 @@
 #include "utils/random.hpp"
 
 namespace config {
-  //inline float fade_speed {0.05}; /// скорость затухания предыдущего кадра
-  //inline float jitter_percent {0.02}; /// степень съёживания по высоте
-  //inline uint blur_x {12}; /// блюр по ширине
-  //inline uint blur_y {2}; /// блюр по высоте
-  inline float fade_speed {1}; /// скорость затухания предыдущего кадра
+  inline float fade_speed {0.2}; /// скорость затухания предыдущего кадра
   inline float jitter_percent {0}; /// степень съёживания по высоте
-  inline uint blur_x {0}; /// блюр по ширине
-  inline uint blur_y {0}; /// блюр по высоте
-  inline double sharpen_power {12}; /// сила фильтра резкости
+  inline uint blur_x {6}; /// блюр по ширине
+  inline uint blur_y {2}; /// блюр по высоте
+  inline double sharpen_power {5}; /// сила фильтра резкости
 }
 
 static std::unique_ptr<seze::Image> dst_frame {};
@@ -63,14 +59,16 @@ inline void accept_fade(seze::Image& dst) {
 }
 
 inline void accept_jitter(seze::Image& dst) {
+  // TODO почини
   return_if(config::jitter_percent == 0);
   uint y_idx = 0;
   cfor (y, dst.Y) {
-    if (config::jitter_percent < seze::frand())
+    if (config::jitter_percent < seze::frand()) {
       ++y_idx;
-    cfor (x, dst.X) {
-      auto src = dst.fast_get<seze::RGB24>(x, y);
-      dst.fast_set<seze::RGB24>(x, y_idx, src);
+      cfor (x, dst.X) {
+        auto src = dst.fast_get<seze::RGB24>(x, y);
+        dst.fast_set<seze::RGB24>(x, y_idx, src);
+      }
     }
   }
   for (auto y = y_idx; y < dst.Y; ++y)
