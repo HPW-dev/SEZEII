@@ -34,7 +34,8 @@ else: # release
   defines.extend(["-DNDEBUG"])
   cpp_flags.extend(["-s"])
   if is_x64:
-    cxx_opts = ["-Ofast", "-march=x86-64", "-mtune=generic"]
+    #cxx_opts = ["-Ofast", "-march=x86-64", "-mtune=generic"]
+    cxx_opts = ["-O2"]
   else:
     cxx_opts = ["-Ofast", "-march=nocona", "-mtune=generic"]
   cpp_flags.extend(cxx_opts)
